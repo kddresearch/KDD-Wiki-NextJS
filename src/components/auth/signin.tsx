@@ -1,6 +1,3 @@
-// import { SignInButton } from "./signinbutton";
-// import react button 
-
 import { signIn } from "@/auth";
 
 export function SignIn({ provider="google", ...props }: {provider?: string} & React.HTMLAttributes<HTMLButtonElement>) {

@@ -4,10 +4,13 @@ import Link from "next/link";
 import { useState } from "react";
 import { Search } from "react-bootstrap-icons";
 import { SignIn } from "../auth/signin";
+import { SignOut } from "../auth/signout";
+import { auth } from "@/auth";
 
-export default function UnitBar({ title, kdduser }: { title: string, kdduser: any }) {
+export default async function UnitBar({ title, kdduser }: { title: string, kdduser: any }) {
 
   const user = kdduser;
+  const session = await auth();
 
   return (
     <div className="flex items-center justify-between w-full h-16 lg:h-14 bg-white text-purple">
@@ -21,14 +24,10 @@ export default function UnitBar({ title, kdduser }: { title: string, kdduser: an
         </Link>
         {/* Signin */}
         <div className="flex items-center justify-end ml-2">
-          {user.username !== "Guest" ? (
-            // sign out
-            <Link href={"/signout"} className="h-8 px-4 border-purple border-solid border-2 rounded-full min-w-max">
-              Sign out
-            </Link>
-            // notification
+          {session ? (
+            <SignOut/>
           ) : (
-            <SignIn />
+            <SignIn/>
           )}
         </div>
       </div>
