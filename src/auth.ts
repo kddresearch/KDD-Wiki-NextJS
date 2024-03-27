@@ -4,6 +4,7 @@ import { NextAuthConfig } from "next-auth"
 import config_json from "@/config.json"
 
 import google from "next-auth/providers/google"
+import KddUser from "./models/kdd_user"
 
 export const config = {
   providers: [
@@ -26,3 +27,15 @@ export const config = {
 } satisfies NextAuthConfig
 
 export const { handlers, auth, signIn, signOut } = NextAuth(config)
+
+// get current user from the database
+
+export async function getCurrentUser(): Promise<KddUser> {
+  const session = await auth()
+
+  if (!session) return KddUser.guestFactory();
+
+  return KddUser.guestFactory();
+
+  // return session?.user?.id
+}

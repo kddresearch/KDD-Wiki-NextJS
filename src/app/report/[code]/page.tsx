@@ -1,30 +1,33 @@
-// import Link from 'next/link'
-// import { use } from 'react';
-// import { GET } from './route';
- 
-// export default function Report404({ page }: { page: string }) {
+"use client";
 
-//   return (
-//     <div className='bg-white min-h-full grow text-black bg-stripe flex items-center justify-center'>
-//       <div className='container p-5 bg-white z-10 my-auto text-lg'>
-//         <div className='flex flex-row'>
-//           <h1 className='text-purple text-4xl md:text-6xl font-bold grow'>Report Page</h1>
-//         </div>
-//         <p className='my-4 inline-block'>
-//           Would you like to report missing page at <span className='text-purple'>{page}</span>?
-//         </p>
-//         <p className='my-4'>
-//         </p>
-//         <Link className='bg-gray p-1 rounded-md' href="/">Return Home</Link>
-//       </div>
-//     </div>
-//   )
-// }
+import Breadcrumb from '@/components/breadcrumb';
+import Link from 'next/link'
+import { useSearchParams } from "next/navigation";
+import { useState } from 'react';
 
 export default function Report404({ code, params }: { code: { code: string }, params: { [key: string]: string | string[] | undefined } }) {
-  const page = code;
+  const page = useSearchParams().get("page");
 
   return (
-    <div>{JSON.stringify(params)}</div>
+    <div className='bg-white min-h-full grow text-black bg-stripe flex items-center justify-center'>
+      <div className='container p-5 bg-white z-10 my-auto text-lg my-8'>
+        <div className='flex flex-row'>
+          <h1 className='text-purple text-4xl md:text-6xl font-bold grow'>Report Page</h1>
+        </div>
+        <p className='my-4 inline-block'>
+          Would you like to report missing page at 
+          <span className='capitalize inline-block bg-gray p-1 mx-1 rounded-md max-w-48 md:max-w-xs lg:max-w-sm xl:max-w-3xl overflow-hidden truncate align-middle'>
+            {page}
+          </span>?
+        </p>
+        <h2>
+          What did you expect to be here?
+        </h2>
+        <p>
+          <textarea className='w-full min-h-24 max-h-40 h-32 border-solid border-2 border-gray' placeholder='Describe what you expected to see here'></textarea>
+        </p>
+        <button className='bg-gray p-1 rounded-md'>Submit</button>
+      </div>
+    </div>
   )
 }

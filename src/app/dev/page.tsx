@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Arrow90degRight } from "react-bootstrap-icons";
 import Category from "@/models/nav-model/category";
 import NavItem from "@/models/nav-model/nav_item";
-import { title } from "process";
+import Breadcrumb from "@/components/breadcrumb";
 
 const nav1 = new Category(
   {
@@ -146,6 +146,7 @@ const Dev = () => (
     <div>
       <h1>Dev</h1>
       <Link href="/">Go back to home</Link>
+      <Breadcrumb/>
     </div>
   </div>
 );
