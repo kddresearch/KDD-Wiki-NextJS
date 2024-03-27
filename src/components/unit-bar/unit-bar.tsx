@@ -3,14 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Search } from "react-bootstrap-icons";
+import { SignIn } from "../auth/signin";
 
 export default function UnitBar({ title, kdduser }: { title: string, kdduser: any }) {
 
   const user = kdduser;
-
-  const onLogin = () => {
-    // redirect to login page
-  }
 
   return (
     <div className="flex items-center justify-between w-full h-16 lg:h-14 bg-white text-purple">
@@ -31,9 +28,7 @@ export default function UnitBar({ title, kdduser }: { title: string, kdduser: an
             </Link>
             // notification
           ) : (
-            <Link href={"/signin"} className="h-8 px-4 border-purple border-solid border-2 rounded-full min-w-max">
-              Sign in
-            </Link>
+            <SignIn />
           )}
         </div>
       </div>
