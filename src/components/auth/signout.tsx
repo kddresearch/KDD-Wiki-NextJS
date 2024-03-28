@@ -1,4 +1,5 @@
 import { signOut } from "@/auth";
+import { ArrowUpRight } from "react-bootstrap-icons";
 
 export function SignOut({ provider="google", ...props }: {provider?: string} & React.HTMLAttributes<HTMLButtonElement>) {
   return (
@@ -6,7 +7,10 @@ export function SignOut({ provider="google", ...props }: {provider?: string} & R
       "use server"
       await signOut()
     }}>
-      <button className="h-8 px-4 border-purple border-solid border-2 rounded-full min-w-max" {...props}>Sign Out</button>
+      <button className="align-middle h-8 min-w-max text-bold hover:underline" {...props}>
+        Log Out
+        <span className="inline-block pl-1 align-middle text-bold"><ArrowUpRight/></span>
+      </button>
     </form>
   );
 }

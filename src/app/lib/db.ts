@@ -9,6 +9,8 @@ const pool = new Pool({
     port: config.db.port,
 });
 
+var connected = false;
+
 function connect(): void {
     pool.connect((err: Error | undefined, client: any, done: any) => {
         if (err) {
@@ -17,14 +19,19 @@ function connect(): void {
           console.log('Connected to PostgreSQL');
         }
     });
-}
 
-connect();
+    connected = true;
+}
 
 /**
  * Executes a query on the PostgreSQL database | ***use specific query functions instead***
  */
 async function query(text: string, params?: any[]): Promise<QueryResult> {
+
+    if (!connected) {
+        connect();
+    }
+
     try {
         // console Debug
         // console.log('Executing query:', text + "\n" + params);

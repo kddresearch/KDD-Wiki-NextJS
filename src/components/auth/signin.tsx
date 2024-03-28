@@ -1,4 +1,5 @@
 import { signIn } from "@/auth";
+import { ArrowUpRight } from "react-bootstrap-icons";
 
 export function SignIn({ provider="google", ...props }: {provider?: string} & React.HTMLAttributes<HTMLButtonElement>) {
   return (
@@ -6,7 +7,10 @@ export function SignIn({ provider="google", ...props }: {provider?: string} & Re
       "use server"
       await signIn(provider)
     }}>
-      <button className="h-8 px-4 border-purple border-solid border-2 rounded-full min-w-max" {...props}>Sign In</button>
+      <button className="align-middle h-8 min-w-max text-bold hover:underline" {...props}>
+        Log In
+        <span className="inline-block pl-1 align-middle text-bold"><ArrowUpRight/></span>
+      </button>
     </form>
   );
 }

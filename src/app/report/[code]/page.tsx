@@ -5,14 +5,16 @@ import Link from 'next/link'
 import { useSearchParams } from "next/navigation";
 import { useState } from 'react';
 
-export default function Report404({ code }: { code: { code: string } }) {
-  const page = useSearchParams().get("page");
+export default function Report404({ params }: { params: { code: string } }) {
+  const page = useSearchParams()?.get("page");
+
+  const code_ = params.code;
 
   return (
     <div className='bg-white min-h-full grow text-black bg-stripe flex items-center justify-center'>
       <div className='container p-5 bg-white z-10 my-auto text-lg my-8'>
         <div className='flex flex-row'>
-          <h1 className='text-purple text-4xl md:text-6xl font-bold grow'>Report Page</h1>
+          <h1 className='text-purple text-4xl md:text-6xl font-bold grow'>Report Page Missing</h1>
         </div>
         <p className='my-4 inline-block'>
           Would you like to report missing page at 
