@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useSearchParams } from "next/navigation";
 import { useState } from 'react';
 
-export default function Report404({ code, params }: { code: { code: string }, params: { [key: string]: string | string[] | undefined } }) {
+export default function Report404({ code }: { code: { code: string } }) {
   const page = useSearchParams().get("page");
 
   return (

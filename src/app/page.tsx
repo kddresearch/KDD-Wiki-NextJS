@@ -1,7 +1,7 @@
 
 import Breadcrumb from "@/components/breadcrumb";
 import AboutUs from "@/components/home/about-us";
-import Announcements from "@/components/home/announcements";
+import Announcements from "@/components/home/AnnouncementComponent";
 import Image from "next/image";
 import Link from "next/link";
 export const metadata = {
