@@ -12,7 +12,7 @@ export default function Report404({ params }: { params: { code: string } }) {
 
   return (
     <div className='bg-white min-h-full grow text-black bg-stripe flex items-center justify-center'>
-      <div className='container p-5 bg-white z-10 my-auto text-lg my-8'>
+      <div className='container p-5 bg-white z-10 text-lg my-8'>
         <div className='flex flex-row'>
           <h1 className='text-purple text-4xl md:text-6xl font-bold grow'>Report Page Missing</h1>
         </div>

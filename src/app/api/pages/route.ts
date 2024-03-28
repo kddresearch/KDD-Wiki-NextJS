@@ -9,13 +9,19 @@ import { NextApiRequest, NextApiResponse } from 'next';
 export const GET = async (req: NextApiRequest, res: NextApiResponse) => {
 
   // const session = await auth(req, res);
-  const session = await auth();
-
-  console.log('session:', session?.user);
-
+  // Checking cookies for API auth
+  var session = await auth();
   if (session?.user == undefined) {
     return NextResponse.json({ error: 'Unauthorized', status: 401 })
+  } else {
+    // // Checking cookies for API auth
+    // session = await auth(req, res)
+    // if (session?.user == undefined) {
+    //   return NextResponse.json({ error: 'Unauthorized', status: 401 })
+    // }
   }
+
+  
 
   try {
     const pages = await fetchAll();

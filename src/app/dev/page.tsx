@@ -5,6 +5,8 @@ import { Arrow90degRight } from "react-bootstrap-icons";
 import Category from "@/models/nav-model/category";
 import NavItem from "@/models/nav-model/nav_item";
 import Breadcrumb from "@/components/breadcrumb";
+import BackDrop from "@/components/page/backdrop";
+import Card from "@/components/page/card";
 
 const nav1 = new Category(
   {
@@ -142,12 +144,16 @@ const nav4 = new Category(
 );
 
 const Dev = () => (
-  <div>
-    <div>
-      <h1>Dev</h1>
-      <Link href="/">Go back to home</Link>
-      <Breadcrumb/>
-    </div>
+  <div className="h-full flex flex-col">
+    <h1>Dev</h1>
+    <Link href="/">Go back to home</Link>
+    <Breadcrumb/>
+    <BackDrop>
+      <Card title="hello testing"></Card>
+      <Card title="hello testing">woiahdi</Card>
+      <Card title="hello testing">dwa id</Card>
+      <Card title="hello testing"> dwahidahi</Card>
+    </BackDrop>
   </div>
 );
 

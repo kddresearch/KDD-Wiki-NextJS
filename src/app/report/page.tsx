@@ -11,7 +11,7 @@ export default function reportPage() {
 
   return (
     <div className='bg-white min-h-full grow text-black bg-stripe flex items-center justify-center'>
-      <div className='container p-5 bg-white z-10 my-auto text-lg my-10'>
+      <div className='container p-5 bg-white z-10  text-lg my-10'>
 
         {isPage ?  
         <>

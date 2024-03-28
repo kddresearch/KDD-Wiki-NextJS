@@ -33,6 +33,8 @@ const config: Config = {
       'yellow': '#f0ad00',
     }
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/typography')
+  ],
 };
 export default config;

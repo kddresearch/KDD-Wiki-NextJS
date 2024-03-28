@@ -1,6 +1,8 @@
 import { Announcement, fetchCurrent } from "@/app/lib/models/announcement";
 import Link from "next/link";
 import AnnouncementListComponent from "./announcement";
+import { BoxArrowUpRight } from "react-bootstrap-icons";
+import Card from "../page/card";
 
 const AnnouncementComponent = async () => {
 
@@ -10,8 +12,14 @@ const AnnouncementComponent = async () => {
 
 
   return (
-    <div className="container p-5 bg-white -mt-8 mb-8 z-10">
-      <h1 className="text-purple text-6xl font-bold">Announcements</h1>
+    <Card className="-mt-8">
+      <div className="">
+        <Link href={"/announcement"} className="flex flex-row text-purple text-6xl font-bold">
+        <h1 className="grow">Announcements</h1>
+          <BoxArrowUpRight className="text-4xl inline-block justify-center my-auto"/>
+        </Link>
+      </div>
+      
 
       <ol className="flex flex-col">
         {listofAnnouncements.map((announcement_model, index) => (
@@ -24,7 +32,7 @@ const AnnouncementComponent = async () => {
           </li>
         ))}
       </ol>
-    </div>
+    </Card>
   );
 };
 

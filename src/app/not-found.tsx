@@ -5,15 +5,17 @@ import Link from 'next/link'
 import Nav from 'next/navigation'
 import { usePathname } from "next/navigation"
 import { BoxArrowUpRight } from 'react-bootstrap-icons';
- 
+import BackDrop from '@/components/page/backdrop'; 
+import Card from '@/components/page/card';
+
 export default function NotFound() {
 
   const pathname = usePathname();
 
   return (
     <>
-      <div className='bg-white min-h-full grow text-black bg-stripe flex flex-col items-center justify-center'>
-        <div className='container p-5 bg-white z-10 my-auto text-lg'>
+      <BackDrop>
+        <Card>
           <div className='flex flex-row'>
             <h1 className='text-purple text-4xl md:text-6xl font-bold grow'>404: Page Not Found</h1>
             <Link className='bg-gray p-1 rounded-md my-auto' href={`/report/404?page=${pathname}`}>Report <span><BoxArrowUpRight className='inline'/></span></Link>
@@ -27,9 +29,9 @@ export default function NotFound() {
           </p>
           <p className='my-4'>
           </p>
-          <Link className='bg-gray p-1 rounded-md' href="/">Return Home</Link>
-        </div>
-      </div>
+          <Link className='bg-gray p-1 rounded-md max-w-[122px]' href="/">Return Home</Link>
+        </Card>
+      </BackDrop>
     </>
   )
 }

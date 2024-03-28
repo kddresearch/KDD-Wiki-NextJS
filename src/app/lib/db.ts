@@ -18,7 +18,9 @@ function connect(): void {
         } else {
           console.log('Connected to PostgreSQL');
         }
+        client.release();
     });
+
 
     connected = true;
 }
@@ -36,6 +38,7 @@ async function query(text: string, params?: any[]): Promise<QueryResult> {
         // console Debug
         // console.log('Executing query:', text + "\n" + params);
         const result = await pool.query(text, params);
+
         return result;
     } catch (err) {
         console.error('Error occurred during query execution:', err);
