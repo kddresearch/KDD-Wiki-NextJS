@@ -5,9 +5,9 @@ function BackDrop({ isRow, ...props }: { isRow?: boolean } & React.HTMLProps<HTM
   var className
 
   if (isRow) {
-    className = 'flex md:flex-row' + props.className;
+    className = 'flex md:flex-row ' + props.className;
   } else {
-    className = 'flex flex-col' + props.className;
+    className = 'flex flex-col ' + props.className;
   }
 
 

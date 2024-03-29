@@ -86,29 +86,44 @@ const Navigation = () => {
   const nav3 = new Category(
     {
       id: 1,
-      title: "About",
+      title: "Teaching",
       location: "dropdown-down",
       links: [
         new NavItem({
           id: 1,
-          title: "About our team",
-          url: "/about/team",
+          title: "About KDD Courses",
+          url: "/course",
         }),
         new NavItem({
           id: 2,
-          title: "About our lab",
-          url: "/about/lab",
+          title: "CIS 732 Machine Learning",
+          url: "/course/machine-learning",
         }),
         new NavItem({
           id: 3,
-          title: "About our research",
-          url: "/about/research",
+          title: "CIS 798 - Computer Vision",
+          url: "/course/computer-vision",
         }),
         new NavItem({
           id: 4,
-          title: "Publications",
-          url: "/publications",
-        })
+          title: "CIS 530/730 - Artifical Intelligence",
+          url: "/course/artifical-intelligence",
+        }),
+        new NavItem({
+          id: 4,
+          title: "CIS 531/731 - Data Science and Analytics",
+          url: "/course/data-science-and-analytics",
+        }),
+        new NavItem({
+          id: 4,
+          title: "CIS 536/736 - Computer Graphics",
+          url: "/courses/computer-graphics",
+        }),
+        new NavItem({
+          id: 4,
+          title: "CIS 830 - Advanced Topics in AI",
+          url: "/courses/advanced-topics-in-ai",
+        }),
       ]
     }
   );
@@ -116,28 +131,28 @@ const Navigation = () => {
   const nav4 = new Category(
     {
       id: 1,
-      title: "About",
+      title: "People",
       location: "dropdown-down",
       links: [
         new NavItem({
           id: 1,
-          title: "About our team",
+          title: "Our Faculty",
           url: "/about/team",
         }),
         new NavItem({
           id: 2,
-          title: "About our lab",
-          url: "/about/lab",
+          title: "Our Members",
+          url: "/member",
         }),
         new NavItem({
           id: 3,
-          title: "About our research",
-          url: "/about/research",
+          title: "Our Alumni",
+          url: "/alumni",
         }),
         new NavItem({
           id: 4,
-          title: "Publications",
-          url: "/publications",
+          title: "Opportunites - Join us!",
+          url: "/opportunites",
         })
       ]
     }

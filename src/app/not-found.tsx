@@ -15,7 +15,7 @@ export default function NotFound() {
   return (
     <>
       <BackDrop>
-        <Card>
+        <Card isFlex={false}>
           <div className='flex flex-row'>
             <h1 className='text-purple text-4xl md:text-6xl font-bold grow'>404: Page Not Found</h1>
             <Link className='bg-gray p-1 rounded-md my-auto' href={`/report/404?page=${pathname}`}>Report <span><BoxArrowUpRight className='inline'/></span></Link>
@@ -29,7 +29,7 @@ export default function NotFound() {
           </p>
           <p className='my-4'>
           </p>
-          <Link className='bg-gray p-1 rounded-md max-w-[122px]' href="/">Return Home</Link>
+          <Link className='bg-gray p-1 rounded-md' href="/">Return Home</Link>
         </Card>
       </BackDrop>
     </>
