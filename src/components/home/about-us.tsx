@@ -1,7 +1,8 @@
+import Card from "../page/card";
+
 const AboutUs = () => {
     return (
-      <div className="container p-5 bg-white mb-8 z-10 text-lg">
-        <h1 className="text-purple text-4xl font-bold">About Us</h1>
+      <Card title="About Us">
         <p className="my-2">
           The Laboratory for Knowledge Discovery in Databases (KDD) is a research
           group in the Computing and Information Sciences (CIS) Department at
@@ -39,7 +40,7 @@ const AboutUs = () => {
           distributed high-performance computation and information retrieval, and
           virtual environments for simulation and computer-assisted instruction.
         </p>
-      </div>
+      </Card>
     );
   };
   

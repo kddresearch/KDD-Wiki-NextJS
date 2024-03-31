@@ -1,4 +1,4 @@
-import KddUser from "@/models/kdd_user";
+import KddUser from "@/app/lib/models/kdd_user";
 import UnitBar from "./unit-bar/unit-bar";
 import Navigation from "./unit-bar/nav-menu";
 import Link from "next/link";
@@ -7,8 +7,13 @@ import { auth } from "@/auth";
 export default async function Header() {
   const session = await auth();
 
-  // concatinate the email address out of the username
-  const username = session?.user?.email ? session?.user?.email.split("@")[0] : "guest"
+  let user;
+
+  if (session?.user) {
+    user = new KddUser(session?.user);
+  } else {
+    user = KddUser.guestFactory();
+  }
 
   return (
     <div className="bg-white">
@@ -22,8 +27,8 @@ export default async function Header() {
           </div>
           {session ? (
             <>
-              <Link className="my-auto" href={`/member/${username}`}>
-                <h1 className="text-xs h-4">Welcome <span className="font-semibold">{session.user?.name}</span></h1>
+              <Link className="my-auto" href={`/member/${user.username}`}>
+                <h1 className="text-xs h-4">Welcome <span className="font-semibold">{user.username}</span></h1>
               </Link>
             </>
           ) : (

@@ -1,27 +1,28 @@
-import BackDrop from "@/components/page/backdrop";
-import { notFound, redirect } from 'next/navigation'
-import { Page, fetchById, fetchByName } from "@/app/lib/models/page";
-import Card from "@/components/page/card";
+import Link from "next/link"
+import { notFound } from 'next/navigation'
 
-import { remark } from 'remark';
+import { fetchByURL } from "../lib/db/custom_url";
+import pageView from './pageView';
+import { fetchByName, fetchById } from "../lib/models/page";
+import { number } from "joi";
+import BackDrop from "@/components/page/backdrop";
+import Card from "@/components/page/card";
+import { remark } from "remark";
 import html from 'remark-html';
 
-async function pageView({ params }: { params: { id: string } }) {
+export default async function Page({ params }: { params: { slug: string[] } }) {
 
-  // check if the id is a number
-  const isNumber = !isNaN(parseInt(params.id))
+  const url = params.slug.join("/");
 
-  if (isNumber) {
-    var page = await fetchById(parseInt(params.id));
-
-    if (page == null) return notFound();
-    //redirect to the page name
-    redirect(`/page/${page.name}`);
-  } else {
-    var page = await fetchByName(params.id);
-
-    if (page == null) return notFound();
+  const customUrl = await fetchByURL(url);
+  if (customUrl == null) {
+    notFound();
   }
+
+  // TODO: fix the target type
+  var page = await fetchById(parseInt(customUrl.target.toString()));
+
+  if (page == null) return notFound();
 
   const isHTML = page.content.trim().startsWith("<") && page.content.trim().endsWith(">");
 
@@ -43,5 +44,3 @@ async function pageView({ params }: { params: { id: string } }) {
     </BackDrop>
   );
 }
-
-export default pageView;

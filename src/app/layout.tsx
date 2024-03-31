@@ -3,13 +3,15 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 // import '@/app/lib/db';
 
+import { logRequestHeaders } from "@/app/logging";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "KSU KDD Wiki",
   description: "Wiki for the KSU KDD Research group",
   icons: [
-    'https://www.k-state.edu/favicon.ico'
+    '/favicon.ico'
   ],
 };
 
@@ -24,6 +26,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // logRequestHeaders();
+
   return (
     <html lang="en">
       <body className={inter.className + " flex flex-col h-screen"}>

@@ -5,7 +5,7 @@ import Link from "next/link";
 
 async function pageIndex() {
 
-  const allPages = await fetchAll();
+  var allPages = await fetchAll();
 
   const search = () => {
     return (
@@ -17,6 +17,17 @@ async function pageIndex() {
   }
 
   const renderedSearch = search();
+
+  // sort allPages by letter
+  allPages.sort((a, b) => {
+    if (a.title < b.title) {
+      return -1;
+    }
+    if (a.title > b.title) {
+      return 1;
+    }
+    return 0;
+  });
 
   return (
     <BackDrop isRow={false}>
