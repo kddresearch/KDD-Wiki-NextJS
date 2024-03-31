@@ -2,7 +2,6 @@ import Link from "next/link"
 import { notFound } from 'next/navigation'
 
 import { fetchByURL } from "../lib/db/custom_url";
-import pageView from './pageView';
 import { fetchByName, fetchById } from "../lib/models/page";
 import { number } from "joi";
 import BackDrop from "@/components/page/backdrop";
