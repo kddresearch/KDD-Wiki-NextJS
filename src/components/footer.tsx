@@ -6,7 +6,7 @@ export default function Footer() {
     return (
         <>
             <Breadcrumb/>
-            <div className="bg-gray h-auto md:h-32">
+            <footer className="bg-gray h-auto md:h-32">
                 <div className="container flex flex-row md:flex-row h-full">
                     <Link className="grow md:w-auto" href={ "https://www.k-state.edu" }>
                         <Image src="/ksu-purple.svg" alt="unit" width="250" height="58" className="pr-4 h-8 h-full mx-auto md:mx-0"/>
@@ -44,7 +44,7 @@ export default function Footer() {
                         </ul>
                     </div>
                 </div>
-            </div>
+            </footer>
         </>
     );
 } 
