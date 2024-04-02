@@ -5,6 +5,7 @@ import { Page, fetchAll } from "@/app/lib/models/page";
 
 import { auth } from "@/auth";
 import { NextApiRequest, NextApiResponse } from 'next';
+import KddUser from '@/app/lib/models/kdd_user';
 
 export const GET = async (req: NextApiRequest, res: NextApiResponse) => {
 
@@ -19,6 +20,12 @@ export const GET = async (req: NextApiRequest, res: NextApiResponse) => {
     // if (session?.user == undefined) {
     //   return NextResponse.json({ error: 'Unauthorized', status: 401 })
     // }
+  }
+
+  const user = new KddUser(session?.user);
+
+  if (!user.admin) {
+      return NextResponse.json({ error: 'Unauthorized', status: 403 });
   }
 
   

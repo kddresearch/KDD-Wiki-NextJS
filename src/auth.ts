@@ -1,5 +1,6 @@
 import NextAuth, { User } from "next-auth"
 import { NextAuthConfig } from "next-auth"
+import { NextRequest, NextResponse } from 'next/server';
 
 import config_json from "@/config.json"
 
@@ -90,4 +91,28 @@ export async function getCurrentUser(): Promise<KddUser> {
   return KddUser.guestFactory();
 
   // return session?.user?.id
+}
+
+import { AccessLevel } from "./app/lib/models/rkdd_user";
+
+/**
+ * Check if the user is authenticated
+ * @param admin - check if the user is an admin
+ * @param member - check if the user is a member
+ * Sends a 401 error if the user is not authenticated
+ */
+export async function checkAPIAuth(access_level: AccessLevel): Promise<any> {
+  const session = await auth()
+
+  if (!session) return NextResponse.json({ error: 'Unauthorized', status: 401 });
+
+  const user = new KddUser(session?.user);
+
+  if ((access_level == AccessLevel.Admin) && !user.admin) return NextResponse.json({ error: 'Unauthorized', status: 403 });
+
+  if ((access_level == AccessLevel.Member) && !user.member) return NextResponse.json({ error: 'Unauthorized', status: 403 });
+
+  console.log(user);
+
+  return user;
 }

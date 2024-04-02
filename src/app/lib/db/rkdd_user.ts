@@ -19,7 +19,31 @@ async function fetchAll() :Promise<rKddUser[]> {
     }
 }
 
-async function fetchByUsername(username: String) :Promise<rKddUser> {
+async function fetchById(id: number) :Promise<rKddUser | null> {
+
+    // Construct the query
+    const query_str: string = `
+        SELECT * FROM rkdd_user
+        WHERE id = $1
+    `
+
+    try {
+        // Execute the query
+        const result = await query(query_str, [id]);
+
+        if (result.rows.length === 0) {
+            return null;
+        }
+
+        return new rKddUser(result.rows[0])
+
+    }   catch (err) {
+        console.error('Error occurred during query execution:', err);
+        throw err;
+    }
+}
+
+async function fetchByUsername(username: String) :Promise<rKddUser | null> {
     
     // Construct the query
     const query_str: string = `
@@ -30,6 +54,10 @@ async function fetchByUsername(username: String) :Promise<rKddUser> {
     try {
         // Execute the query
         const result = await query(query_str, [username]);
+
+        if (result.rows.length === 0) {
+            return null;
+        }
 
         return new rKddUser(result.rows[0])
 
@@ -105,6 +133,7 @@ async function remove(id: number) :Promise<boolean> {
 
 export {
     fetchAll,
+    fetchById,
     fetchByUsername,
     insert,
     update,

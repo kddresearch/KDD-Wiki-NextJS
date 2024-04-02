@@ -135,17 +135,19 @@ class rKddUser {
             username: kddUser.username,
             access_level: kddUser.readonly ? AccessLevel.ReadOnly : kddUser.admin ? AccessLevel.Admin : AccessLevel.Member,
             settings: {},
-            first_name: "",
-            last_name: "",
+            first_name: "John",
+            last_name: "Doe",
             bio: "Your bio here!",
-            email: "",
+            email: `${kddUser.username}@k-state.edu`,
             profile_picture: "/images/default_profile.png",
-            phone_number: "",
+            phone_number: "(785) 532-6011",
             social_media: {},
             date_created: new Date(),
             date_modified: new Date(),
             last_login: new Date()
         };
+
+        const defaults = ["first_name", "last_name", "bio", "email", "profile_picture", "phone_number"];
 
         return new rKddUser(userData);
     }
