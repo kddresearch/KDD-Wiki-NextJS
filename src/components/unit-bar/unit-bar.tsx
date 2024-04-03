@@ -7,28 +7,41 @@ import { SignIn } from "../auth/signin";
 import { SignOut } from "../auth/signout";
 import { auth } from "@/auth";
 
-export default async function UnitBar({ title, kdduser }: { title: string, kdduser: any }) {
-
+export default async function UnitBar({
+  title,
+  kdduser,
+}: {
+  title: string;
+  kdduser: any;
+}) {
   const user = kdduser;
   const session = await auth();
 
   return (
     <div className="flex items-center justify-between w-full h-16 lg:h-14 bg-white text-purple">
       <div className="container flex items-center">
-        <Image src="/wildcat.svg" alt="unit" width="40" height="32" className="mr-4 h-8" />
-        <div id="bar" className="realitive pr-8 border-l-[1px] border-purple border-solid h-8 w-1"></div>
+        <Image
+          src="/wildcat.svg"
+          alt="unit"
+          width="40"
+          height="32"
+          className="mr-4 h-8"
+        />
+        <div
+          id="bar"
+          className="realitive pr-8 border-l-[1px] border-purple border-solid h-8 w-1"
+        ></div>
         <Link className="grow" href={"/"}>
-          <p className="text-2xl font-bold overflow-hidden line-clamp-2" title={title}>
+          <p
+            className="text-2xl font-bold overflow-hidden line-clamp-2"
+            title={title}
+          >
             {title}
           </p>
         </Link>
         {/* Signin */}
         <div className="flex items-center justify-end ml-2">
-          {session ? (
-            <SignOut/>
-          ) : (
-            <SignIn/>
-          )}
+          {session ? <SignOut /> : <SignIn />}
         </div>
       </div>
     </div>

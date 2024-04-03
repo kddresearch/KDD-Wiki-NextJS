@@ -1,19 +1,18 @@
 "use server";
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 import { Page, fetchAll } from "@/app/lib/models/page";
 
 import { auth } from "@/auth";
-import { NextApiRequest, NextApiResponse } from 'next';
-import KddUser from '@/app/lib/models/kdd_user';
+import { NextApiRequest, NextApiResponse } from "next";
+import KddUser from "@/app/lib/models/kdd_user";
 
 export const GET = async (req: NextApiRequest, res: NextApiResponse) => {
-
   // const session = await auth(req, res);
   // Checking cookies for API auth
   var session = await auth();
   if (session?.user == undefined) {
-    return NextResponse.json({ error: 'Unauthorized', status: 401 })
+    return NextResponse.json({ error: "Unauthorized", status: 401 });
   } else {
     // // Checking cookies for API auth
     // session = await auth(req, res)
@@ -25,16 +24,17 @@ export const GET = async (req: NextApiRequest, res: NextApiResponse) => {
   const user = new KddUser(session?.user);
 
   if (!user.admin) {
-      return NextResponse.json({ error: 'Unauthorized', status: 403 });
+    return NextResponse.json({ error: "Unauthorized", status: 403 });
   }
-
-  
 
   try {
     const pages = await fetchAll();
     return NextResponse.json(pages);
   } catch (err) {
-    console.error('Error occurred during fetchAll:', err);
-    return NextResponse.json({ error: 'Failed to fetch pages' }, { status: 500 });
+    console.error("Error occurred during fetchAll:", err);
+    return NextResponse.json(
+      { error: "Failed to fetch pages" },
+      { status: 500 },
+    );
   }
 };

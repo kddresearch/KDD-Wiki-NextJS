@@ -7,9 +7,11 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import KddUser from "../lib/models/kdd_user";
 
-
-export default async function AdminLayout({ children}: { children: React.ReactNode}) {
-
+export default async function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   // const router = useRouter();
   // const [Component, setComponent] = useState(null);
 
@@ -28,13 +30,13 @@ export default async function AdminLayout({ children}: { children: React.ReactNo
   const session = await auth();
 
   if (session?.user == undefined) {
-    return redirect('/login');
+    return redirect("/login");
   }
 
   const user = new KddUser(session?.user);
 
   if (!user.admin) {
-    return redirect('/login');
+    return redirect("/login");
   }
 
   return (
@@ -46,16 +48,36 @@ export default async function AdminLayout({ children}: { children: React.ReactNo
           <Card className="h-max-fit" title="Nav">
             <ul className="text-2xl font-bold text-black mt-2">
               <li>
-                <Link href="/admin/" className="hover:underline hover:text-purple">Dashboard</Link>
+                <Link
+                  href="/admin/"
+                  className="hover:underline hover:text-purple"
+                >
+                  Dashboard
+                </Link>
               </li>
               <li>
-                <Link href="/admin/page" className="hover:underline hover:text-purple">Pages</Link>
+                <Link
+                  href="/admin/page"
+                  className="hover:underline hover:text-purple"
+                >
+                  Pages
+                </Link>
               </li>
               <li>
-                <Link href="/admin/user" className="hover:underline hover:text-purple">Users</Link>
+                <Link
+                  href="/admin/user"
+                  className="hover:underline hover:text-purple"
+                >
+                  Users
+                </Link>
               </li>
               <li>
-                <Link href="/admin/settings" className="hover:underline hover:text-purple">Settings</Link>
+                <Link
+                  href="/admin/settings"
+                  className="hover:underline hover:text-purple"
+                >
+                  Settings
+                </Link>
               </li>
             </ul>
           </Card>

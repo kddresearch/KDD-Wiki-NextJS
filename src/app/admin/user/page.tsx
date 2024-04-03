@@ -1,18 +1,17 @@
-
 import Card from "@/components/page/card";
 import AdminLayout from "../layout";
 
-import * as React from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import * as React from "react";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
 // import TablePagination from '@mui/material/TablePagination';
 
-import * as kdd_user from "@/app/lib/db/kdd_user"
+import * as kdd_user from "@/app/lib/db/kdd_user";
 
 import * as rkdd_user from "@/app/lib/db/rkdd_user";
 
@@ -22,7 +21,6 @@ import { Button, TableFooter, TablePagination } from "@mui/material";
 import rKddUser from "@/app/lib/models/rkdd_user";
 
 export default async function UserDashboard() {
-
   var allUsers = await kdd_user.fetchAll();
 
   var newAllUsers = await rkdd_user.fetchAll();
@@ -64,7 +62,7 @@ export default async function UserDashboard() {
   return (
     <div className="w-3/4 flex flex-col">
       <Card className="" title="Old Type Users">
-        <div className="my-2"/>
+        <div className="my-2" />
         <TableContainer>
           <Table>
             <TableHead>
@@ -85,10 +83,18 @@ export default async function UserDashboard() {
                       {user.username}
                     </Link>
                   </TableCell>
-                  <TableCell>{user.admin ? 'Admin' : 'Not Admin'}</TableCell>
-                  <TableCell>{user.readonly ? 'True' : 'False' }</TableCell>
-                  <TableCell>{user.kdd_group_id ? user.kdd_group_id.toString() : 'No group'}</TableCell>
-                  <TableCell>{user.directory_group_id ? user.directory_group_id.toString() : 'No group'}</TableCell>
+                  <TableCell>{user.admin ? "Admin" : "Not Admin"}</TableCell>
+                  <TableCell>{user.readonly ? "True" : "False"}</TableCell>
+                  <TableCell>
+                    {user.kdd_group_id
+                      ? user.kdd_group_id.toString()
+                      : "No group"}
+                  </TableCell>
+                  <TableCell>
+                    {user.directory_group_id
+                      ? user.directory_group_id.toString()
+                      : "No group"}
+                  </TableCell>
                   <TableCell>{user.is_kdd_only.toString()}</TableCell>
                 </TableRow>
               ))}
@@ -126,7 +132,10 @@ export default async function UserDashboard() {
                 <TableRow key={user.id}>
                   <TableCell>{user.id}</TableCell>
                   <TableCell>
-                    <Link href={`/member/${user.username}`} className="hover:underline text-purple font-bold">
+                    <Link
+                      href={`/member/${user.username}`}
+                      className="hover:underline text-purple font-bold"
+                    >
                       {user.username}
                     </Link>
                   </TableCell>
@@ -135,30 +144,47 @@ export default async function UserDashboard() {
                   <TableCell>{user.first_name}</TableCell>
                   <TableCell>{user.last_name}</TableCell>
                   <TableCell className="whitespace-nowrap">
-                    <Link href={`/member/${user.username}/#bio`} className="hover:underline text-purple font-bold">
+                    <Link
+                      href={`/member/${user.username}/#bio`}
+                      className="hover:underline text-purple font-bold"
+                    >
                       {user.bio.split(" ").length} words
                     </Link>
                   </TableCell>
-                  <TableCell className="whitespace-nowrap">{user.email}</TableCell>
+                  <TableCell className="whitespace-nowrap">
+                    {user.email}
+                  </TableCell>
                   <TableCell>{user.profile_picture}</TableCell>
-                  <TableCell className="whitespace-nowrap">{user.phone_number}</TableCell>
+                  <TableCell className="whitespace-nowrap">
+                    {user.phone_number}
+                  </TableCell>
                   <TableCell>{JSON.stringify(user.social_media)}</TableCell>
-                  <TableCell>{user.date_created.toLocaleDateString()}</TableCell>
-                  <TableCell>{user.date_modified.toLocaleDateString()}</TableCell>
+                  <TableCell>
+                    {user.date_created.toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    {user.date_modified.toLocaleDateString()}
+                  </TableCell>
                   <TableCell>{user.last_login.toLocaleDateString()}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
             <TableFooter>
-              <Button variant="outlined" className="whitespace-nowrap" action={undefined}>Save all</Button>
+              <Button
+                variant="outlined"
+                className="whitespace-nowrap"
+                action={undefined}
+              >
+                Save all
+              </Button>
             </TableFooter>
           </Table>
         </TableContainer>
       </Card>
-      <Card className="" title="Users">    
+      <Card className="" title="Users">
         <div>Users, a lot and a lot of users </div>
       </Card>
-      <Card className="" title="Users">    
+      <Card className="" title="Users">
         <div>Users, a lot and a lot of users </div>
       </Card>
     </div>

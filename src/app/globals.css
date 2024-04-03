@@ -40,5 +40,11 @@ body {
 }
 
 .bg-stripe {
-  background: repeating-linear-gradient(135deg, #fff, #fff 9.89949px, #f0f0f0 9.89949px, #f0f0f0 12.72792px);
+  background: repeating-linear-gradient(
+    135deg,
+    #fff,
+    #fff 9.89949px,
+    #f0f0f0 9.89949px,
+    #f0f0f0 12.72792px
+  );
 }

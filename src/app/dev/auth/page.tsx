@@ -8,5 +8,5 @@ export default async function Index() {
       <div>Current Session</div>
       <div>{JSON.stringify(session, null, 2)}</div>
     </div>
-  )
+  );
 }

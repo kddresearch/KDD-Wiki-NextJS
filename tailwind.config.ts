@@ -18,23 +18,21 @@ const config: Config = {
         144: "36rem",
       },
       textDecorationThickness: {
-        3: '3px',
-      }
+        3: "3px",
+      },
     },
     container: {
       center: true,
       // padding: "1rem",
     },
     colors: {
-      'purple': '#512888',
-      'white': '#ffffff',
-      'gray': '#eeeeee',
-      'black': '#000000',
-      'yellow': '#f0ad00',
-    }
+      purple: "#512888",
+      white: "#ffffff",
+      gray: "#eeeeee",
+      black: "#000000",
+      yellow: "#f0ad00",
+    },
   },
-  plugins: [
-    require('@tailwindcss/typography')
-  ],
+  plugins: [require("@tailwindcss/typography")],
 };
 export default config;

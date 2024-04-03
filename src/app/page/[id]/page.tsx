@@ -1,15 +1,14 @@
 import BackDrop from "@/components/page/backdrop";
-import { notFound, redirect } from 'next/navigation'
+import { notFound, redirect } from "next/navigation";
 import { Page, fetchById, fetchByName } from "@/app/lib/models/page";
 import Card from "@/components/page/card";
 
-import { remark } from 'remark';
-import html from 'remark-html';
+import { remark } from "remark";
+import html from "remark-html";
 
 async function pageView({ params }: { params: { id: string } }) {
-
   // check if the id is a number
-  const isNumber = !isNaN(parseInt(params.id))
+  const isNumber = !isNaN(parseInt(params.id));
 
   if (isNumber) {
     var page = await fetchById(parseInt(params.id));
@@ -23,7 +22,8 @@ async function pageView({ params }: { params: { id: string } }) {
     if (page == null) return notFound();
   }
 
-  const isHTML = page.content.trim().startsWith("<") && page.content.trim().endsWith(">");
+  const isHTML =
+    page.content.trim().startsWith("<") && page.content.trim().endsWith(">");
 
   var contentHTML;
 
@@ -37,7 +37,7 @@ async function pageView({ params }: { params: { id: string } }) {
     <BackDrop isRow={true}>
       <Card title={page.title + page.id.toString()} className="mx-4">
         <div className="mt-4 prose max-w-none prose-a:text-purple prose-a:underline">
-          <div dangerouslySetInnerHTML={{ __html: contentHTML}}></div>
+          <div dangerouslySetInnerHTML={{ __html: contentHTML }}></div>
         </div>
       </Card>
     </BackDrop>

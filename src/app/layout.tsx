@@ -10,9 +10,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "KSU KDD Wiki",
   description: "Wiki for the KSU KDD Research group",
-  icons: [
-    '/favicon.ico'
-  ],
+  icons: ["/favicon.ico"],
 };
 
 import { SessionProvider } from "next-auth/react";
@@ -32,9 +30,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className + " flex flex-col h-screen"}>
         <Header />
-        <div className="grow">
-          {children}
-        </div>
+        <div className="grow">{children}</div>
         <Footer />
       </body>
     </html>

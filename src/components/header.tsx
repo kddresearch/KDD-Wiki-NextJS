@@ -22,13 +22,13 @@ export default async function Header() {
           <Link className="my-auto" href={"https://k-state.edu"}>
             <h1 className="text-xs h-4">Kansas State University</h1>
           </Link>
-          <div className="grow">
-
-          </div>
+          <div className="grow"></div>
           {session ? (
             <>
               <Link className="my-auto" href={`/member/${user.username}`}>
-                <h1 className="text-xs h-4">Welcome <span className="font-semibold">{user.username}</span></h1>
+                <h1 className="text-xs h-4">
+                  Welcome <span className="font-semibold">{user.username}</span>
+                </h1>
               </Link>
             </>
           ) : (
@@ -38,9 +38,11 @@ export default async function Header() {
           )}
         </div>
       </div>
-      <UnitBar title="Laboratory for Knowledge Discovery in Databases (KSU KDD Lab)" kdduser={KddUser.guestFactory().toJSON()} />
-      <Navigation/>
+      <UnitBar
+        title="Laboratory for Knowledge Discovery in Databases (KSU KDD Lab)"
+        kdduser={KddUser.guestFactory().toJSON()}
+      />
+      <Navigation />
     </header>
   );
 }
-
