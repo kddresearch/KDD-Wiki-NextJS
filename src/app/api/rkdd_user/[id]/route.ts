@@ -18,8 +18,6 @@ export async function GET(req: NextApiRequest, { params }: { params: { id: strin
 
     const auth_user = await checkAPIAuth(AccessLevel.Admin);
 
-    // console.log(auth_user);
-
     // if id is not a number
     if (isNaN(id)) {
 

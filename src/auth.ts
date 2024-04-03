@@ -112,7 +112,5 @@ export async function checkAPIAuth(access_level: AccessLevel): Promise<any> {
 
   if ((access_level == AccessLevel.Member) && !user.member) return NextResponse.json({ error: 'Unauthorized', status: 403 });
 
-  console.log(user);
-
   return user;
 }

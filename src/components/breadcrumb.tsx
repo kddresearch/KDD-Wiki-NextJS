@@ -6,7 +6,8 @@ import { BoxArrowUpRight, CaretRightFill, ChevronDoubleRight, ChevronRight, Hous
 
 const Breadcrumb = () => {
   const pathname = usePathname();
-  const paths = pathname.split("/").filter((path) => path !== "");
+
+  const paths = pathname?.split("/").filter((path) => path !== "");
 
 
   return (
@@ -20,7 +21,7 @@ const Breadcrumb = () => {
             </div>
           </Link>
         </li>
-        {paths.map((path, index) => {
+        {paths?.map((path, index) => {
           const isLast = index === paths.length - 1;
           const link = '/' + paths.slice(0, index + 1).join('/');
           return (

@@ -61,7 +61,6 @@ export default async function AdminLayout({ children}: { children: React.ReactNo
           </Card>
         </div>
         {children}
-        
       </div>
     </BackDrop>
   );
