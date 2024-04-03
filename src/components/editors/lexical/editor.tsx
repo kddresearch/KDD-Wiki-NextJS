@@ -20,7 +20,7 @@ function onError(error: Error) {
 }
 
 function Placeholder() {
-  return <div className="text-gray overflow-hidden absolute text-ellipsis top-[15px] left-[10px] text-[15px] select-none inline-block pointer-events-none">
+  return <div className="text-lightgray overflow-hidden absolute text-ellipsis top-[15px] left-[10px] text-normal select-none inline-block pointer-events-none">
     Enter some rich text...
   </div>;
 }
@@ -34,22 +34,14 @@ const Editor = () => {
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <div className="mx-auto my-5 max-w-[600px] text-black relative leading-5 font-normal text-left rounded-t-lg">
+      <div className="my-5 text-black relative leading-5 font-normal text-left rounded-t-lg border-gray border rounded-b-lg">
         <ToolbarPlugin />
         <div className="bg-white relative">
-          <RichTextPlugin
-            contentEditable={<ContentEditable className="editor-input" />}
-            placeholder={<Placeholder />}
-            ErrorBoundary={LexicalErrorBoundary}
-          />
+          <RichTextPlugin contentEditable={<ContentEditable className="min-h-[150px] resize-none text-[15px] caret-[#444)] relative tab-[1] outline-none p-[15px_10px] caret-[#444]" />} placeholder={<Placeholder />} ErrorBoundary={LexicalErrorBoundary}/>
           <HistoryPlugin />
           <AutoFocusPlugin />
         </div>
       </div>
-      {/* <HistoryPlugin />
-      <AutoFocusPlugin />
-      <ToolbarPlugin />
-      <RichTextPlugin contentEditable={<ContentEditable />} placeholder={<Placeholder />} ErrorBoundary={LexicalErrorBoundary} /> */}
     </LexicalComposer>
   );
 };

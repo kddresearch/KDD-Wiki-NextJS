@@ -1,3 +1,4 @@
+import { light } from "@mui/material/styles/createPalette";
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -29,6 +30,8 @@ const config: Config = {
       purple: "#512888",
       white: "#ffffff",
       gray: "#eeeeee",
+      lightgray: "#eeeeee",
+      darkgray: "#333333",
       black: "#000000",
       yellow: "#f0ad00",
     },

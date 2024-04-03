@@ -13,11 +13,12 @@ import {
 } from "lexical";
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as React from "react";
+import { ArrowClockwise, ArrowCounterclockwise, Justify, TextCenter, TextLeft, TextRight, TypeBold, TypeItalic, TypeStrikethrough, TypeUnderline } from "react-bootstrap-icons";
 
 const LowPriority = 1;
 
 function Divider() {
-  return <div className="divider" />;
+  return <div className="w-px bg-lightgray mr-1" />;
 }
 
 export default function ToolbarPlugin() {
@@ -77,7 +78,7 @@ export default function ToolbarPlugin() {
 
   return (
     <div
-      className="flex bg-white p-1 rounded-t-lg align-middle"
+      className="flex bg-white mx-1 py-1 rounded-t-lg align-middle text-darkgray border-b border-gray"
       ref={toolbarRef}
     >
       <button
@@ -85,22 +86,20 @@ export default function ToolbarPlugin() {
         onClick={() => {
           editor.dispatchCommand(UNDO_COMMAND, undefined);
         }}
-        className="flex border rounded-md p-1 spaced cursor-pointer align-middle mr-0.5"
+        className="flex border-0 rounded-md p-1 spaced cursor-pointer align-middle mr-0.5 hover:bg-lightgray disabled:opacity-20"
         aria-label="Undo"
       >
-        <i className="format undo" />
-        Undo
+        <ArrowCounterclockwise />
       </button>
       <button
         disabled={!canRedo}
         onClick={() => {
           editor.dispatchCommand(REDO_COMMAND, undefined);
         }}
-        className="flex border rounded-md p-1 spaced cursor-pointer align-middle"
+        className="flex border-0  rounded-md p-1 spaced cursor-pointer align-middle hover:bg-lightgray disabled:opacity-20"
         aria-label="Redo"
       >
-        <i className="format redo" />
-        Redo
+        <ArrowClockwise />
       </button>
       <Divider />
       <button
@@ -108,93 +107,85 @@ export default function ToolbarPlugin() {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
         }}
         className={
-          "flex border rounded-md p-1 spaced cursor-pointer align-middle mr-0.5 " +
-          (isBold ? "bg-[#dfe8fa4d]" : "")
+          "flex border-0  rounded-md p-1 spaced cursor-pointer align-middle mr-0.5 hover:bg-lightgray " +
+          (isBold ? "bg-[#dfe8fa4d] text-black" : "")
         }
         aria-label="Format Bold"
       >
-        <i className="format bold" />
-        bold
+        <TypeBold />
       </button>
       <button
         onClick={() => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
         }}
         className={
-          "flex border rounded-md p-1 spaced cursor-pointer align-middle mr-0.5 " +
+          "flex border-0  rounded-md p-1 spaced cursor-pointer align-middle mr-0.5 hover:bg-lightgray " +
           (isItalic ? "bg-[#dfe8fa4d]" : "")
         }
         aria-label="Format Italics"
       >
-        <i className="format italic" />
-        italic
+        <TypeItalic />
       </button>
       <button
         onClick={() => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
         }}
         className={
-          "flex border rounded-md p-1 spaced cursor-pointer align-middle mr-0.5 " +
+          "flex border-0  rounded-md p-1 spaced cursor-pointer align-middle mr-0.5 hover:bg-lightgray " +
           (isUnderline ? "bg-[#dfe8fa4d]" : "")
         }
         aria-label="Format Underline"
       >
-        <i className="format underline" />
-        underline
+        <TypeUnderline />
       </button>
       <button
         onClick={() => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
         }}
         className={
-          "flex border rounded-md p-1 spaced cursor-pointer align-middle mr-0.5 " +
+          "flex border-0 rounded-md p-1 spaced cursor-pointer align-middle mr-0.5 hover:bg-lightgray " +
           (isStrikethrough ? "bg-[#dfe8fa4d]" : "")
         }
         aria-label="Format Strikethrough"
       >
-        <i className="format strikethrough" />
-        strike through
+        <TypeStrikethrough />
       </button>
       <Divider />
       <button
         onClick={() => {
           editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "left");
         }}
-        className="flex border rounded-md p-1 spaced cursor-pointer align-middle mr-0.5"
+        className="flex border-0  rounded-md p-1 spaced cursor-pointer align-middle mr-0.5 hover:bg-lightgray"
         aria-label="Left Align"
       >
-        <i className="format left-align" />
-        left align
+        <TextLeft />
       </button>
       <button
         onClick={() => {
           editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "center");
         }}
-        className="flex border rounded-md p-1 spaced cursor-pointer align-middle mr-0.5"
+        className="flex border-0  rounded-md p-1 spaced cursor-pointer align-middle mr-0.5 hover:bg-lightgray"
         aria-label="Center Align"
       >
-        <i className="format center-align" />
-        center align
+        <TextCenter />
       </button>
       <button
         onClick={() => {
           editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "right");
         }}
-        className="flex border rounded-md p-1 spaced cursor-pointer align-middle mr-0.5"
+        className="flex border-0  rounded-md p-1 spaced cursor-pointer align-middle mr-0.5 hover:bg-lightgray"
         aria-label="Right Align"
       >
-        <i className="format right-align" />
-        right align
+        <TextRight />
       </button>
       <button
         onClick={() => {
           editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "justify");
         }}
-        className="flex border rounded-md p-1 spaced cursor-pointer align-middle"
+        className="flex border-0  rounded-md p-1 spaced cursor-pointer align-middle hover:bg-lightgray"
         aria-label="Justify Align"
       >
-        <i className="format justify-align" />
-        justify
+        <Justify />
       </button>{" "}
     </div>
   );
