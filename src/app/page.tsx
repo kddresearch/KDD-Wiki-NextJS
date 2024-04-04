@@ -3,6 +3,7 @@ import AboutUs from "@/components/home/about-us";
 import Announcements from "@/components/home/AnnouncementComponent";
 import Image from "next/image";
 import Link from "next/link";
+
 export const metadata = {
   title: "KSU KDD Wiki",
   description: "A simple hello world page",

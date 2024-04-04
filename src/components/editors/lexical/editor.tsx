@@ -1,3 +1,5 @@
+"use client";
+
 // lexical
 import { HashtagPlugin } from "@lexical/react/LexicalHashtagPlugin";
 import { PlainTextPlugin } from "@lexical/react/LexicalPlainTextPlugin";
@@ -8,12 +10,18 @@ import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
-import { $getRoot, $getSelection } from "lexical";
-import { useEffect } from "react";
+import { $createTextNode, $getRoot, $getSelection } from "lexical";
+import { useEffect, useState } from "react";
+
+// Nodes
+import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
+import editorNodes from "./nodes";
+
 
 // custom plugins
 import ToolbarPlugin from "./plugins/toolbar-plugin";
 import theme from "./theme";
+import DraggableBlockPlugin from "./plugins/draggable-node-plugin";
 
 function onError(error: Error) {
   console.error(error);
@@ -25,24 +33,80 @@ function Placeholder() {
   </div>;
 }
 
+function prePopulate() {
+  const root = $getRoot();
+  if (root.getFirstChild() === null) {
+    const heading = $createHeadingNode("h1");
+    heading.append($createTextNode("Hello world!"));
+    root.append(heading);
+
+    const quote = $createQuoteNode();
+    quote.append($createTextNode("This is a quote for everyone talking about how good lexical is as a framework."));
+    root.append(quote);
+
+  } 
+  const selection = $getSelection();
+
+}
+
 const Editor = () => {
+
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const initialConfig = {
+    editorState: prePopulate,
     namespace: "editor",
-    theme,
-    onError,
+    nodes: [...editorNodes],
+    onError: onError,
+    theme: theme,
+  };
+
+  const [foatingAnchorElm, setFloatingAnchorElm] = useState<HTMLDivElement | null>(null);
+
+  const onRef = (_floatingAnchorElem: HTMLDivElement) => {
+    if (_floatingAnchorElem !== null) {
+      setFloatingAnchorElm(_floatingAnchorElem);
+    }
   };
 
   return (
-    <LexicalComposer initialConfig={initialConfig}>
-      <div className="my-5 text-black relative leading-5 font-normal text-left rounded-t-lg border-gray border rounded-b-lg">
-        <ToolbarPlugin />
-        <div className="bg-white relative">
-          <RichTextPlugin contentEditable={<ContentEditable className="min-h-[150px] resize-none text-[15px] caret-[#444)] relative tab-[1] outline-none p-[15px_10px] caret-[#444]" />} placeholder={<Placeholder />} ErrorBoundary={LexicalErrorBoundary}/>
-          <HistoryPlugin />
-          <AutoFocusPlugin />
-        </div>
-      </div>
-    </LexicalComposer>
+    <>
+      {isClient ?  (
+        <LexicalComposer initialConfig={initialConfig}>
+          <div id="hello" className="my-5 text-black relative leading-5 font-normal text-left rounded-t-lg border-gray border rounded-b-lg">
+            <ToolbarPlugin />
+            <div id="world" className="bg-white relative">
+              <RichTextPlugin 
+                contentEditable={
+                  <div className="editor-scroller">
+                    <div className="editor" ref={onRef}>
+                      <ContentEditable className="min-h-[150px] resize-none text-[15px] caret-[#444)] relative tab-[1] outline-none p-[15px_10px] caret-[#444]" />
+                    </div>
+                  </div>
+                } 
+                placeholder={<Placeholder />} 
+                ErrorBoundary={LexicalErrorBoundary}
+              />
+              <HistoryPlugin />
+              <AutoFocusPlugin />
+              { foatingAnchorElm ? 
+              <DraggableBlockPlugin anchorElem={foatingAnchorElm} /> 
+              // <div>hello</div>
+              : 
+              null
+              }
+              {/* <DraggableBlockPlugin anchorElem={foatingAnchorElm} /> */}
+            </div>
+          </div>
+        </LexicalComposer>
+      ) : (
+        <div>Loading editor... (enable javascript)</div>
+      )}
+    </>
   );
 };
 
