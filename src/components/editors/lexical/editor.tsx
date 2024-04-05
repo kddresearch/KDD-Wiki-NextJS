@@ -69,6 +69,8 @@ const Editor = () => {
 
   const onRef = (_floatingAnchorElem: HTMLDivElement) => {
     if (_floatingAnchorElem !== null) {
+      _floatingAnchorElem.id = "floating-anchor";
+      _floatingAnchorElem.className = "relative";
       setFloatingAnchorElm(_floatingAnchorElem);
     }
   };
@@ -84,7 +86,7 @@ const Editor = () => {
                 contentEditable={
                   <div className="editor-scroller">
                     <div className="editor" ref={onRef}>
-                      <ContentEditable className="min-h-[150px] resize-none text-[15px] caret-[#444)] relative tab-[1] outline-none p-[15px_10px] caret-[#444]" />
+                      <ContentEditable className="min-h-[150px] resize-none text-[15px] caret-[#444)] relative tab-[1] outline-none p-[15px_10px] caret-[#444] pl-7" />
                     </div>
                   </div>
                 } 

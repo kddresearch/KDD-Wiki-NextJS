@@ -545,8 +545,8 @@ function setMenuPosition(
 
   const top =
     targetRect.top +
-    (parseInt(targetStyle.lineHeight, 10) - floatingElemRect.height) / 2 -
-    anchorElementRect.top;
+    (parseInt(targetStyle.lineHeight, 10) - floatingElemRect.height) 
+    / 2 - anchorElementRect.top;
 
   const left = SPACE;
 
@@ -764,14 +764,14 @@ function useDraggableBlockMenu(
   return createPortal(
     <>
       <div
-        className="w-4 h-4 opacity-30 bg-[url(/icons/draggable-block-menu.svg)] draggable-block-menu"
+        className="w-4 h-4 opacity-30 absolute left-0 top-0 cursor-grab will-change-transform bg-[url(/icons/draggable-block-menu.svg)] hover:bg-[#efefef] active:cursor-grabbing draggable-block-menu"
         ref={menuRef}
         draggable={true}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}>
         <div className={isEditable ? 'icon' : ''} />
       </div>
-      <div className="draggable-block-target-line" ref={targetLineRef} />
+      <div className="pointer-events-none bg-purple h-1 absolute left-0 top-0 opacity-0 will-change-transform" ref={targetLineRef} />
     </>,
     anchorElem,
   );
