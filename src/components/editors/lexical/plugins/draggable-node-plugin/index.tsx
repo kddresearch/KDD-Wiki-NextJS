@@ -1,126 +1,3 @@
-// import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-// import { eventFiles } from '@lexical/rich-text';
-// import {
-//   $getNearestNodeFromDOMNode,
-//   $getNodeByKey,
-//   $getRoot,
-//   COMMAND_PRIORITY_HIGH,
-//   COMMAND_PRIORITY_LOW,
-//   DRAGOVER_COMMAND,
-//   DROP_COMMAND,
-//   LexicalEditor,
-// } from 'lexical';
-// import * as React from 'react';
-// import {DragEvent as ReactDragEvent, useEffect, useRef, useState} from 'react';
-// import {createPortal} from 'react-dom';
-
-// const SPACE = 4;
-// const TARGET_LINE_HEIGHT = 2;
-// const DRAG_DATA_FORMAT = "application/x-lexical-drag-node";
-
-// const Downward = 1;
-// const Upward = -1;
-// const Inderminate = 0;
-
-// let prevIndex = Infinity;
-
-// function getCurrentIndex(keysLength: number): number {
-//   if (keysLength === 0) {
-//     return Infinity;
-//   }
-//   if (prevIndex >= 0 && prevIndex < keysLength) {
-//     return prevIndex;
-//   }
-
-//   return Math.floor(keysLength / 2);
-// }
-
-// import React from 'react';
-// import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-// import { $getNearestNodeFromDOMNode, $getNodeByKey, DRAGOVER_COMMAND, DROP_COMMAND, LexicalEditor, LexicalNode } from 'lexical';
-// import { mergeRegister } from '@lexical/utils';
-// import { COMMAND_PRIORITY_HIGH, COMMAND_PRIORITY_LOW } from 'lexical';
-
-// import { LexicalNode } from 'lexical';
-
-// const DRAG_DATA_FORMAT = 'application/x-lexical-drag-block';
-
-// const DraggableBlockPlugin = () => {
-//   const [editor] = useLexicalComposerContext();
-
-//   React.useEffect(() => {
-//     function onDragover(event: DragEvent) {
-//       event.preventDefault();
-//       return true;
-//     }
-
-//     function onDrop(event: DragEvent) {
-//       const dragData = event.dataTransfer?.getData(DRAG_DATA_FORMAT) || '';
-//       const draggedNode = $getNodeByKey(dragData);
-//       if (!draggedNode) {
-//         return false;
-//       }
-//       const targetNode = 
-//         event.target instanceof Node
-//           ? $getNearestNodeFromDOMNode(event.target)
-//           : null;
-
-//       if (!targetNode) {
-//         return false;
-//       }
-//       if (targetNode === draggedNode) {
-//         return true;
-//       }
-//       targetNode.insertAfter(draggedNode);
-//       return true;
-//     }
-
-//     return mergeRegister(
-//       editor.registerCommand(
-//         DRAGOVER_COMMAND,
-//         (event) => {
-//           return onDragover(event);
-//         },
-//         COMMAND_PRIORITY_LOW
-//       ),
-//       editor.registerCommand(
-//         DROP_COMMAND,
-//         (event) => {
-//           return onDrop(event);
-//         },
-//         COMMAND_PRIORITY_HIGH
-//       )
-//     );
-//   }, [editor]);
-
-//   return null;
-// };
-
-// class DraggableNodeWrapper extends LexicalNode {
-
-//   static getType() {
-//     return 'draggable-node-wrapper';
-//   }
-
-//   static clone(node) {
-//     return new DraggableNodeWrapper(node.__children);
-//   }
-
-//   constructor(children) {
-//     super(children);
-//   }
-
-//   decorate() {
-//     return (
-//       <div draggable={true}>
-//         {this.__children}
-//       </div>
-//     );
-//   }
-// }
-
-// export default DraggableBlockPlugin;
-
 /**
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
@@ -128,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+
 // import './index.css';
 
 function isHTMLElement(x: unknown): x is HTMLElement {
@@ -353,13 +231,8 @@ import * as React from 'react';
 import {DragEvent as ReactDragEvent, useEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
 
-// import {isHTMLElement} from '../../utils/guard';
-// import {Point} from '../../utils/point';
-// import {Rect} from '../../utils/rect';
-
 const SPACE = 4;
 const TARGET_LINE_HALF_HEIGHT = 2;
-// const DRAGGABLE_BLOCK_MENU_CLASSNAME = 'rounded-md p-0.5 cursor-grab opacity-0 absolute left-0 top-0 will-change-transform';
 const DRAGGABLE_BLOCK_MENU_CLASSNAME = "draggable-block-menu";
 const DRAG_DATA_FORMAT = 'application/x-lexical-drag-block';
 const TEXT_BOX_HORIZONTAL_PADDING = 28;
@@ -569,6 +442,21 @@ function setDragImage(
   });
 }
 
+function getTopScrollableElement(element: HTMLElement): HTMLElement | null {
+  let currentElement = element;
+  let topScrollableElement: HTMLElement | null = null;
+
+  while (currentElement && currentElement !== document.body) {
+    if (currentElement.scrollHeight > currentElement.clientHeight) {
+      topScrollableElement = currentElement;
+    }
+    currentElement = currentElement.parentElement || document.body;
+  }
+
+  // return topScrollableElement || window;
+  return topScrollableElement;
+}
+
 function setTargetLine(
   targetLineElem: HTMLElement,
   targetBlockElem: HTMLElement,
@@ -581,9 +469,30 @@ function setTargetLine(
     anchorElem.getBoundingClientRect();
   const {marginTop, marginBottom} = getCollapsedMargins(targetBlockElem);
   let lineTop = targetBlockElemTop;
-  if (mouseY >= targetBlockElemTop) {
+
+  // console.log('targetBlockElemTop', lineTop);
+
+  console.log(`where is mouseY ${mouseY} and top: ${targetBlockElemTop}`);
+
+  const topScrollableElement = getTopScrollableElement(anchorElem);
+
+  // const scrollTop = topScrollableElement instanceof HTMLElement ? topScrollableElement.scrollTop : window.scrollY;
+
+  const adjsutedTop = targetBlockElemTop + window.scrollY;
+
+  // console.log(`where is mouseY ${adjsutedMouseY} and top: ${targetBlockElemTop}`);
+
+  // if (mouseY >= targetBlockElemTop) {
+  //   lineTop += targetBlockElemHeight + marginBottom / 2;
+  // } else {
+  //   // console.log("Mouse is above the target block element");
+  //   lineTop -= marginTop / 2;
+  // }
+
+  if (mouseY >= adjsutedTop) {
     lineTop += targetBlockElemHeight + marginBottom / 2;
   } else {
+    // console.log("Mouse is above the target block element");
     lineTop -= marginTop / 2;
   }
 
@@ -658,19 +567,31 @@ function useDraggableBlockMenu(
       if (!isDraggingBlockRef.current) {
         return false;
       }
+
       const [isFileTransfer] = eventFiles(event);
       if (isFileTransfer) {
         return false;
       }
+
       const {pageY, target} = event;
       if (!isHTMLElement(target)) {
         return false;
       }
+
+      // console.log('target', pageY);
+
+      const isTargetingTop = target.id === 'floating-anchor';
+
+      // console.log('targeting children', target.className);
+
       const targetBlockElem = getBlockElement(anchorElem, editor, event, true);
       const targetLineElem = targetLineRef.current;
       if (targetBlockElem === null || targetLineElem === null) {
         return false;
       }
+
+      // console.log('targetBlockElem', targetBlockElem.nodeName);
+
       setTargetLine(
         targetLineElem,
         targetBlockElem,

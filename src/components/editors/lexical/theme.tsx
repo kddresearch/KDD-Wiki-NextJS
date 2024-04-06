@@ -27,7 +27,7 @@ export default {
     ltr: 'text-left',
     paragraph: 'mb-2 relative',
     placeholder: 'text-gray-500 overflow-hidden absolute text-ellipsis top-4 left-2.5 text-base pointer-events-none inline-block',
-    quote: 'm-0 ml-5 text-base text-[rgb(101,103,107)] border-l-4 border-[rgb(206,208,212)] pl-4',
+    quote: 'm-0 ml-5 text-base text-[rgb(101,103,107)] border-l-4 border-[rgb(206,208,212)] pl-4 italic',
     rtl: 'text-right',
     text: {
         bold: 'font-bold',
