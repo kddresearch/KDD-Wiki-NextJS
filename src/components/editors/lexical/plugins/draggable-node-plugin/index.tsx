@@ -469,30 +469,11 @@ function setTargetLine(
     anchorElem.getBoundingClientRect();
   const {marginTop, marginBottom} = getCollapsedMargins(targetBlockElem);
   let lineTop = targetBlockElemTop;
-
-  // console.log('targetBlockElemTop', lineTop);
-
-  console.log(`where is mouseY ${mouseY} and top: ${targetBlockElemTop}`);
-
-  const topScrollableElement = getTopScrollableElement(anchorElem);
-
-  // const scrollTop = topScrollableElement instanceof HTMLElement ? topScrollableElement.scrollTop : window.scrollY;
-
   const adjsutedTop = targetBlockElemTop + window.scrollY;
-
-  // console.log(`where is mouseY ${adjsutedMouseY} and top: ${targetBlockElemTop}`);
-
-  // if (mouseY >= targetBlockElemTop) {
-  //   lineTop += targetBlockElemHeight + marginBottom / 2;
-  // } else {
-  //   // console.log("Mouse is above the target block element");
-  //   lineTop -= marginTop / 2;
-  // }
 
   if (mouseY >= adjsutedTop) {
     lineTop += targetBlockElemHeight + marginBottom / 2;
   } else {
-    // console.log("Mouse is above the target block element");
     lineTop -= marginTop / 2;
   }
 

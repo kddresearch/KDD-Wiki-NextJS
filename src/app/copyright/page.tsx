@@ -27,7 +27,7 @@ async function copyrightPage() {
     <BackDrop>
       <Card>
         <div className="m-4 p-4 font-mono bg-gray border-gray border rounded-lg"> 
-          <div className="mt-4 prose max-w-none prose-a:text-purple prose-a:underline">
+          <div className="mt-4 prose max-w-none prose-h1:text-purple prose-a:text-purple prose-a:underline">
             <div dangerouslySetInnerHTML={{ __html: contentHTML }}></div>
           </div>
         </div>

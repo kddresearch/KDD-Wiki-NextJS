@@ -91,7 +91,7 @@ const Editor = () => {
         <LexicalComposer initialConfig={initialConfig}>
           <div id="hello" className="my-5 text-black relative leading-5 font-normal text-left rounded-t-lg border-gray border rounded-b-lg">
             <ToolbarPlugin />
-            <div id="world" className="bg-white relative">
+            <div id="world" className="bg-white relative prose max-w-none prose-h1:text-purple prose-a:text-purple prose-a:underline">
               <RichTextPlugin 
                 contentEditable={
                   <div className="editor-scroller">
