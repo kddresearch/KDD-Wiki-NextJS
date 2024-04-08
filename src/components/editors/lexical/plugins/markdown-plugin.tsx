@@ -1,14 +1,15 @@
-import {
-  $convertFromMarkdownString,
-  $convertToMarkdownString,
-  CHECK_LIST,
-  ELEMENT_TRANSFORMERS,
-  ElementTransformer,
-  TEXT_FORMAT_TRANSFORMERS,
-  TEXT_MATCH_TRANSFORMERS,
-  TextMatchTransformer,
-  Transformer,
-} from '@lexical/markdown';
+// import {
+//   $convertFromMarkdownString,
+//   $convertToMarkdownString,
+//   CHECK_LIST,
+//   ELEMENT_TRANSFORMERS,
+//   ElementTransformer,
+//   TEXT_FORMAT_TRANSFORMERS,
+//   TEXT_MATCH_TRANSFORMERS,
+//   TextMatchTransformer,
+//   Transformer,
+// } from '@lexical/markdown';
+// import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {
   $createHorizontalRuleNode,
   $isHorizontalRuleNode,
@@ -33,9 +34,25 @@ import {
   LexicalNode,
 } from 'lexical';
   
-// import {
-//   $createEquationNode,
-//   $isEquationNode,
-//   EquationNode,
-// } from '../../nodes/EquationNode';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { $convertToMarkdownString, TRANSFORMERS } from '@lexical/markdown';
+
+export default function MarkdownPlugin(): JSX.Element | null {
+
+  const [editor] = useLexicalComposerContext();
+
+
+  const handleConvertToMarkdown = () => {
+    editor.update(() => {
+      const markdown = $convertToMarkdownString(TRANSFORMERS);
+      console.log(markdown);
+    });
+  };
+
+  return (
+    <div>
+      <button onClick={handleConvertToMarkdown}>Convert to Markdown</button>
+    </div>
+  );
+}
 

@@ -12,6 +12,12 @@ import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { $createTextNode, $getRoot, $getSelection } from "lexical";
 import { useEffect, useState } from "react";
+import {
+  $convertFromMarkdownString,
+  $convertToMarkdownString,
+  TRANSFORMERS,
+} from '@lexical/markdown';
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 // Nodes
 import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
@@ -22,6 +28,8 @@ import editorNodes from "./nodes";
 import ToolbarPlugin from "./plugins/toolbar-plugin";
 import theme from "./theme";
 import DraggableBlockPlugin from "./plugins/draggable-node-plugin";
+import MarkdownPlugin from "./plugins/markdown-plugin";
+import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 
 function onError(error: Error) {
   console.error(error);
@@ -65,6 +73,8 @@ const Editor = () => {
     theme: theme,
   };
 
+
+
   const [foatingAnchorElm, setFloatingAnchorElm] = useState<HTMLDivElement | null>(null);
 
   const onRef = (_floatingAnchorElem: HTMLDivElement) => {
@@ -94,14 +104,14 @@ const Editor = () => {
                 ErrorBoundary={LexicalErrorBoundary}
               />
               <HistoryPlugin />
+              <MarkdownPlugin />
+              <MarkdownShortcutPlugin />
               <AutoFocusPlugin />
-              { foatingAnchorElm ? 
-              <DraggableBlockPlugin anchorElem={foatingAnchorElm} /> 
-              // <div>hello</div>
-              : 
-              null
-              }
-              {/* <DraggableBlockPlugin anchorElem={foatingAnchorElm} /> */}
+              { foatingAnchorElm ? (
+                <DraggableBlockPlugin anchorElem={foatingAnchorElm} /> 
+              ) : (
+                null
+              )}
             </div>
           </div>
         </LexicalComposer>
