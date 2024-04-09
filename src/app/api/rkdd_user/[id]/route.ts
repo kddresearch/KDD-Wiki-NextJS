@@ -17,7 +17,7 @@ import {
 import { auth } from "@/auth";
 import KddUser from "@/app/lib/models/kdd_user";
 
-import { AccessLevel } from "@/app/lib/models/rkdd_user";
+import { AccessLevel, rKddUser } from "@/app/lib/models/rkdd_user";
 
 export async function GET(
   req: NextApiRequest,
@@ -37,7 +37,15 @@ export async function GET(
       const user = await fetchByUsername(params.id);
 
       if (user === null) {
-        return NextResponse.json({ error: "User not found" }, { status: 404 });
+
+        var kdduser = rKddUser.newUserFactory(params.id);
+
+        return NextResponse.json(kdduser);
+
+        return NextResponse.json(
+          { error: "User not found" }, 
+          { status: 404 }
+        );
       }
 
       return NextResponse.json(user);
@@ -54,7 +62,10 @@ export async function GET(
     const user = await fetchById(id);
 
     if (user === null) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "User not found" }, 
+        { status: 404 }
+      );
     }
 
     return NextResponse.json(user);
@@ -63,6 +74,89 @@ export async function GET(
     return NextResponse.json(
       { error: "Failed to fetch user" },
       { status: 500 },
-    );
+    ); 
+  }
+}
+
+// export async function POST(
+//   req: NextRequest,
+// //  { params }: { params: { id: string } },
+// ) {
+
+//   const body = await req.json();
+
+// //  console.log("POST: ", body);
+
+//   try {
+//     const user = new rKddUser(body);
+//     const result = await insert(user);
+
+//     return NextResponse.json(result);
+//   } catch (err) {
+//     console.error("Error occurred during insert:", err);
+//     return NextResponse.json(
+//       { error: "Failed to insert user" },
+//       { status: 500 },
+//     );
+//   }
+// }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const id = parseInt(params.id);
+
+  // const auth_user = await checkAPIAuth(AccessLevel.Admin);
+
+  if (isNaN(id)) {
+    try {
+      if (params.id === "self") {
+        return NextResponse.json(
+          { error: "Cannot delete self" }, 
+          { status: 400 }
+        );
+      }
+
+      const user = await fetchByUsername(params.id);
+
+      if (user === null) {
+        return NextResponse.json(
+          { error: "User not found" }, 
+          { status: 404 }
+        );
+      }
+
+      await remove(user.id);
+
+      return NextResponse.json({ success: true });
+    } catch (err) {
+      console.error("Error occurred during fetchByUsername:", err);
+      return NextResponse.json(
+        { error: "Failed to fetch user" },
+        { status: 500 },
+      );
+    }
+  }
+
+  try {
+    const user = await fetchById(id);
+
+    if (user === null) {
+      return NextResponse.json(
+        { error: "User not found" }, 
+        { status: 404 }
+      );
+    }
+
+    await remove(id);
+
+    return NextResponse.json(user);
+  } catch (err) {
+    console.error("Error occurred during fetchByUsername:", err);
+    return NextResponse.json(
+      { error: "Failed to fetch user" },
+      { status: 500 },
+    ); 
   }
 }

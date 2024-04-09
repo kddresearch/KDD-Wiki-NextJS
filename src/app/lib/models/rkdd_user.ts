@@ -47,7 +47,7 @@ const kddUserSchema = Joi.object({
       Joi.string().uri().allow(""),
     )
     .required(),
-  admin_team: Joi.array().items(Joi.string().valid(...Object.values(AdminTeam))).required(),
+  admin_team: Joi.array().items(Joi.string().valid(...Object.values(AdminTeam))),
   date_created: Joi.date().required(),
   date_modified: Joi.date().required(),
   last_login: Joi.date().required(),
@@ -122,18 +122,18 @@ class rKddUser {
     return new rKddUser(guestData);
   }
 
-  static newUserFactory(): rKddUser {
+  static newUserFactory(username: string): rKddUser {
     const userData = {
       id: -1,
-      username: "",
+      username: username,
       access_level: AccessLevel.Member,
       settings: {},
-      first_name: "",
-      last_name: "",
+      first_name: "John",
+      last_name: "Doe",
       bio: "Your bio here!",
-      email: "",
+      email: `${username}@k-state.edu`,
       profile_picture: "/images/default_profile.png",
-      phone_number: "",
+      phone_number: "785-000-0000",
       social_media: {},
       admin_team: [],
       date_created: new Date(),

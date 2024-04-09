@@ -77,7 +77,7 @@ export const config = {
     },
   },
   secret: config_json.auth.secret,
-  session: { strategy: "jwt" },
+  // session: { strategy: "jwt" },
 } satisfies NextAuthConfig;
 
 export const { handlers, auth, signIn, signOut } = NextAuth(config);

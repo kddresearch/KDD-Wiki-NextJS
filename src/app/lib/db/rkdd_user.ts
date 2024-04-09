@@ -55,6 +55,10 @@ async function fetchByUsername(username: String): Promise<rKddUser | null> {
       return null;
     }
 
+    if (result.rows.length > 1) {
+      console.warn("Multiple users found with the same username");
+    }
+
     return new rKddUser(result.rows[0]);
   } catch (err) {
     console.error("Error occurred during query execution:", err);

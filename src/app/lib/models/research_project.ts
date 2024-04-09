@@ -1,14 +1,17 @@
 import Joi from "joi";
 
+// Joi schema for the ResearchProject validation
 const researchProjectSchema = Joi.object({
     id: Joi.number().required(),
     title: Joi.string().required(),
-    category: Joi.number().required(),
+    category_id: Joi.number().required(),
     description: Joi.string().required(),
     project_management_link: Joi.string().required(),
-    datasets: Joi.array().items(Joi.number()).required(),
-    source_code: Joi.string().required(),
-    background: Joi.string().required(),
+    datasets_id: Joi.array().items().required(),
+    source_code: Joi.object({
+        url: Joi.string().required(),
+        is_private: Joi.boolean().required() 
+    }).required(),
 
     date_created: Joi.date().required(),
     date_modified: Joi.date().required(),
@@ -17,12 +20,13 @@ const researchProjectSchema = Joi.object({
 class ResearchProject {
     id: number;
     title: string;
-    category: number;
     description: string;
     project_management_link: string;
-    datasets: number[];
-    source_code: string;
-    background: string;
+    source_code: { url: string, is_private: boolean }[];
+
+    // relationships
+    category_id: number;
+    datasets_id: number[];
 
     date_created: Date;
     date_modified: Date;
@@ -38,12 +42,11 @@ class ResearchProject {
 
         this.id = value.id;
         this.title = value.title;
-        this.category = value.category;
+        this.category_id = value.category_id;
         this.description = value.description;
         this.project_management_link = value.project_management_link;
-        this.datasets = value.datasets;
+        this.datasets_id = value.datasets_id;
         this.source_code = value.source_code;
-        this.background = value.background;
 
         this.date_created = value.date_created;
         this.date_modified = value.date_modified;
