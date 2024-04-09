@@ -20,6 +20,13 @@ type SocialMediaLinks = {
   [Key in SocialMedia]?: string;
 };
 
+enum AdminTeam {
+  WikiTeam = 'WikiTeam',
+  SysAdmin = 'SysAdmin',
+  // Unassigned = 'Unassigned',
+  // ...
+}
+
 // Joi schema for validating the KddUser object
 const kddUserSchema = Joi.object({
   id: Joi.number().required(),
@@ -40,6 +47,7 @@ const kddUserSchema = Joi.object({
       Joi.string().uri().allow(""),
     )
     .required(),
+  admin_team: Joi.array().items(Joi.string().valid(...Object.values(AdminTeam))).required(),
   date_created: Joi.date().required(),
   date_modified: Joi.date().required(),
   last_login: Joi.date().required(),
@@ -59,6 +67,7 @@ class rKddUser {
   profile_picture: string;
   phone_number: string;
   social_media: SocialMediaLinks;
+  admin_team: AdminTeam[];
 
   // Metadata
   date_created: Date;
@@ -85,6 +94,7 @@ class rKddUser {
     this.profile_picture = value.profile_picture;
     this.phone_number = value.phone_number;
     this.social_media = value.social_media;
+    this.admin_team = value.admin_team;
     this.date_created = value.date_created;
     this.date_modified = value.date_modified;
     this.last_login = value.last_login;
@@ -103,6 +113,7 @@ class rKddUser {
       profile_picture: "",
       phone_number: "",
       social_media: {},
+      admin_team: [],
       date_created: new Date(),
       date_modified: new Date(),
       last_login: null,
@@ -124,6 +135,7 @@ class rKddUser {
       profile_picture: "/images/default_profile.png",
       phone_number: "",
       social_media: {},
+      admin_team: [],
       date_created: new Date(),
       date_modified: new Date(),
       last_login: new Date(),
@@ -149,6 +161,7 @@ class rKddUser {
       profile_picture: "/images/default_profile.png",
       phone_number: "(785) 532-6011",
       social_media: {},
+      admin_team: [],
       date_created: new Date(),
       date_modified: new Date(),
       last_login: new Date(),
@@ -179,6 +192,7 @@ class rKddUser {
       profile_picture: this.profile_picture,
       phone_number: this.phone_number,
       social_media: this.social_media,
+      admin_team: this.admin_team,
       date_created: this.date_created,
       date_modified: this.date_modified,
       last_login: this.last_login,

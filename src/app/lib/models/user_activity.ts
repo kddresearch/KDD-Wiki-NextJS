@@ -69,6 +69,10 @@ class UserActivity {
       timestamp: this.timestamp,
     };
   }
+
+  toString() {
+    return `${this.timestamp.toISOString()} - ${this.activityType}: ${this.activityDetails} by user ${this.userId}`
+  }
 }
 
 export { ActivityType, UserActivity };
