@@ -38,7 +38,7 @@ const kddUserSchema = Joi.object({
   first_name: Joi.string().required(),
   last_name: Joi.string().required(),
   bio: Joi.string().required(),
-  email: Joi.string().email().required(),
+  email: Joi.string().email({ tlds: false }).required(),
   profile_picture: Joi.string().required(),
   phone_number: Joi.string().required(),
   social_media: Joi.object()

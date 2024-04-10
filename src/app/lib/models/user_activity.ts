@@ -33,6 +33,9 @@ const userActivitySchema = joi.object({
     .string()
     .valid(...Object.values(ActivityType))
     .required(),
+  endpoint: joi.string().required(),
+  detected_ip: joi.string().required(),
+  status: joi.number().required(),
   activityDetails: joi.string().required(),
   timestamp: joi.date().default(new Date()),
 });
@@ -41,7 +44,10 @@ class UserActivity {
   id: number;
   userId: number; // Foreign key referencing the KddUser.id
   activityType: ActivityType;
-  activityDetails: string; // Additional details about the activity (e.g., IP address, etc.)
+  endpoint: string; // The endpoint that the activity was performed on
+  detected_ip: string; // The IP address that the activity was detected from
+  status: number; // The status code of the activity
+  activityDetails: string; // Additional details about the activity
   timestamp: Date;
 
   constructor(data: any) {
@@ -56,8 +62,24 @@ class UserActivity {
     this.id = value.id;
     this.userId = value.userId;
     this.activityType = value.activityType;
+    this.endpoint = value.endpoint;
+    this.detected_ip = value.detected_ip;
+    this.status = value.status;
     this.activityDetails = value.activityDetails;
     this.timestamp = value.timestamp ? value.timestamp : new Date();
+  }
+
+  // extra constructors
+  static viewedPage(userId: number, status: number, detected_ip: string, endpoint: string, page: string) {
+    return new UserActivity({
+      id: -1,
+      userId: userId,
+      status: status,
+      activityType: ActivityType.PageView,
+      endpoint: endpoint,
+      detected_ip: detected_ip,
+      activityDetails: `Viewed page: ${page}`,
+    });
   }
 
   toJSON() {
@@ -65,13 +87,15 @@ class UserActivity {
       id: this.id,
       userId: this.userId,
       activityType: this.activityType,
+      endpoint: this.endpoint,
+      detected_ip: this.detected_ip,
       activityDetails: this.activityDetails,
       timestamp: this.timestamp,
     };
   }
 
   toString() {
-    return `${this.timestamp.toISOString()} - ${this.activityType}: ${this.activityDetails} by user ${this.userId}`
+    return `${this.timestamp.toISOString()} - ${this.status} - ${this.endpoint} - ${this.activityType}: "${this.activityDetails}" by user ${this.userId} from IP ${this.detected_ip}`
   }
 }
 

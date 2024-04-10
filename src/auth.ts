@@ -42,7 +42,18 @@ export const config = {
   basePath: "/auth",
   callbacks: {
     async signIn({ user, account, profile }) {
-      // console.log("signIn", user, account, profile)
+
+      const userActivity = UserActivity({
+        id: -1,
+        userId: user.id,
+        status: 200,
+        activityType: ActivityType.Login,
+        endpoint: "auth/signin",
+        detected_ip: 
+      })
+
+      console.log
+
       return true;
     },
     async redirect({ url, baseUrl }) {
@@ -77,24 +88,25 @@ export const config = {
     },
   },
   secret: config_json.auth.secret,
-  // session: { strategy: "jwt" },
 } satisfies NextAuthConfig;
 
 export const { handlers, auth, signIn, signOut } = NextAuth(config);
 
-// get current user from the database
-
+/**
+ * Gets the current user from the session
+ * @returns {KddUser} - The current user
+ */
 export async function getCurrentUser(): Promise<KddUser> {
   const session = await auth();
 
   if (!session) return KddUser.guestFactory();
 
+  // TODO: Implement fetching user from the database
   return KddUser.guestFactory();
-
-  // return session?.user?.id
 }
 
 import { AccessLevel } from "./app/lib/models/rkdd_user";
+import { ActivityType } from "./app/lib/models/user_activity";
 
 /**
  * Check if the user is authenticated
@@ -105,10 +117,21 @@ import { AccessLevel } from "./app/lib/models/rkdd_user";
 export async function checkAPIAuth(access_level: AccessLevel): Promise<any> {
   const session = await auth();
 
+  let user;
+
   if (!session)
     return NextResponse.json({ error: "Unauthorized", status: 401 });
 
-  const user = new KddUser(session?.user);
+  try {
+    user = new KddUser(session?.user);
+  } catch (err) {
+    console.error("Error occurred during fetchByUsername:", err);
+    return NextResponse.json(
+      { error: "Failed to fetch user" },
+      { status: 500 },
+    );
+  }
+
 
   if (access_level == AccessLevel.Admin && !user.admin)
     return NextResponse.json({ error: "Unauthorized", status: 403 });

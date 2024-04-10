@@ -8,16 +8,19 @@ import BackDrop from "@/components/page/backdrop";
 import Card from "@/components/page/card";
 import { remark } from "remark";
 import html from "remark-html";
+import { UserActivity } from "../lib/models/user_activity";
 
 export default async function Page({ params }: { params: { slug: string[] } }) {
   const url = params.slug.join("/");
+
+
+
 
   const customUrl = await fetchByURL(url);
   if (customUrl == null) {
     notFound();
   }
 
-  // TODO: fix the target type
   var page = await fetchById(parseInt(customUrl.target.toString()));
 
   if (page == null) return notFound();

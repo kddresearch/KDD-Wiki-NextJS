@@ -24,8 +24,7 @@ const rpublicationSchema = Joi.object({
         .pattern(
             Joi.string().valid(...Object.values(PublicationPlatform)),
             Joi.string().uri().allow(""),
-        )
-        .required(),
+        ).required(),
     date_published: Joi.date().required(),
 
     project_id: Joi.number().integer().required(),
@@ -44,6 +43,8 @@ class rPublication {
     // relationships
     project_id: number;
     author_ids: number[];
+
+    // metadata
     date_created: Date;
     date_modified: Date;
 

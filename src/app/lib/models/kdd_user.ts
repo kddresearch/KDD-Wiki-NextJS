@@ -2,7 +2,7 @@ import joi from "joi";
 
 // Joi schema for kdd user validation
 const kdd_userSchema = joi.object({
-  id: joi.number().integer().min(0),
+  id: joi.number().integer(),
   username: joi.string().required().max(50), // TODO: Find EID max length
   member: joi.boolean().required().allow(null),
   admin: joi.boolean().required().allow(null),
@@ -51,6 +51,7 @@ class KddUser {
 
   static guestFactory() {
     return new KddUser({
+      id: -2,
       username: "Guest",
       readonly: true,
       member: false,
