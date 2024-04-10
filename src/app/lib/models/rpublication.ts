@@ -26,10 +26,8 @@ const rpublicationSchema = Joi.object({
             Joi.string().uri().allow(""),
         ).required(),
     date_published: Joi.date().required(),
-
     project_id: Joi.number().integer().required(),
     author_ids: Joi.array().items(Joi.number().integer()).required(),
-
     date_created: Joi.date().required(),
     date_modified: Joi.date().required(),
 });
