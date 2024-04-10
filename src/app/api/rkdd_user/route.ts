@@ -14,7 +14,7 @@ import { auth } from "@/auth";
 import KddUser from "@/app/lib/models/kdd_user";
 import { AccessLevel, rKddUser } from "@/app/lib/models/rkdd_user";
 
-export const GET = async (req: NextApiRequest, res: NextApiResponse) => {
+export const GET = async (req: NextRequest, res: NextResponse) => {
   // Checking cookies for API auth
   // var session = await auth();
   // if (session?.user == undefined) {
@@ -60,7 +60,7 @@ export async function POST(
   try {
     const result = await fetchByUsername(user.username);
 
-    console.log("this is the result", result);
+    // console.log("this is the result", result);
 
     if (result) {
       return NextResponse.json(

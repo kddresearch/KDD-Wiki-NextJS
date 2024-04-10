@@ -14,12 +14,6 @@ const secret = config_json.auth.secret;
 export const GET = async (req: NextRequest, res: NextResponse) => {
 
     const session = await auth();
-    
-    // get the jwt token from the session
-
-    // const secret
-
-    // const token = await getToken({ req, secret: secret, salt: ""})
 
     return NextResponse.json(session)
 }

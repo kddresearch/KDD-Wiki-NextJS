@@ -23,7 +23,7 @@ class ResearchCategory {
 
         // If there is an error, throw an error
         if (error) {
-            throw new Error(`ResearchTeam validation error: ${error.message}`);
+            throw new Error(`ResearchCategory validation error: ${error.message}`);
         }
 
         this.id = value.id;

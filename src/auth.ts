@@ -43,16 +43,16 @@ export const config = {
   callbacks: {
     async signIn({ user, account, profile }) {
 
-      const userActivity = UserActivity({
-        id: -1,
-        userId: user.id,
-        status: 200,
-        activityType: ActivityType.Login,
-        endpoint: "auth/signin",
-        detected_ip: 
-      })
+      // const userActivity = UserActivity({
+      //   id: -1,
+      //   userId: user.id,
+      //   status: 200,
+      //   activityType: ActivityType.Login,
+      //   endpoint: "auth/signin",
+      //   detected_ip: 
+      // })
 
-      console.log
+      // console.log
 
       return true;
     },

@@ -13,9 +13,6 @@ import { UserActivity } from "../lib/models/user_activity";
 export default async function Page({ params }: { params: { slug: string[] } }) {
   const url = params.slug.join("/");
 
-
-
-
   const customUrl = await fetchByURL(url);
   if (customUrl == null) {
     notFound();

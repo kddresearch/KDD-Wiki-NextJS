@@ -22,7 +22,7 @@ class ResearchProject {
     title: string;
     description: string;
     project_management_link: string;
-    source_code: { url: string, is_private: boolean }[];
+    source_code: { url: string, is_private: boolean };
 
     // relationships
     category_id: number;
