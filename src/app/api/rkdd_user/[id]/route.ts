@@ -3,7 +3,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { checkAPIAuth } from "@/auth";
+import { checkAuthAPI } from "@/auth";
 
 import {
   fetchAll,
@@ -25,7 +25,7 @@ export async function GET(
 ) {
   const id = parseInt(params.id);
 
-  const auth_user = await checkAPIAuth(AccessLevel.Admin);
+  const auth_user = await checkAuthAPI(AccessLevel.Admin);
 
   // if id is not a number
   if (isNaN(id)) {

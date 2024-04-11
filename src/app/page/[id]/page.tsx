@@ -1,6 +1,6 @@
 import BackDrop from "@/components/page/backdrop";
 import { notFound, redirect } from "next/navigation";
-import { Page, fetchById, fetchByName } from "@/app/lib/models/page";
+import { fetchById, fetchByName } from "@/app/lib/db/page";
 import Card from "@/components/page/card";
 
 import { remark } from "remark";
@@ -30,7 +30,7 @@ async function pageView({ params }: { params: { id: string } }) {
   if (!isHTML) {
     const processedContent = await remark().use(html).process(page.content);
     contentHTML = processedContent.toString();
-  } else {
+  } else { 
     contentHTML = page.content;
   }
   return (

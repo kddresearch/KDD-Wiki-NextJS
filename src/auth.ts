@@ -114,7 +114,7 @@ import { ActivityType } from "./app/lib/models/user_activity";
  * @param member - check if the user is a member
  * Sends a 401 error if the user is not authenticated
  */
-export async function checkAPIAuth(access_level: AccessLevel): Promise<any> {
+export async function checkAuthAPI(access_level: AccessLevel): Promise<any> {
   const session = await auth();
 
   let user;
@@ -138,6 +138,32 @@ export async function checkAPIAuth(access_level: AccessLevel): Promise<any> {
 
   if (access_level == AccessLevel.Member && !user.member)
     return NextResponse.json({ error: "Unauthorized", status: 403 });
+
+  return user;
+}
+
+/**
+ * Check if the user is authenticated
+ * @param access_level
+ * @returns The current user
+ */
+export async function checkAuth(access_level: AccessLevel): Promise<any> {
+  const session = await auth();
+
+  let user;
+
+  if (!session) return null;
+
+  try {
+    user = new KddUser(session?.user);
+  } catch (err) {
+    console.error("Error occurred during fetchByUsername:", err);
+    return null;
+  }
+
+  if (access_level == AccessLevel.Admin && !user.admin) return null;
+
+  if (access_level == AccessLevel.Member && !user.member) return null;
 
   return user;
 }

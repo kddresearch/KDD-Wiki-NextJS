@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { fetchByURL } from "../lib/db/custom_url";
-import { fetchByName, fetchById } from "../lib/models/page";
+import { fetchByName, fetchById } from "../lib/db/page";
 import { number } from "joi";
 import BackDrop from "@/components/page/backdrop";
 import Card from "@/components/page/card";
