@@ -1,10 +1,8 @@
-"use server";
-
 import { NextRequest, NextResponse } from "next/server";
-import { fetchAll, insert } from "@/app/lib/db/page";
+import { fetchAll, fetchByName, insert } from "@/app/lib/db/page";
 
 import { checkAuthAPI } from "@/auth";
-import { AccessLevel } from "@/app/lib/models/rkdd_user";
+import { AccessLevel } from "@/app/lib/models/user";
 import Page from "@/app/lib/models/page";
 
 //
@@ -36,6 +34,22 @@ export async function POST(req: NextRequest) {
   
   const body = await req.json();
   const page = new Page(body);
+
+  try {
+    let t_page = await fetchByName(page?.name);
+    if (t_page !== null) {
+      return NextResponse.json(
+        { error: "Page with name already exists" },
+        { status: 409 },
+      );
+    }
+  } catch (err) {
+    console.error("Error occurred during fetchByName:", err);
+    return NextResponse.json(
+      { error: "Failed to fetch page" },
+      { status: 500 },
+    );
+  }
 
   try {
       const return_page = await insert(page);

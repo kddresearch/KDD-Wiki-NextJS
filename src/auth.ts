@@ -105,7 +105,7 @@ export async function getCurrentUser(): Promise<KddUser> {
   return KddUser.guestFactory();
 }
 
-import { AccessLevel } from "./app/lib/models/rkdd_user";
+import { AccessLevel } from "./app/lib/models/user";
 import { ActivityType } from "./app/lib/models/user_activity";
 
 /**

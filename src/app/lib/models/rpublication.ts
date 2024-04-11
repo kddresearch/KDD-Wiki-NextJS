@@ -37,7 +37,7 @@ const rpublicationSchema = Joi.object({
     date_published: Joi.date().required(),
     project_id: Joi.number().integer().required(),
     author_ids: Joi.array().items(Joi.number().integer()).required(),
-    research_category_id: Joi.array().items(Joi.number().integer()).required(),
+    category_ids: Joi.array().items(Joi.number().integer()).required(),
     date_created: Joi.date().required(),
     date_modified: Joi.date().required(),
 });
@@ -51,7 +51,7 @@ class rPublication {
     // relationships
     project_id: number;
     author_ids: number[];
-    research_category_id: number[];
+    category_ids: number[];
 
     // metadata
     date_created: Date;
@@ -72,7 +72,7 @@ class rPublication {
         this.date_published = value.date_published;
         this.project_id = value.project_id;
         this.author_ids = value.author_ids;
-        this.research_category_id = value.research_category_id;
+        this.category_ids = value.category_ids;
         this.date_created = value.date_created;
         this.date_modified = value.date_modified;
     }

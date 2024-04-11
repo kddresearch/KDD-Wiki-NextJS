@@ -53,7 +53,7 @@ const kddUserSchema = Joi.object({
   last_login: Joi.date().required(),
 });
 
-class rKddUser {
+class User {
   id: number;
   username: string;
   access_level: AccessLevel;
@@ -100,7 +100,7 @@ class rKddUser {
     this.last_login = value.last_login;
   }
 
-  static guestFactory(): rKddUser {
+  static guestFactory(): User {
     const guestData = {
       id: 0,
       username: "Guest",
@@ -119,10 +119,10 @@ class rKddUser {
       last_login: null,
     };
 
-    return new rKddUser(guestData);
+    return new User(guestData);
   }
 
-  static newUserFactory(username: string): rKddUser {
+  static newUserFactory(username: string): User {
     const userData = {
       id: -1,
       username: username,
@@ -141,10 +141,10 @@ class rKddUser {
       last_login: new Date(),
     };
 
-    return new rKddUser(userData);
+    return new User(userData);
   }
 
-  static fromKddUser(kddUser: KddUser): rKddUser {
+  static fromKddUser(kddUser: KddUser): User {
     const userData = {
       id: kddUser.id,
       username: kddUser.username,
@@ -176,7 +176,7 @@ class rKddUser {
       "phone_number",
     ];
 
-    return new rKddUser(userData);
+    return new User(userData);
   }
 
   toJSON(): any {
@@ -200,9 +200,28 @@ class rKddUser {
   }
 }
 
-export { AccessLevel, SocialMedia, rKddUser };
+export { AccessLevel, SocialMedia };
 
-export default rKddUser;
+export default User;
 
 // TODO: on production:
 // CREATE INDEX idx_kdd_users_username ON kdd_users (username);
+
+// SQL
+// CREATE TABLE users (
+//   id SERIAL PRIMARY KEY,
+//   username TEXT NOT NULL UNIQUE,
+//   access_level TEXT NOT NULL,
+//   settings JSONB NOT NULL,
+//   first_name TEXT NOT NULL,
+//   last_name TEXT NOT NULL,
+//   bio TEXT NOT NULL,
+//   email TEXT NOT NULL UNIQUE,
+//   profile_picture TEXT NOT NULL,
+//   phone_number TEXT NOT NULL,
+//   social_media JSONB NOT NULL,
+//   admin_teams JSONB NOT NULL,
+//   date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+//   date_modified TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+//   last_login TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+// );

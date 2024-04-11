@@ -17,7 +17,7 @@ import {
 import { auth } from "@/auth";
 import KddUser from "@/app/lib/models/kdd_user";
 
-import { AccessLevel, rKddUser } from "@/app/lib/models/rkdd_user";
+import { AccessLevel, User } from "@/app/lib/models/user";
 
 export async function GET(
   req: NextApiRequest,
@@ -38,7 +38,7 @@ export async function GET(
 
       if (user === null) {
 
-        var kdduser = rKddUser.newUserFactory(params.id);
+        var kdduser = User.newUserFactory(params.id);
 
         return NextResponse.json(kdduser);
 

@@ -18,7 +18,7 @@ import * as rkdd_user from "@/app/lib/db/rkdd_user";
 import KddUser from "@/app/lib/models/kdd_user";
 import Link from "next/link";
 import { Button, TableFooter, TablePagination } from "@mui/material";
-import rKddUser from "@/app/lib/models/rkdd_user";
+import User from "@/app/lib/models/user";
 
 export default async function UserDashboard() {
   var allUsers = await kdd_user.fetchAll();
@@ -40,7 +40,7 @@ export default async function UserDashboard() {
   });
 
   for (const kdd_user of allUsers) {
-    newAllUsers.push(rKddUser.fromKddUser(kdd_user));
+    newAllUsers.push(User.fromKddUser(kdd_user));
   }
 
   // // save all users

@@ -1,23 +1,28 @@
-import joi from "joi";
+import Joi from "joi";
+
+enum ActionType {
+  toPage = "pg",
+  redirect = "rd",
+}
 
 // Joi schema for custom_url validation
-const customUrlSchema = joi.object({
-  id: joi.number().integer().min(0).optional(),
-  url: joi.string().max(50).required(),
-  action: joi.string().valid("pg", "rd").required(),
-  target: joi
+const customUrlSchema = Joi.object({
+  id: Joi.number().integer().min(0).optional(),
+  url: Joi.string().max(50).required(),
+  action: Joi.string().valid(...Object.values(ActionType)).required(),
+  target: Joi
     .alternatives()
-    .try(joi.number().integer().min(0), joi.string().uri())
+    .try(Joi.number().integer().min(0), Joi.string().uri())
     .required(),
-  date_created: joi.date().required(),
-  date_modified: joi.date().required(),
-  author_id: joi.number().integer().min(0).required(),
+  date_created: Joi.date().required(),
+  date_modified: Joi.date().required(),
+  author_id: Joi.number().integer().min(0).required(),
 });
 
 class CustomUrl {
   id?: number;
   url: string;
-  action: "pg" | "rd";
+  action: ActionType;
   target: string | number;
 
   // metadata
@@ -44,7 +49,7 @@ class CustomUrl {
     // IF there is an error, throw an error with the message
     if (error) {
       throw new Error(
-        `CustomUrl validation error: ${error.message}\nCurrent Value: ${data[error.name]}`,
+        `CustomUrl validation error: ${error.message}`,
       );
     }
 

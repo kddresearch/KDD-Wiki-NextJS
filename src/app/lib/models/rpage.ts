@@ -1,6 +1,7 @@
 import Joi from "joi";
-import { AccessLevel } from "./rkdd_user";
-import { Page } from "./page";
+import { AccessLevel } from "./user";
+import Page from "./page";
+import rPageVersion from "./rpage_version";
 
 const rpageSchema = Joi.object({
     id: Joi.number().integer().min(0),
@@ -8,14 +9,6 @@ const rpageSchema = Joi.object({
     content: Joi.string().min(0),
     author: Joi.number().integer().min(0).required(),
     category: Joi.number().integer().min(0).required(),
-
-    versionId: Joi.number().integer().min(0).required(),
-    versions: Joi.array().items(Joi.object({
-        versionId: Joi.number().integer().min(0).required(),
-        content: Joi.string().min(0).required(),
-        author: Joi.number().integer().min(0).required(),
-        date_created: Joi.date().required(),
-    })),
 
     views: Joi.number().integer().min(0).default(0),
     access_level: Joi.string().valid(...Object.values(AccessLevel)).required(),
@@ -29,14 +22,6 @@ class rPage {
     content: string;
     author: number;
     category: number;
-
-    versionId: number;
-    versions: {
-        versionId: number;
-        content: string;
-        author: number;
-        date_created: Date;
-    }[];
 
     views: number;
     access_level: AccessLevel;
@@ -64,8 +49,7 @@ class rPage {
         this.author = value.author;
         this.category = value.category;
 
-        this.versionId = value.versionId;
-        this.versions = value.versions;
+        // this.versionId = value.versionId;
 
         this.views = value.views;
         this.access_level = value.access_level;
@@ -73,40 +57,26 @@ class rPage {
         this.date_modified = value.date_modified;
     }
 
-    newPage(title: string, content: string, author: number, category: number, access_level: AccessLevel) {
-        return new rPage({
-            id: 0,
-            title: title,
-            content: content,
-            author: author,
-            category: category,
+    /**
+     * Update the page with the new page data
+     */
+    update(page: rPage) {
+        this.title = page.title;
+        this.content = page.content;
+        this.author = page.author;
+        this.category = page.category;
 
-            versionId: 0,
-            versions: [{
-                versionId: 0,
-                content: content,
-                author: author,
-                date_created: new Date(),
-            }],
+        // update content
+        // this.updatePageContent(page.content, page.author);
 
-            views: 0,
-            access_level: access_level,
-            date_created: new Date(),
-            date_modified: new Date(),
-        });
+        // this.views = page.views;
+        this.access_level = page.access_level;
+        this.date_created = page.date_created;
+        this.date_modified = page.date_modified;
     }
 
-    updatePageContent(content: string, author: number) {
-        this.content = content;
-        this.versions.push({
-            versionId: this.versions.length + 1,
-            content: content,
-            author: author,
-            date_created: new Date(),
-        });
-
-        this.versionId = this.versions.length;
-        this.date_modified = new Date();
+    view() {
+        this.views++;
     }
 
     static fromPage(page: Page) {
@@ -117,14 +87,6 @@ class rPage {
             author: page.author_id,
             category: null,
 
-            versionId: 0,
-            versions: [{
-                versionId: 0,
-                content: page.content,
-                author: page.author_id,
-                date_created: page.date_created,
-            }],
-
             access_level: page.is_kdd_only ? AccessLevel.Member : AccessLevel.ReadOnly,
             views: 0,
             date_created: page.date_created,
@@ -132,5 +94,18 @@ class rPage {
         });
     }
 }
+
+// CREATE TABLE rpage (
+//     id SERIAL PRIMARY KEY,
+//     title TEXT NOT NULL,
+//     content TEXT NOT NULL,
+//     author_id INTEGER NOT NULL,
+//     category_id INTEGER NOT NULL,
+//     version_id INTEGER NOT NULL,
+//     views INTEGER NOT NULL DEFAULT 0,
+//     access_level TEXT NOT NULL,
+//     date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+//     date_modified TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+// );
 
 export default rPage;

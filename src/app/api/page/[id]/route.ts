@@ -1,5 +1,3 @@
-"use server";
-
 import { NextRequest, NextResponse } from "next/server";
 import Page from "@/app/lib/models/page";
 import { 
@@ -13,7 +11,7 @@ import {
     remove, 
 } from "@/app/lib/db/page";
 import { checkAuthAPI } from "@/auth";
-import { AccessLevel } from "@/app/lib/models/rkdd_user";
+import { AccessLevel } from "@/app/lib/models/user";
 
 // All page routes are protected by the Admin access level
 

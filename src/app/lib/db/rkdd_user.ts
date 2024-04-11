@@ -1,7 +1,7 @@
 import { query } from "../db";
-import rKddUser from "../models/rkdd_user";
+import User from "../models/user";
 
-async function fetchAll(): Promise<rKddUser[]> {
+async function fetchAll(): Promise<User[]> {
   // Construct the query
   const query_str: string = `
         SELECT * FROM rkdd_user
@@ -11,14 +11,14 @@ async function fetchAll(): Promise<rKddUser[]> {
     // Execute the query
     const result = await query(query_str);
 
-    return result.rows.map((row: any) => new rKddUser(row));
+    return result.rows.map((row: any) => new User(row));
   } catch (err) {
     console.error("Error occurred during query execution:", err);
     throw err;
   }
 }
 
-async function fetchById(id: number): Promise<rKddUser | null> {
+async function fetchById(id: number): Promise<User | null> {
   // Construct the query
   const query_str: string = `
         SELECT * FROM rkdd_user
@@ -33,14 +33,14 @@ async function fetchById(id: number): Promise<rKddUser | null> {
       return null;
     }
 
-    return new rKddUser(result.rows[0]);
+    return new User(result.rows[0]);
   } catch (err) {
     console.error("Error occurred during query execution:", err);
     throw err;
   }
 }
 
-async function fetchByUsername(username: String): Promise<rKddUser | null> {
+async function fetchByUsername(username: String): Promise<User | null> {
   // Construct the query
   const query_str: string = `
         SELECT * FROM rkdd_user
@@ -59,14 +59,14 @@ async function fetchByUsername(username: String): Promise<rKddUser | null> {
       console.warn("Multiple users found with the same username");
     }
 
-    return new rKddUser(result.rows[0]);
+    return new User(result.rows[0]);
   } catch (err) {
     console.error("Error occurred during query execution:", err);
     throw err;
   }
 }
 
-async function insert(user: rKddUser): Promise<rKddUser> {
+async function insert(user: User): Promise<User> {
   // Construct the query
   const query_str: string = `
         INSERT INTO rkdd_user (username, access_level, settings, first_name, last_name, bio, email, profile_picture, phone_number, social_media, date_created, date_modified, last_login)
@@ -90,14 +90,14 @@ async function insert(user: rKddUser): Promise<rKddUser> {
     // Execute the query
     const result = await query(query_str, values);
 
-    return new rKddUser(result.rows[0]);
+    return new User(result.rows[0]);
   } catch (err) {
     console.error("Error occurred during query execution:", err);
     throw err;
   }
 }
 
-async function update(user: rKddUser): Promise<rKddUser> {
+async function update(user: User): Promise<User> {
   // Construct the query
   const query_str: string = `
         UPDATE rkdd_user
@@ -123,7 +123,7 @@ async function update(user: rKddUser): Promise<rKddUser> {
     // Execute the query
     const result = await query(query_str, values);
 
-    return new rKddUser(result.rows[0]);
+    return new User(result.rows[0]);
   } catch (err) {
     console.error("Error occurred during query execution:", err);
     throw err;
