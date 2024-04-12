@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen relative">
       <div className="h-128 bg-gradient-to-r from-blue-500">
-        <div className="h-128 bg-cover bg-[url('/Placeholder.jpeg')]"></div>
+        <div className="h-128 bg-cover bg-[url('/images/placeholder.jpeg')]"></div>
       </div>
       <div className="bg-white min-h-fit grow text-black bg-stripe">
         <Announcements />

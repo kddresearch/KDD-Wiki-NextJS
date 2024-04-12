@@ -17,7 +17,7 @@ import WikiUser from "@/app/lib/models/user";
 export async function GET(
   req: NextRequest
 ) {
-  const user = await checkAuthAPI(AccessLevel.Admin);
+  const authUser = await checkAuthAPI(AccessLevel.Admin);
 
   try {
     const users = await fetchAll();
@@ -35,7 +35,7 @@ export async function GET(
 export async function POST(
   req: NextRequest
 ) {
-  const _ = await checkAuthAPI(AccessLevel.Admin);
+  const authUser = await checkAuthAPI(AccessLevel.Admin);
   let user;
 
   // Try to parse the request body

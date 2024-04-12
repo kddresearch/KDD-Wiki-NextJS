@@ -12,7 +12,7 @@ import { AccessLevel } from "@/app/lib/models/user";
 import rCategory from "@/app/lib/models/rcategory";
 
 export async function GET(req: NextRequest) {
-    const user = await checkAuthAPI(AccessLevel.Admin);
+    const authUser = await checkAuthAPI(AccessLevel.Admin);
 
     try {
         const rcategories = await fetchAll();
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-    const _ = await checkAuthAPI(AccessLevel.Admin);
+    const authUser = await checkAuthAPI(AccessLevel.Admin);
     let rcategory;
 
     // Try to parse the request body

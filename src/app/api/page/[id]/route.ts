@@ -19,7 +19,7 @@ export async function GET(
     req: NextRequest,
     { params }: { params: { id: string } },
 ) {
-    var user = checkAuthAPI(AccessLevel.Admin);
+    const authUser = checkAuthAPI(AccessLevel.Admin);
     params.id = decodeURIComponent(params.id);
 
     const id = parseInt(params.id);
