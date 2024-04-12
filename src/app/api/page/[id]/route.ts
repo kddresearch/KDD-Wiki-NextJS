@@ -69,7 +69,7 @@ export async function PATCH(
     req: NextRequest,
     { params }: { params: { id: string } },
 ) {
-    var user = checkAuthAPI(AccessLevel.Admin);
+    const authUser = await checkAuthAPI(AccessLevel.Admin);
     params.id = decodeURIComponent(params.id);
 
     let page;
@@ -123,7 +123,7 @@ export async function DELETE(
     { params }: { params: { id: string } },
 ) {
 
-    var user = checkAuthAPI(AccessLevel.Admin);
+    const authUser = await checkAuthAPI(AccessLevel.Admin);
     params.id = decodeURIComponent(params.id);
 
     let page;
