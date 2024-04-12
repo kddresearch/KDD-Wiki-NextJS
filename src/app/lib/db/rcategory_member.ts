@@ -36,16 +36,16 @@ async function fetchByCategoryId(category_id: number): Promise<rCategoryMember[]
     }
 }
 
-async function fetchByUserId(member_id: number): Promise<rCategoryMember[]> {
+async function fetchByUserId(user_id: number): Promise<rCategoryMember[]> {
     // Construct the query
     const query_str: string = `
           SELECT * FROM category_member
-          WHERE member_id = $1
+          WHERE user_id = $1
       `;
 
     try {
         // Execute the query
-        const result = await query(query_str, [member_id]);
+        const result = await query(query_str, [user_id]);
 
         return result.rows.map((row: any) => new rCategoryMember(row));
     } catch (err) {
@@ -54,16 +54,18 @@ async function fetchByUserId(member_id: number): Promise<rCategoryMember[]> {
     }
 }
 
-async function fetchByCategoryandUser(category_id: number, member_id: number): Promise<rCategoryMember | null> {
+async function fetchByCategoryandUser(category_id: number, user_id: number): Promise<rCategoryMember | null> {
     // Construct the query
     const query_str: string = `
           SELECT * FROM category_member
-          WHERE category_id = $1 AND member_id = $2
+          WHERE category_id = $1 AND user_id = $2
       `;
+
+    console.log("running query", query_str, [category_id, user_id])
 
     try {
         // Execute the query
-        const result = await query(query_str, [category_id, member_id]);
+        const result = await query(query_str, [category_id, user_id]);
 
         if (result.rows.length === 0) {
             return null;
@@ -86,7 +88,7 @@ async function insert(rcategory_member: rCategoryMember): Promise<rCategoryMembe
 
     try {
         // Execute the query
-        const result = await query(query_str, [rcategory_member.category_id, rcategory_member.member_id]);
+        const result = await query(query_str, [rcategory_member.category_id, rcategory_member.user_id]);
 
         return new rCategoryMember(result.rows[0]);
     } catch (err) {
@@ -99,13 +101,13 @@ async function remove(rcategory_member: rCategoryMember): Promise<rCategoryMembe
     // Construct the query
     const query_str: string = `
           DELETE FROM category_member
-          WHERE category_id = $1 AND member_id = $2
+          WHERE category_id = $1 AND user_id = $2
           RETURNING *
       `;
 
     try {
         // Execute the query
-        const result = await query(query_str, [rcategory_member.category_id, rcategory_member.member_id]);
+        const result = await query(query_str, [rcategory_member.category_id, rcategory_member.user_id]);
 
         return new rCategoryMember(result.rows[0]);
     } catch (err) {

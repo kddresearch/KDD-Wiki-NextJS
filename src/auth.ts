@@ -107,6 +107,7 @@ export async function getCurrentUser(): Promise<KddUser> {
 
 import { AccessLevel } from "./app/lib/models/user";
 import { ActivityType } from "./app/lib/models/user_activity";
+import { fetchByUsername } from "./app/lib/db/wiki_user";
 
 /**
  * Check if the user is authenticated
@@ -114,16 +115,26 @@ import { ActivityType } from "./app/lib/models/user_activity";
  * @param member - check if the user is a member
  * Sends a 401 error if the user is not authenticated
  */
-export async function checkAuthAPI(access_level: AccessLevel): Promise<any> {
+export async function checkAuthAPI(access_level: AccessLevel): Promise<any> /* TODO: FIX ANY TYPE */ {
   const session = await auth();
 
   let user;
+  let ret_user;
 
   if (!session)
     return NextResponse.json({ error: "Unauthorized", status: 401 });
 
   try {
     user = new KddUser(session?.user);
+
+    ret_user = await fetchByUsername(user.username);
+    if (ret_user === null) {
+      ret_user = user;
+      // return NextResponse.json(
+      //   { error: "User not found" },
+      //   { status: 404 },
+      // );
+    }
   } catch (err) {
     console.error("Error occurred during fetchByUsername:", err);
     return NextResponse.json(
@@ -139,7 +150,7 @@ export async function checkAuthAPI(access_level: AccessLevel): Promise<any> {
   if (access_level == AccessLevel.Member && !user.member)
     return NextResponse.json({ error: "Unauthorized", status: 403 });
 
-  return user;
+  return ret_user;
 }
 
 /**

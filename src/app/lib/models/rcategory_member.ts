@@ -2,12 +2,12 @@ import Joi from "joi";
 
 const rCategoryMemberSchema = Joi.object({
     category_id: Joi.number().required(),
-    member_id: Joi.number().required(),
+    user_id: Joi.number().required(),
 });
 
 class rCategoryMember {
     category_id: number;
-    member_id: number;
+    user_id: number;
 
     constructor(data: any) {
         // Validate the data
@@ -18,7 +18,7 @@ class rCategoryMember {
         }
 
         this.category_id = data.category_id;
-        this.member_id = data.member_id;
+        this.user_id = data.user_id;
     }
 }
 
