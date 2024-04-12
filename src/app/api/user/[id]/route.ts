@@ -12,15 +12,15 @@ import {
   insert,
   update,
   remove,
-} from "@/app/lib/db/rkdd_user";
+} from "@/app/lib/db/wiki_user";
 
 import { auth } from "@/auth";
 import KddUser from "@/app/lib/models/kdd_user";
 
-import { AccessLevel, User } from "@/app/lib/models/user";
+import { AccessLevel, WikiUser } from "@/app/lib/models/user";
 
 export async function GET(
-  req: NextApiRequest,
+  req: NextRequest,
   { params }: { params: { id: string } },
 ) {
   const id = parseInt(params.id);
@@ -31,17 +31,19 @@ export async function GET(
   if (isNaN(id)) {
     try {
       if (params.id === "self") {
-        return NextResponse.json(auth_user);
+        const user = await fetchByUsername(auth_user.username);
+
+        if (user === null) {
+          var kdduser = WikiUser.newUserFactory(auth_user.username);
+          return NextResponse.json(kdduser);
+        }
+
+        return NextResponse.json(user);
       }
 
       const user = await fetchByUsername(params.id);
 
       if (user === null) {
-
-        var kdduser = User.newUserFactory(params.id);
-
-        return NextResponse.json(kdduser);
-
         return NextResponse.json(
           { error: "User not found" }, 
           { status: 404 }
@@ -78,28 +80,70 @@ export async function GET(
   }
 }
 
-// export async function POST(
-//   req: NextRequest,
-// //  { params }: { params: { id: string } },
-// ) {
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const id = parseInt(params.id);
 
-//   const body = await req.json();
+  const auth_user = await checkAuthAPI(AccessLevel.Admin);
+  let user;
 
-// //  console.log("POST: ", body);
+  if (isNaN(id)) {
+    try{
+      if (params.id === "self") {
+        user = await fetchByUsername(auth_user.username);
+      } else {
+        user = await fetchByUsername(params.id);
+      }
+    } catch (err) {
+      console.error("Error occurred during fetchByUsername:", err);
+      return NextResponse.json(
+        { error: "Failed to fetch user" },
+        { status: 500 },
+      );
+    }
+  } else {
+    try {
+      user = await fetchById(id);
+    } catch (err) {
+      console.error("Error occurred during fetchById:", err);
+      return NextResponse.json(
+        { error: "Failed to fetch user" },
+        { status: 500 },
+      );
+    }
+  }
 
-//   try {
-//     const user = new rKddUser(body);
-//     const result = await insert(user);
+  if (user === null) {
+    return NextResponse.json(
+      { error: "User not found" }, 
+      { status: 404 }
+    );
+  }
 
-//     return NextResponse.json(result);
-//   } catch (err) {
-//     console.error("Error occurred during insert:", err);
-//     return NextResponse.json(
-//       { error: "Failed to insert user" },
-//       { status: 500 },
-//     );
-//   }
-// }
+  try {
+    const body = await req.json();
+    user.update(new WikiUser(body));
+  } catch (err) {
+    console.error("Error occurred during req.json:", err);
+    return NextResponse.json(
+      { error: "Failed to parse request body" },
+      { status: 400 },
+    );
+  }
+
+  try {
+    await update(user);
+    return NextResponse.json(user);
+  } catch (err) {
+    console.error("Error updating user", err);
+    return NextResponse.json(
+      { error: "Failed to update user" },
+      { status: 500 },
+    );
+  }
+}
 
 export async function DELETE(
   req: NextRequest,
@@ -128,7 +172,6 @@ export async function DELETE(
       }
 
       await remove(user.id);
-
       return NextResponse.json({ success: true });
     } catch (err) {
       console.error("Error occurred during fetchByUsername:", err);

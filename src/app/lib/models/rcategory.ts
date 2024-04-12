@@ -6,28 +6,26 @@ enum CategoryType {
     // ...
 }
 
-const researchCategorySchema = Joi.object({
+const rCategorySchema = Joi.object({
     id: Joi.number().required(),
     role: Joi.string().valid(...Object.values(CategoryType)).required(),
-    name: Joi.string().required(),
+    name: Joi.string().max(50).lowercase().required(),
     description: Joi.string().required(),
-    members: Joi.array().items(Joi.number()).required(),
     date_created: Joi.date().required(),
     date_modified: Joi.date().required(),
 });
 
-class Category {
+class rCategory {
     id: number;
     role: CategoryType
     name: string;
     description: string;
-    members: number[];
     date_created: Date;
     date_modified: Date;
 
     constructor(data: any) {
         // Validate the data
-        const { error, value } = researchCategorySchema.validate(data);
+        const { error, value } = rCategorySchema.validate(data);
 
         // If there is an error, throw an error
         if (error) {
@@ -38,21 +36,19 @@ class Category {
         this.role = value.role;
         this.name = value.name;
         this.description = value.description;
-        this.members = value.members;
         this.date_created = value.date_created;
         this.date_modified = value.date_modified;
     }
 }
 
-export default Category;
+export default rCategory;
 
 // SQL
-// CREATE TABLE categories (
+// CREATE TABLE rcategory (
 //     id SERIAL PRIMARY KEY,
 //     role TEXT NOT NULL,
 //     name TEXT NOT NULL,
 //     description TEXT NOT NULL,
-//     members INTEGER[] NOT NULL REFERENCES rkdd_user(id),
 //     date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 //     date_modified TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 // );

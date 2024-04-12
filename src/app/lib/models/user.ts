@@ -23,12 +23,12 @@ type SocialMediaLinks = {
 enum AdminTeam {
   WikiTeam = 'WikiTeam',
   SysAdmin = 'SysAdmin',
-  // Unassigned = 'Unassigned',
+  Unassigned = 'Unassigned',
   // ...
 }
 
 // Joi schema for validating the KddUser object
-const kddUserSchema = Joi.object({
+const wikiUserSchema = Joi.object({
   id: Joi.number().required(),
   username: Joi.string().required(),
   access_level: Joi.string()
@@ -47,13 +47,13 @@ const kddUserSchema = Joi.object({
       Joi.string().uri().allow(""),
     )
     .required(),
-  admin_team: Joi.array().items(Joi.string().valid(...Object.values(AdminTeam))),
+  admin_teams: Joi.array().items(Joi.string().valid(...Object.values(AdminTeam))).default([]),
   date_created: Joi.date().required(),
   date_modified: Joi.date().required(),
   last_login: Joi.date().required(),
 });
 
-class User {
+class WikiUser {
   id: number;
   username: string;
   access_level: AccessLevel;
@@ -67,7 +67,7 @@ class User {
   profile_picture: string;
   phone_number: string;
   social_media: SocialMediaLinks;
-  admin_team: AdminTeam[];
+  admin_teams: AdminTeam[];
 
   // Metadata
   date_created: Date;
@@ -76,11 +76,12 @@ class User {
 
   constructor(data: any) {
     // Validates the data against the Joi schema, values is the validated data
-    const { error, value } = kddUserSchema.validate(data);
+    const { error, value } = wikiUserSchema.validate(data);
 
     // IF there is an error, throw an error with the message
     if (error) {
-      throw new Error(`KddUser validation error: ${error.message}`);
+      throw error;
+      // throw new Error(`KddUser validation error: ${error.message}`);
     }
 
     this.id = value.id;
@@ -94,13 +95,13 @@ class User {
     this.profile_picture = value.profile_picture;
     this.phone_number = value.phone_number;
     this.social_media = value.social_media;
-    this.admin_team = value.admin_team;
+    this.admin_teams = value.admin_teams;
     this.date_created = value.date_created;
     this.date_modified = value.date_modified;
     this.last_login = value.last_login;
   }
 
-  static guestFactory(): User {
+  static guestFactory(): WikiUser {
     const guestData = {
       id: 0,
       username: "Guest",
@@ -113,16 +114,16 @@ class User {
       profile_picture: "",
       phone_number: "",
       social_media: {},
-      admin_team: [],
+      admin_teams: [],
       date_created: new Date(),
       date_modified: new Date(),
       last_login: null,
     };
 
-    return new User(guestData);
+    return new WikiUser(guestData);
   }
 
-  static newUserFactory(username: string): User {
+  static newUserFactory(username: string): WikiUser {
     const userData = {
       id: -1,
       username: username,
@@ -135,16 +136,16 @@ class User {
       profile_picture: "/images/default_profile.png",
       phone_number: "785-000-0000",
       social_media: {},
-      admin_team: [],
+      admin_teams: [],
       date_created: new Date(),
       date_modified: new Date(),
       last_login: new Date(),
     };
 
-    return new User(userData);
+    return new WikiUser(userData);
   }
 
-  static fromKddUser(kddUser: KddUser): User {
+  static fromKddUser(kddUser: KddUser): WikiUser {
     const userData = {
       id: kddUser.id,
       username: kddUser.username,
@@ -161,7 +162,7 @@ class User {
       profile_picture: "/images/default_profile.png",
       phone_number: "(785) 532-6011",
       social_media: {},
-      admin_team: [],
+      admin_teams: [],
       date_created: new Date(),
       date_modified: new Date(),
       last_login: new Date(),
@@ -176,13 +177,28 @@ class User {
       "phone_number",
     ];
 
-    return new User(userData);
+    return new WikiUser(userData);
+  }
+
+  update(user: WikiUser): void {
+    // this.username = user.username;
+    this.access_level = user.access_level;
+    this.settings = user.settings;
+    this.first_name = user.first_name;
+    this.last_name = user.last_name;
+    this.bio = user.bio;
+    // this.email = user.email;
+    this.profile_picture = user.profile_picture;
+    this.phone_number = user.phone_number;
+    this.social_media = user.social_media;
+    this.admin_teams = user.admin_teams;
+    this.date_modified = new Date();
   }
 
   toJSON(): any {
     return {
       id: this.id,
-      username: this.username,
+      username: this. username,
       access_level: this.access_level,
       settings: this.settings,
       first_name: this.first_name,
@@ -192,7 +208,7 @@ class User {
       profile_picture: this.profile_picture,
       phone_number: this.phone_number,
       social_media: this.social_media,
-      admin_team: this.admin_team,
+      admin_teams: this.admin_teams,
       date_created: this.date_created,
       date_modified: this.date_modified,
       last_login: this.last_login,
@@ -200,15 +216,15 @@ class User {
   }
 }
 
-export { AccessLevel, SocialMedia };
+export { AccessLevel, SocialMedia, WikiUser };
 
-export default User;
+export default WikiUser;
 
 // TODO: on production:
 // CREATE INDEX idx_kdd_users_username ON kdd_users (username);
 
 // SQL
-// CREATE TABLE users (
+// CREATE TABLE wiki_user (
 //   id SERIAL PRIMARY KEY,
 //   username TEXT NOT NULL UNIQUE,
 //   access_level TEXT NOT NULL,

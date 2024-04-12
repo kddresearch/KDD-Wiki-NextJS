@@ -5,10 +5,10 @@ import rPageVersion from "./rpage_version";
 
 const rpageSchema = Joi.object({
     id: Joi.number().integer().min(0),
-    title: Joi.string().max(50).required(),
+    title: Joi.string().max(50).lowercase().required(),
     content: Joi.string().min(0),
-    author: Joi.number().integer().min(0).required(),
-    category: Joi.number().integer().min(0).required(),
+    author_id: Joi.number().integer().min(0).required(),
+    category_id: Joi.number().integer().min(0).required(),
 
     views: Joi.number().integer().min(0).default(0),
     access_level: Joi.string().valid(...Object.values(AccessLevel)).required(),
@@ -20,8 +20,10 @@ class rPage {
     id: number;
     title: string;
     content: string;
-    author: number;
-    category: number;
+
+    // relationships
+    author_id: number;
+    category_id: number;
 
     views: number;
     access_level: AccessLevel;
@@ -30,8 +32,8 @@ class rPage {
 
     constructor(data: any) {
         // Convert author_id and category_id to numbers if they are strings
-        data.author = Number(data.author);
-        data.category = Number(data.category);
+        data.author_id = Number(data.author_id);
+        data.category_id = Number(data.category_id);
         // Validates the data against the Joi schema, values is the validated data
         const { error, value } = rpageSchema.validate(data);
 
@@ -46,8 +48,8 @@ class rPage {
         this.id = value.id;
         this.title = value.title;
         this.content = value.content;
-        this.author = value.author;
-        this.category = value.category;
+        this.author_id = value.author_id;
+        this.category_id = value.category_id;
 
         // this.versionId = value.versionId;
 
@@ -63,8 +65,8 @@ class rPage {
     update(page: rPage) {
         this.title = page.title;
         this.content = page.content;
-        this.author = page.author;
-        this.category = page.category;
+        this.author_id = page.author_id;
+        this.category_id = page.category_id;
 
         // update content
         // this.updatePageContent(page.content, page.author);
@@ -84,8 +86,8 @@ class rPage {
             id: page.id,
             title: page.title,
             content: page.content,
-            author: page.author_id,
-            category: null,
+            author_id: page.author_id,
+            category_id: null,
 
             access_level: page.is_kdd_only ? AccessLevel.Member : AccessLevel.ReadOnly,
             views: 0,

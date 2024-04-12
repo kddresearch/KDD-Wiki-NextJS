@@ -36,8 +36,8 @@ export async function POST(req: NextRequest) {
   const page = new Page(body);
 
   try {
-    let t_page = await fetchByName(page?.name);
-    if (t_page !== null) {
+    let existingPage = await fetchByName(page?.name);
+    if (existingPage !== null) {
       return NextResponse.json(
         { error: "Page with name already exists" },
         { status: 409 },

@@ -13,12 +13,12 @@ import Paper from "@mui/material/Paper";
 
 import * as kdd_user from "@/app/lib/db/kdd_user";
 
-import * as rkdd_user from "@/app/lib/db/rkdd_user";
+import * as rkdd_user from "@/app/lib/db/wiki_user";
 
 import KddUser from "@/app/lib/models/kdd_user";
 import Link from "next/link";
 import { Button, TableFooter, TablePagination } from "@mui/material";
-import User from "@/app/lib/models/user";
+import WikiUser from "@/app/lib/models/user";
 
 export default async function UserDashboard() {
   var allUsers = await kdd_user.fetchAll();
@@ -40,7 +40,7 @@ export default async function UserDashboard() {
   });
 
   for (const kdd_user of allUsers) {
-    newAllUsers.push(User.fromKddUser(kdd_user));
+    newAllUsers.push(WikiUser.fromKddUser(kdd_user));
   }
 
   // // save all users
