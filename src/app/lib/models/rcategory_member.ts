@@ -1,13 +1,11 @@
 import Joi from "joi";
 
 const rCategoryMemberSchema = Joi.object({
-    id: Joi.number().required(),
     category_id: Joi.number().required(),
     member_id: Joi.number().required(),
 });
 
 class rCategoryMember {
-    id: number;
     category_id: number;
     member_id: number;
 
@@ -19,13 +17,13 @@ class rCategoryMember {
             throw new Error(`CategoryMembers validation error: ${error.message}`);
         }
 
-        this.id = data.id;
         this.category_id = data.category_id;
         this.member_id = data.member_id;
     }
 }
 
 export default rCategoryMember;
+
 // SQL
 // CREATE TABLE category_member (
 //     category_id INTEGER NOT NULL REFERENCES rcategory(id),

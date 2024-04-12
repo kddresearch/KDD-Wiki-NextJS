@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
         let existingRCategory = await fetchByName(rcategory.name);
         if (existingRCategory !== null) {
             return NextResponse.json(
-                { error: "RCategory with name already exists" },
+                { error: `rCategory with name "${existingRCategory.name}" already exists` },
                 { status: 409 },
             );
         }

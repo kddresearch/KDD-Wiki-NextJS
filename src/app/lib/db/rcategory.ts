@@ -71,7 +71,7 @@ async function insert(category: rCategory): Promise<rCategory> {
     // Construct the query
     const query_str: string = `
           INSERT INTO rcategory (role, name, description, date_created, date_modified)
-          VALUES ($1, $2, $3, $4, NOW(), NOW())
+          VALUES ($1, $2, $3, NOW(), NOW())
           RETURNING *
       `;
 
