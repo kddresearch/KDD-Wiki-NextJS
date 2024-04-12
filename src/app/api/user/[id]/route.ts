@@ -1,10 +1,7 @@
 "use server";
 
 import { NextRequest, NextResponse } from "next/server";
-import { NextApiRequest, NextApiResponse } from "next";
-
 import { checkAuthAPI } from "@/auth";
-
 import {
   fetchAll,
   fetchById,
@@ -13,24 +10,18 @@ import {
   update,
   remove,
 } from "@/app/lib/db/wiki_user";
-
-import { auth } from "@/auth";
-import KddUser from "@/app/lib/models/kdd_user";
-import * as Utils from "@/app/lib/utils/wiki_user";
-
+import * as userUtils from "@/app/lib/utils/wiki_user";
 import { AccessLevel, WikiUser } from "@/app/lib/models/user";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } },
 ) {
-  const id = parseInt(params.id);
-
   const auth_user = await checkAuthAPI(AccessLevel.Admin);
   let user;
 
   try {
-    user = await Utils.fetchUser(params.id, auth_user);
+    user = await userUtils.fetchUser(params.id, auth_user);
   } catch (err) {
     console.error("Error occurred during fetchUser:", err);
     return NextResponse.json(
@@ -51,13 +42,11 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } },
 ) {
-  const id = parseInt(params.id);
-
   const auth_user = await checkAuthAPI(AccessLevel.Admin);
   let user;
 
   try {
-    user = await Utils.fetchUser(params.id, auth_user);
+    user = await userUtils.fetchUser(params.id, auth_user);
   } catch (err) {
     console.error("Error occurred during fetchUser:", err);
     return NextResponse.json(
@@ -101,7 +90,6 @@ export async function DELETE(
   { params }: { params: { id: string } },
 ) {
   const auth_user = await checkAuthAPI(AccessLevel.Admin);
-  const id = parseInt(params.id);
 
   if (params.id === "self") {
     return NextResponse.json(
@@ -112,7 +100,7 @@ export async function DELETE(
   let user;
   
   try {
-    user = await Utils.fetchUser(params.id, auth_user);
+    user = await userUtils.fetchUser(params.id, auth_user);
   } catch (err) {
     console.error("Error occurred during fetchUser:", err);
     return NextResponse.json(

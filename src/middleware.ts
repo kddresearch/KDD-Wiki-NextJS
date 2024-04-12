@@ -5,31 +5,10 @@
 
 import { NextRequest } from "next/server";
 
-// export async function middleware(req: NextRequest) {
-
-//   const session = await auth();
-//   let user;
-//   if (!session) {
-//     user = KddUser.guestFactory();
-//   } else {
-//     user = new KddUser(session.user);
-//   }
-
-//   var res = NextResponse.next();
-
-//   const userActivity = UserActivity.viewedPage(
-//     user.id,
-//     res.status
-//     req.nextUrl.hostname,
-//     req.nextUrl.pathname,
-//     req.nextUrl.href
-//   );
-//   console.log(res.status);
-//   // console.log(userActivity.toString())
-// }
-
 export default function middleware(req: NextRequest) {
-  
+    // https://nextjs.org/docs/app/api-reference/functions/next-request#ip
+    const ip = req.headers.get('X-Forwarded-For')
+    console.log(ip);
 }
 
 // export const config = {

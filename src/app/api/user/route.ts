@@ -9,7 +9,7 @@ import {
   remove,
 } from "@/app/lib/db/wiki_user";
 
-import { auth, checkAuthAPI } from "@/auth";
+import { checkAuthAPI } from "@/auth";
 import KddUser from "@/app/lib/models/kdd_user";
 import { AccessLevel } from "@/app/lib/models/user";
 import WikiUser from "@/app/lib/models/user";

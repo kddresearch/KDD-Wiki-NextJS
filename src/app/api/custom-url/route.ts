@@ -8,8 +8,7 @@ import {
 } from "@/app/lib/db/custom_url";
 import CustomUrl from "@/app/lib/models/custom_url";
 
-import { auth, checkAuthAPI } from "@/auth";
-import { NextApiRequest, NextApiResponse } from "next";
+import { checkAuthAPI } from "@/auth";
 import Router from "next/navigation";
 import { AccessLevel } from "@/app/lib/models/user";
 

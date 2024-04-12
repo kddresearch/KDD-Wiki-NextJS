@@ -7,7 +7,7 @@ import {
   update,
   remove,
 } from "@/app/lib/db/rcategory";
-import { auth, checkAuthAPI } from "@/auth";
+import { checkAuthAPI } from "@/auth";
 import { AccessLevel } from "@/app/lib/models/user";
 import rCategory from "@/app/lib/models/rcategory";
 import * as utils from "@/app/lib/utils/rcategory";
