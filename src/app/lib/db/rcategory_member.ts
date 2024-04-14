@@ -97,19 +97,18 @@ async function insert(rcategory_member: rCategoryMember): Promise<rCategoryMembe
     }
 }
 
-async function remove(rcategory_member: rCategoryMember): Promise<rCategoryMember> {
+async function remove(rcategory_member: rCategoryMember): Promise<boolean> {
     // Construct the query
     const query_str: string = `
           DELETE FROM category_member
           WHERE category_id = $1 AND user_id = $2
-          RETURNING *
       `;
 
     try {
         // Execute the query
         const result = await query(query_str, [rcategory_member.category_id, rcategory_member.user_id]);
 
-        return new rCategoryMember(result.rows[0]);
+        return true;
     } catch (err) {
         console.error("Error occurred during query execution:", err);
         throw err;
