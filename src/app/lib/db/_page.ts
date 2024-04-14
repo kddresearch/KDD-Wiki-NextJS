@@ -1,5 +1,5 @@
 import { query } from "../db";
-import Page from "../models/page";
+import Page from "../models/_page";
 
 async function fetchById(id: number): Promise<Page | null> {
     // Construct the query
@@ -53,7 +53,7 @@ async function fetchById(id: number): Promise<Page | null> {
     }
   }
   
-  async function fetchAll(): Promise<Page[]> {
+  async function fetchsAll(): Promise<Page[]> {
     // Construct the query
     const query_st: string = `
           SELECT * FROM page
@@ -195,7 +195,7 @@ async function fetchById(id: number): Promise<Page | null> {
   }
   
 export {
-    fetchAll,
+    fetchsAll as fetchAll,
     fetchAllByCategoryIdsOrNoCategory,
     fetchById,
     fetchByName,

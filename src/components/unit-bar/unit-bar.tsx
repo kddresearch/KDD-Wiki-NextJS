@@ -1,4 +1,4 @@
-import KddUser from "@/models/kdd_user";
+import KddUser from "@/app/lib/models/kdd_user";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";

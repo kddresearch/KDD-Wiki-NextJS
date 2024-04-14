@@ -1,6 +1,6 @@
 import BackDrop from "@/components/page/backdrop";
 import { notFound, redirect } from "next/navigation";
-import { fetchById, fetchByName } from "@/app/lib/db/page";
+import { fetchById, fetchByName } from "@/app/lib/db/_page";
 import Card from "@/components/page/card";
 
 import { remark } from "remark";

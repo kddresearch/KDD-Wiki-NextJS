@@ -435,96 +435,96 @@
 //   }
 // }
 
-import React, { useState } from 'react';
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-// import TextField from '@material-ui/TextField';
-import TextField from '@mui/material';
-// import Popper from '@material-ui/Popper';
-import Popper from '@mui/material';
-// import Paper from '@material-ui/core/Paper';
-import MenuItem from '@mui/material';
-import { makeStyles, createStyles } from '@mui/material';
-import { Paper } from '@mui/material';
-import { LexicalEditor } from 'lexical';
+// import React, { useState } from 'react';
+// import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+// // import TextField from '@material-ui/TextField';
+// import TextField from '@mui/material';
+// // import Popper from '@material-ui/Popper';
+// import Popper from '@mui/material';
+// // import Paper from '@material-ui/core/Paper';
+// import MenuItem from '@mui/material';
+// import { makeStyles, createStyles } from '@mui/material';
+// import { Paper } from '@mui/material';
+// import { LexicalEditor } from 'lexical';
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    root: {
-      display: 'flex',
-    },
-    popper: {
-      zIndex: 1300, // Adjust this value based on your app's z-index hierarchy
-    },
-  })
-);
+// const useStyles = makeStyles(() =>
+//   createStyles({
+//     root: {
+//       display: 'flex',
+//     },
+//     popper: {
+//       zIndex: 1300, // Adjust this value based on your app's z-index hierarchy
+//     },
+//   })
+// );
 
-interface Option {
-  title: string;
-  onSelect: () => void;
-}
+// interface Option {
+//   title: string;
+//   onSelect: () => void;
+// }
 
-function getBaseOptions(editor: LexicalEditor): Option[] {
-  // Implement your logic to get base options
-  return [
-    {
-      title: 'Hello World',
-      onSelect: () => {
-        // Implement the action when selecting the option
-        console.log('Hello World option selected');
-      },
-    },
-  ];
-}
+// function getBaseOptions(editor: LexicalEditor): Option[] {
+//   // Implement your logic to get base options
+//   return [
+//     {
+//       title: 'Hello World',
+//       onSelect: () => {
+//         // Implement the action when selecting the option
+//         console.log('Hello World option selected');
+//       },
+//     },
+//   ];
+// }
 
-const ComponentPickerMenuPlugin: React.FC = () => {
-  const classes = useStyles;
-  const [editor] = useLexicalComposerContext();
-  const [queryString, setQueryString] = useState<string | null>(null);
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+// const ComponentPickerMenuPlugin: React.FC = () => {
+//   const classes = useStyles;
+//   const [editor] = useLexicalComposerContext();
+//   const [queryString, setQueryString] = useState<string | null>(null);
+//   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
-  const baseOptions = getBaseOptions(editor);
+//   const baseOptions = getBaseOptions(editor);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    setQueryString(value);
+//   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+//     const value = event.target.value;
+//     setQueryString(value);
 
-    if (value.startsWith('/')) {
-      setAnchorEl(event.currentTarget);
-    } else {
-      setAnchorEl(null);
-    }
-  };
+//     if (value.startsWith('/')) {
+//       setAnchorEl(event.currentTarget);
+//     } else {
+//       setAnchorEl(null);
+//     }
+//   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+//   const handleClose = () => {
+//     setAnchorEl(null);
+//   };
 
-  const handleOptionSelect = (option: Option) => {
-    option.onSelect();
-    setAnchorEl(null);
-  };
+//   const handleOptionSelect = (option: Option) => {
+//     option.onSelect();
+//     setAnchorEl(null);
+//   };
 
-  const open = Boolean(anchorEl);
-  const id = open ? 'typeahead-popper' : undefined;
+//   const open = Boolean(anchorEl);
+//   const id = open ? 'typeahead-popper' : undefined;
 
-  return (
-    <div className={classes.root}>
-      <TextField
-        value={queryString || ''}
-        onChange={handleChange}
-        placeholder="Type '/' to see the menu"
-      />
-      <Popper id={id} open={open} anchorEl={anchorEl} className={classes.popper}>
-        <Paper>
-          {baseOptions.map((option, index) => (
-            <MenuItem key={index} onClick={() => handleOptionSelect(option)}>
-              {option.title}
-            </MenuItem>
-          ))}
-        </Paper>
-      </Popper>
-    </div>
-  );
-};
+//   return (
+//     <div className={classes.root}>
+//       <TextField
+//         value={queryString || ''}
+//         onChange={handleChange}
+//         placeholder="Type '/' to see the menu"
+//       />
+//       <Popper id={id} open={open} anchorEl={anchorEl} className={classes.popper}>
+//         <Paper>
+//           {baseOptions.map((option, index) => (
+//             <MenuItem key={index} onClick={() => handleOptionSelect(option)}>
+//               {option.title}
+//             </MenuItem>
+//           ))}
+//         </Paper>
+//       </Popper>
+//     </div>
+//   );
+// };
 
-export default ComponentPickerMenuPlugin;
+// export default ComponentPickerMenuPlugin;

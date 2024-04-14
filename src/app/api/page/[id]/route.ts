@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import Page from "@/app/lib/models/page";
+import Page from "@/app/lib/models/_page";
 import { 
     fetchAll,
     fetchAllByCategoryIdsOrNoCategory,
@@ -9,10 +9,10 @@ import {
     insert,
     update,
     remove, 
-} from "@/app/lib/db/page";
+} from "@/app/lib/db/_page";
 import { checkAuthAPI } from "@/auth";
 import { AccessLevel } from "@/app/lib/models/user";
-import { fetchPage } from "@/app/lib/utils/page";
+import { fetchPage } from "@/app/lib/utils/_page";
 import { bodyParser, handleAPIError } from "@/app/lib/utils/api";
 
 // All page routes are protected by the Admin access level

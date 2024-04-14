@@ -1,6 +1,6 @@
 import Joi from "joi";
 import { AccessLevel } from "./user";
-import Page from "./page";
+import Page from "./_page";
 import rPageVersion from "./rpage_version";
 
 const rpageSchema = Joi.object({
