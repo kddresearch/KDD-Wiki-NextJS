@@ -97,7 +97,7 @@ async function update(category: rCategory): Promise<rCategory> {
     const query_str: string = `
           UPDATE rcategory
           SET role = $1, name = $2, description = $3, date_modified = NOW()
-          WHERE id = $5
+          WHERE id = $4
           RETURNING *
       `;
 

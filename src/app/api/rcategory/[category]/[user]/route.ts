@@ -5,7 +5,7 @@ import { AccessLevel } from "@/app/lib/models/user";
 import rCategoryMember from "@/app/lib/models/rcategory_member";
 import * as userUtils from "@/app/lib/utils/wiki_user";
 import * as categoryUtils from "@/app/lib/utils/rcategory";
-import handleAPIError from "@/app/lib/utils/api";
+import { handleAPIError } from "@/app/lib/utils/api";
 
 /**
  * name of route to fetch all members in a category | Protected keyword

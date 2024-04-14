@@ -39,6 +39,14 @@ class rCategory {
         this.date_created = value.date_created;
         this.date_modified = value.date_modified;
     }
+
+    update(rcategory: rCategory) {
+
+        this.role = rcategory.role;
+        this.name = rcategory.name;
+        this.description = rcategory.description;
+        this.date_modified = new Date();
+    }
 }
 
 export default rCategory;
