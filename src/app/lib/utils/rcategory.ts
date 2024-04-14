@@ -1,5 +1,5 @@
 import { fetchById, fetchByName } from "@/app/lib/db/rcategory";
-import { WikiUser } from "@/app/lib/models/user";
+import { WikiUser } from "@/app/lib/models/wikiuser";
 import KddUser from "../models/kdd_user";
 import rCategory from "../models/rcategory";
 import { fetchByCategoryId } from "../db/rcategory_member";

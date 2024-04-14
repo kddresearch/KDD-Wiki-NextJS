@@ -1,5 +1,5 @@
 import { fetchById, fetchByUsername } from "@/app/lib/db/wiki_user";
-import { WikiUser } from "@/app/lib/models/user";
+import { WikiUser } from "@/app/lib/models/wikiuser";
 import KddUser from "../models/kdd_user";
 
 export const fetchUser = async (identifier: string, authUser: any): Promise<WikiUser | null> => {

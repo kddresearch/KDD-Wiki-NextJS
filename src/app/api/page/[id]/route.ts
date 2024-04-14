@@ -11,7 +11,7 @@ import {
     remove, 
 } from "@/app/lib/db/_page";
 import { checkAuthAPI } from "@/auth";
-import { AccessLevel } from "@/app/lib/models/user";
+import { AccessLevel } from "@/app/lib/models/wikiuser";
 import { fetchPage } from "@/app/lib/utils/_page";
 import { bodyParser, handleAPIError } from "@/app/lib/utils/api";
 

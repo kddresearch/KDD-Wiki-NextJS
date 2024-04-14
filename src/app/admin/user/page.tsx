@@ -18,7 +18,7 @@ import * as rkdd_user from "@/app/lib/db/wiki_user";
 import KddUser from "@/app/lib/models/kdd_user";
 import Link from "next/link";
 import { Button, TableFooter, TablePagination } from "@mui/material";
-import WikiUser from "@/app/lib/models/user";
+import WikiUser from "@/app/lib/models/wikiuser";
 
 export default async function UserDashboard() {
   var allUsers = await kdd_user.fetchAll();

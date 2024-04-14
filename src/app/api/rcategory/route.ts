@@ -8,7 +8,7 @@ import {
   remove,
 } from "@/app/lib/db/rcategory";
 import { checkAuthAPI } from "@/auth";
-import { AccessLevel } from "@/app/lib/models/user";
+import { AccessLevel } from "@/app/lib/models/wikiuser";
 import rCategory from "@/app/lib/models/rcategory";
 import { bodyParser, handleAPIError } from "@/app/lib/utils/api";
 

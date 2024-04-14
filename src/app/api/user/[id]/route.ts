@@ -11,7 +11,7 @@ import {
     remove,
 } from "@/app/lib/db/wiki_user";
 import * as userUtils from "@/app/lib/utils/wiki_user";
-import { AccessLevel, WikiUser } from "@/app/lib/models/user";
+import { AccessLevel, WikiUser } from "@/app/lib/models/wikiuser";
 import { bodyParser, handleAPIError } from "@/app/lib/utils/api";
 
 export async function GET(

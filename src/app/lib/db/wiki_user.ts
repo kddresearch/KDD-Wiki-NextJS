@@ -1,5 +1,5 @@
 import { query } from "../db";
-import WikiUser from "../models/user";
+import WikiUser from "../models/wikiuser";
 
 async function fetchAll(): Promise<WikiUser[]> {
   // Construct the query

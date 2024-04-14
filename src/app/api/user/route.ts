@@ -11,8 +11,8 @@ import {
 
 import { checkAuthAPI } from "@/auth";
 import KddUser from "@/app/lib/models/kdd_user";
-import { AccessLevel } from "@/app/lib/models/user";
-import WikiUser from "@/app/lib/models/user";
+import { AccessLevel } from "@/app/lib/models/wikiuser";
+import WikiUser from "@/app/lib/models/wikiuser";
 import { bodyParser, handleAPIError } from "@/app/lib/utils/api";
 
 
