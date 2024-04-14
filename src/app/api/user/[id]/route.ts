@@ -3,127 +3,84 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkAuthAPI } from "@/auth";
 import {
-  fetchAll,
-  fetchById,
-  fetchByUsername,
-  insert,
-  update,
-  remove,
+    fetchAll,
+    fetchById,
+    fetchByUsername,
+    insert,
+    update,
+    remove,
 } from "@/app/lib/db/wiki_user";
 import * as userUtils from "@/app/lib/utils/wiki_user";
 import { AccessLevel, WikiUser } from "@/app/lib/models/user";
+import { bodyParser, handleAPIError } from "@/app/lib/utils/api";
 
 export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } },
+    req: NextRequest,
+    { params }: { params: { id: string } },
 ) {
-  const auth_user = await checkAuthAPI(AccessLevel.Admin);
-  let user;
+    const auth_user = await checkAuthAPI(AccessLevel.Admin);
+    let user;
 
-  try {
-    user = await userUtils.fetchUser(params.id, auth_user);
-  } catch (err) {
-    console.error("Error occurred during fetchUser:", err);
-    return NextResponse.json(
-      { error: "Failed to fetch user" },
-      { status: 500 },
-    );
-  }
+    try {
+        user = await userUtils.fetchUser(params.id, auth_user);
 
-  if (user === null) {
-    return NextResponse.json(
-      { error: "User not found" }, 
-      { status: 404 }
-    );
-  }
+        if (user === null)
+            throw { status: 404, message: "User not found" };
+
+        return NextResponse.json(user);
+    } catch (err) {
+        console.error("Error occurred during GET User route:", err);
+        const [{ error }, { status }] = handleAPIError(err);
+        return NextResponse.json({ error }, { status });
+    }
 }
 
 export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } },
+    req: NextRequest,
+    { params }: { params: { id: string } },
 ) {
-  const auth_user = await checkAuthAPI(AccessLevel.Admin);
-  let user;
+    const auth_user = await checkAuthAPI(AccessLevel.Admin);
+    let user;
 
-  try {
-    user = await userUtils.fetchUser(params.id, auth_user);
-  } catch (err) {
-    console.error("Error occurred during fetchUser:", err);
-    return NextResponse.json(
-      { error: "Failed to fetch user" },
-      { status: 500 },
-    );
-  }
+    try {
+        user = await userUtils.fetchUser(params.id, auth_user);
 
-  if (user === null) {
-    return NextResponse.json(
-      { error: "User not found" }, 
-      { status: 404 }
-    );
-  }
+        if (user === null)
+            throw { status: 404, message: "User not found" };
 
-  try {
-    const body = await req.json();
-    user.update(new WikiUser(body));
-  } catch (err) {
-    console.error("Error occurred during req.json:", err);
-    return NextResponse.json(
-      { error: "Failed to parse request body" },
-      { status: 400 },
-    );
-  }
+        user.update(await bodyParser(req, WikiUser));
 
-  try {
-    await update(user);
-    return NextResponse.json(user);
-  } catch (err) {
-    console.error("Error updating user", err);
-    return NextResponse.json(
-      { error: "Failed to update user" },
-      { status: 500 },
-    );
-  }
+        await update(user);
+        return NextResponse.json(user);
+    } catch (err) {
+        console.error("Error occurred during PATCH User route:", err);
+        const [{ error }, { status }] = handleAPIError(err);
+        return NextResponse.json({ error }, { status });
+    }
 }
 
 export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } },
+    req: NextRequest,
+    { params }: { params: { id: string } },
 ) {
-  const auth_user = await checkAuthAPI(AccessLevel.Admin);
+    const auth_user = await checkAuthAPI(AccessLevel.Admin);
 
-  if (params.id === "self") {
-    return NextResponse.json(
-      { error: "Cannot delete self" }, 
-      { status: 400 }
-    );
-  }
-  let user;
-  
-  try {
-    user = await userUtils.fetchUser(params.id, auth_user);
-  } catch (err) {
-    console.error("Error occurred during fetchUser:", err);
-    return NextResponse.json(
-      { error: "Failed to fetch user" },
-      { status: 500 },
-    );
-  }
+    let user;
 
-  if (user === null) {
-    return NextResponse.json(
-      { error: "User not found" }, 
-      { status: 404 }
-    );
-  }
+    try {
+        if (params.id === "self")
+            throw { status: 400, message: "Cannot delete self" };
 
-  try {
-    await remove(user.id);
-    return NextResponse.json({ message: "User deleted" });
-  } catch (err) {
-    console.error("Error deleting user", err);
-    return NextResponse.json(
-      { error: "Failed to remove user" },
-      { status: 500 },
-    );
-  }
+        user = await userUtils.fetchUser(params.id, auth_user);
+
+        if (user === null)
+            throw { status: 404, message: "User not found" };
+
+        await remove(user.id);
+        return NextResponse.json({ message: "User deleted" });
+    } catch (err) {
+        console.error("Error occurred during DELETE User route:", err);
+        const [{ error }, { status }] = handleAPIError(err);
+        return NextResponse.json({ error }, { status });
+    }
 }

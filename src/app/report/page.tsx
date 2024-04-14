@@ -4,7 +4,7 @@ import Breadcrumb from "@/components/breadcrumb";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-export default function reportPage() {
+export default function ReportPage() {
   const page = useSearchParams().get("page");
 
   const isPage = !(page == null);

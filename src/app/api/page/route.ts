@@ -4,69 +4,45 @@ import { fetchAll, fetchByName, insert } from "@/app/lib/db/page";
 import { checkAuthAPI } from "@/auth";
 import { AccessLevel } from "@/app/lib/models/user";
 import Page from "@/app/lib/models/page";
+import { bodyParser, handleAPIError } from "@/app/lib/utils/api";
 
-//
-// All page routes are protected by the Admin access level
-//
+export async function GET(
+    req: NextRequest
+) {
+    const authUser = checkAuthAPI(AccessLevel.Admin);
+    let pages;
 
-export const GET = async (req: NextRequest, res: NextResponse) => {
+    try {
+        pages = await fetchAll();
+        pages.sort((a, b) => a.id - b.id);
 
-  var user = checkAuthAPI(AccessLevel.Admin);
-
-  try {
-    const pages = await fetchAll();
-
-    // sort by id
-    pages.sort((a, b) => a.id - b.id);
-
-    return NextResponse.json(pages);
-  } catch (err) {
-    console.error("Error occurred during fetchAll:", err);
-    return NextResponse.json(
-      { error: "Failed to fetch pages" },
-      { status: 500 },
-    );
-  }
-};
-
-export async function POST(req: NextRequest) {
-  var user = checkAuthAPI(AccessLevel.Admin);
-  
-  const body = await req.json();
-  const page = new Page(body);
-
-  try {
-    let existingPage = await fetchByName(page?.name);
-    if (existingPage !== null) {
-      return NextResponse.json(
-        { error: "Page with name already exists" },
-        { status: 409 },
-      );
+        return NextResponse.json(pages);
+    } catch (err) {
+        console.error("Error occurred during GET Page route:", err);
+        const [{ error }, { status }] = handleAPIError(err);
+        return NextResponse.json({ error }, { status });
     }
-  } catch (err) {
-    console.error("Error occurred during fetchByName:", err);
-    return NextResponse.json(
-      { error: "Failed to fetch page" },
-      { status: 500 },
-    );
-  }
-
-  try {
-      const return_page = await insert(page);
-      return NextResponse.json(return_page);
-  } catch (err) {
-      console.error("Error occurred during insert:", err);
-      return NextResponse.json(
-          { error: "Failed to insert page" },
-          { status: 500 },
-      );
-  }
 }
 
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: "1mb",
-    },
-  },
-};
+export async function POST(
+    req: NextRequest
+) {
+    const authUser = checkAuthAPI(AccessLevel.Admin);
+    let page;
+    let existingPage;
+
+    try {
+        page = await bodyParser(req, Page);
+        existingPage = await fetchByName(page.name);
+
+        if (existingPage !== null)
+            throw { status: 409, message: `Page with name "${existingPage.name}" already exists` };
+
+        page = await insert(page);
+        return NextResponse.json(page);
+    } catch (err) {
+        console.error("Error occurred during POST Page route:", err);
+        const [{ error }, { status }] = handleAPIError(err);
+        return NextResponse.json({ error }, { status });
+    }
+}

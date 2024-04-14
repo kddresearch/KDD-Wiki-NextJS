@@ -194,7 +194,7 @@ async function fetchById(id: number): Promise<Page | null> {
     }
   }
   
-  export {
+export {
     fetchAll,
     fetchAllByCategoryIdsOrNoCategory,
     fetchById,
@@ -203,5 +203,5 @@ async function fetchById(id: number): Promise<Page | null> {
     insert,
     update,
     remove,
-  };
+};
   

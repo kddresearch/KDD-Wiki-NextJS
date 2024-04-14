@@ -1,6 +1,6 @@
 import BackDrop from "@/components/page/backdrop";
 import Card from "@/components/page/card";
-import { fetchAll } from "@/app/lib/models/page";
+import { fetchAll } from "@/app/lib/db/page";
 import Link from "next/link";
 
 async function pageIndex() {

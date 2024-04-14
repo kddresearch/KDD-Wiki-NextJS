@@ -4,8 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
-export default {
+const theme = {
     code: 'bg-[#f0f2f5] font-mono block px-8 py-8 pl-52 leading-[1.53] text-[13px] mt-2 mb-2 tab-[2] overflow-x-auto relative',
     // heading: {
     //     h1: '',
@@ -50,3 +49,5 @@ export default {
         functionName: 'text-[#dd4a68]',
     },
 };
+
+export default theme;

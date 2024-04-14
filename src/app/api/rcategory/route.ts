@@ -10,64 +10,41 @@ import {
 import { checkAuthAPI } from "@/auth";
 import { AccessLevel } from "@/app/lib/models/user";
 import rCategory from "@/app/lib/models/rcategory";
+import { bodyParser, handleAPIError } from "@/app/lib/utils/api";
 
 export async function GET(req: NextRequest) {
     const authUser = await checkAuthAPI(AccessLevel.Admin);
+    let rcategories;
 
     try {
-        const rcategories = await fetchAll();
+        rcategories = await fetchAll();
 
         return NextResponse.json(rcategories);
     } catch (err) {
-        console.error("Error occurred during fetchAll:", err);
-        return NextResponse.json(
-            { error: "Failed to fetch rcategories" },
-            { status: 500 },
-        );
+        console.error("Error occurred during GET Category route:", err);
+        const [{ error }, { status }] = handleAPIError(err);
+        return NextResponse.json({ error }, { status });
     }
 }
 
 export async function POST(req: NextRequest) {
     const authUser = await checkAuthAPI(AccessLevel.Admin);
     let rcategory;
-
-    // Try to parse the request body
-    try {
-        const body = await req.json();
-        rcategory = new rCategory(body);
-    } catch (err) {
-        console.error("Error occurred during req.json:", err);
-        return NextResponse.json(
-            { error: "Failed to parse request body" },
-            { status: 400 },
-        );
-    }
-
-    // Check if the rcategory already exists
-    try {
-        let existingRCategory = await fetchByName(rcategory.name);
-        if (existingRCategory !== null) {
-            return NextResponse.json(
-                { error: `rCategory with name "${existingRCategory.name}" already exists` },
-                { status: 409 },
-            );
-        }
-    } catch (err) {
-        console.error("Error occurred during fetchByName:", err);
-        return NextResponse.json(
-            { error: "Failed to fetch rcategory" },
-            { status: 500 },
-        );
-    }
+    let existingRCategory;
 
     try {
-        const return_rcategory = await insert(rcategory);
-        return NextResponse.json(return_rcategory);
+        rcategory = await bodyParser(req, rCategory);
+
+        existingRCategory = await fetchByName(rcategory.name);
+        if (existingRCategory !== null)
+            throw { status: 409, message: `rCategory with name "${existingRCategory.name}" already exists` };
+
+        rcategory = await insert(rcategory);
+        return NextResponse.json(rcategory);
+
     } catch (err) {
-        console.error("Error occurred during insert:", err);
-        return NextResponse.json(
-            { error: "Failed to insert rcategory" },
-            { status: 500 },
-        );
+        console.error("Error occurred during POST Category route:", err);
+        const [{ error }, { status }] = handleAPIError(err);
+        return NextResponse.json({ error }, { status });
     }
 }

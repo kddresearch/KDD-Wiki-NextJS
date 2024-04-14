@@ -13,78 +13,56 @@ import { checkAuthAPI } from "@/auth";
 import KddUser from "@/app/lib/models/kdd_user";
 import { AccessLevel } from "@/app/lib/models/user";
 import WikiUser from "@/app/lib/models/user";
+import { bodyParser, handleAPIError } from "@/app/lib/utils/api";
+
 
 export async function GET(
-  req: NextRequest
+    req: NextRequest
 ) {
-  const authUser = await checkAuthAPI(AccessLevel.Admin);
+    const authUser = await checkAuthAPI(AccessLevel.Admin);
+    let users;
 
-  try {
-    const users = await fetchAll();
+    try {
+        users = await fetchAll();
 
-    return NextResponse.json(users);
-  } catch (err) {
-    console.error("Error occurred during fetchAll:", err);
-    return NextResponse.json(
-      { error: "Failed to fetch users" },
-      { status: 500 },
-    );
-  }
+        return NextResponse.json(users);
+    } catch (err) {
+        console.error("Error occurred during GET User route:", err);
+        const [{ error }, { status }] = handleAPIError(err);
+        return NextResponse.json({ error }, { status });
+    }
 }
 
 export async function POST(
-  req: NextRequest
+    req: NextRequest
 ) {
-  const authUser = await checkAuthAPI(AccessLevel.Admin);
-  let user;
+    const authUser = await checkAuthAPI(AccessLevel.Admin);
+    let user;
+    let existingUser;
 
-  // Try to parse the request body
-  try {
-    const body = await req.json();
-    user = new WikiUser(body);
-  } catch (err) {
-    console.error("Error occurred during req.json:", err);
-    return NextResponse.json(
-      { error: "Failed to parse request body" },
-      { status: 400 },
-    );
-  }
+    try {
+        user = await bodyParser(req, WikiUser);
 
-  // Check if the user already exists
-  try {
-    let existingUser  = await fetchByUsername(user.username);
-    if (existingUser  !== null) {
-      return NextResponse.json(
-        { error: "User with username already exists" },
-        { status: 409 },
-      );
+        existingUser = await fetchByUsername(user.username);
+        if (existingUser !== null)
+            throw { status: 409, message: `User with username "${existingUser.username}" already exists` };
+
+        user = await insert(user);
+        return NextResponse.json(user);
+    } catch (err) {
+        console.error("Error occurred during GET User route:", err);
+        const [{ error }, { status }] = handleAPIError(err);
+        return NextResponse.json({ error }, { status });
     }
-  } catch (err) {
-    console.error("Error occurred during fetchByUsername:", err);
-    return NextResponse.json(
-      { error: "Failed to fetch user" },
-      { status: 500 },
-    );
-  }
-
-  // Insert the user
-  try {
-    const return_user = await insert(user);
-    return NextResponse.json(return_user);
-  } catch (err) {
-    console.error("Error occurred during insert:", err);
-    return NextResponse.json(
-      { error: "Failed to insert user" },
-      { status: 500 },
-    );
-  }
 }
 
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '1mb',
-    },
-  },
-  maxDuration: 5,
-}
+// export const config = {
+//     api: {
+//         bodyParser: {
+//             sizeLimit: '1mb',
+//         },
+//     },
+//     maxDuration: 5,
+// }
+
+export const maxDuration = 5;
