@@ -1,9 +1,7 @@
 import { expect, test } from 'vitest'
 import { render, screen } from '@testing-library/react'
 // import WikiUser from './app/lib/models/wikiuser'
-import WikiUser, { AccessLevel } from "../src/app/lib/models/wikiuser"
-
-
+import WikiUser, { AccessLevel } from "@/app/lib/models/wikiuser"
 
 test('WikiUser Default', () => {
 

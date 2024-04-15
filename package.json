@@ -12,6 +12,7 @@
   "dependencies": {
     "@auth/core": "^0.29.0",
     "@auth/pg-adapter": "^0.8.0",
+    "@azure/identity": "^4.1.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@lexical/react": "^0.14.2",

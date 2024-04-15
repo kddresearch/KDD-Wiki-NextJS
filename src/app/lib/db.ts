@@ -46,4 +46,15 @@ async function query(text: string, params?: any[]): Promise<QueryResult> {
   }
 }
 
-export { query };
+// can connect
+async function testConnection(): Promise<boolean> {
+  try {
+    await query("SELECT NOW()");
+    return true;
+  } catch (err) {
+    console.error("Error occurred during testConnection:", err);
+    return false;
+  }
+}
+
+export { query, testConnection };
