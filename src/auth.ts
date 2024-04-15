@@ -12,6 +12,7 @@ import type { OIDCConfig } from "@auth/core/providers";
 import { AdapterUser } from "next-auth/adapters";
 
 export const config = {
+  trustHost: true,
   providers: [
     {
       id: "ksu",
