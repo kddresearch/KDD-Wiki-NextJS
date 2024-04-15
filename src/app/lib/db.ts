@@ -2,26 +2,27 @@ import { Pool, QueryResult } from "pg";
 import env_config from "@/config";
 
 const pool = new Pool({
-  user: env_config.db.username,
-  host: env_config.db.host,
-  database: env_config.db.name,
-  password: env_config.db.password,
-  port: env_config.db.port,
+    user: env_config.db.username,
+    host: env_config.db.host,
+    database: env_config.db.name,
+    password: env_config.db.password,
+    port: env_config.db.port,
+    ssl: true,
 });
 
 var connected = false;
 
 function connect(): void {
-  pool.connect((err: Error | undefined, client: any, done: any) => {
-    if (err) {
-      console.error("Database connection error", err.stack);
-    } else {
-      console.log("Connected to PostgreSQL");
-      client.release();
-    }
-  });
+    pool.connect((err: Error | undefined, client: any, done: any) => {
+        if (err) {
+            console.error("Database connection error", err.stack);
+        } else {
+            console.log("Connected to PostgreSQL");
+            client.release();
+        }
+    });
 
-  connected = true;
+    connected = true;
 }
 
 /**
