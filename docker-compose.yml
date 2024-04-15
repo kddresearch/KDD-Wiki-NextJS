@@ -5,7 +5,7 @@ services:
     container_name: kdd-wiki-dev
     build:
       context: .
-      # dockerfile: Dockerfile
+      dockerfile: Dockerfile
       target: dev
     restart: always
     command: npm run dev
@@ -24,15 +24,11 @@ services:
     container_name: kdd-wiki-prod
     build:
       context: .
-      # dockerfile: Dockerfile
+      dockerfile: Dockerfile
       target: prod
     restart: always
     command: npm run start
     environment:
       - NODE_ENV=production
-    volumes:
-      - .:/app
-      - /app/node_modules
-      - /app/.next
     ports:
       - 3000:3000
