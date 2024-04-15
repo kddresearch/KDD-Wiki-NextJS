@@ -19,3 +19,20 @@ services:
       - /app/.next
     ports:
       - 3000:3000
+
+  kdd-wiki-prod:
+    container_name: kdd-wiki-prod
+    build:
+      context: .
+      # dockerfile: Dockerfile
+      target: prod
+    restart: always
+    command: npm run start
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - 3000:3000

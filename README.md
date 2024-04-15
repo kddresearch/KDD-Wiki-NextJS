@@ -27,12 +27,16 @@ DB_PASSWORD=
 
 Install [Docker Desktop](https://docs.docker.com/desktop/install/windows-install/) and restart your PC
 
-## Then
-
 Open the directory in the cli
 
+### Development
 ```bash
-docker compose up --build
+docker-compose up --build kdd-wiki-dev
+```
+
+### Production
+```bash
+docker-compose up --build kdd-wiki-prod
 ```
 
 # Test/Builds

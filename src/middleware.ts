@@ -8,7 +8,7 @@ import { NextRequest } from "next/server";
 export default function middleware(req: NextRequest) {
     // https://nextjs.org/docs/app/api-reference/functions/next-request#ip
     const ip = req.headers.get('X-Forwarded-For')
-    console.log(ip);
+    // console.log(ip);
 }
 
 // export const config = {
