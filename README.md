@@ -1,4 +1,4 @@
-# [KDD Research Wiki](https://kddresearch.org/)
+# [KDD Research Wiki](https://www.kddresearch.org/)
 
 This is a wiki for the KDD Research Lab.
 
