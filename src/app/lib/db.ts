@@ -1,12 +1,12 @@
 import { Pool, QueryResult } from "pg";
-import config from "@/config.json";
+import env_config from "@/config";
 
 const pool = new Pool({
-  user: config.db.username,
-  host: config.db.host,
-  database: config.db.name,
-  password: config.db.password,
-  port: config.db.port,
+  user: env_config.db.username,
+  host: env_config.db.host,
+  database: env_config.db.name,
+  password: env_config.db.password,
+  port: env_config.db.port,
 });
 
 var connected = false;

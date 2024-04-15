@@ -2,7 +2,7 @@ import NextAuth, { User } from "next-auth";
 import { NextAuthConfig } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
-import config_json from "@/config.json";
+import env_config from "@/config";
 
 import google from "next-auth/providers/google";
 import KddUser from "@/app/lib/models/kdd_user";
@@ -17,9 +17,9 @@ export const config = {
       id: "ksu",
       name: "K-State",
       type: "oidc",
-      issuer: config_json.auth.ksu.issuer,
-      clientId: config_json.auth.ksu.client_id,
-      clientSecret: config_json.auth.ksu.client_secret,
+      issuer: env_config.auth.ksu.issuer,
+      clientId: env_config.auth.ksu.client_id,
+      clientSecret: env_config.auth.ksu.client_secret,
       profile(profile) {
         console.log(profile);
         return {
@@ -32,11 +32,11 @@ export const config = {
           scope: "email openid profile",
         },
       },
-      wellKnown: config_json.auth.ksu.well_known,
+      wellKnown: env_config.auth.ksu.well_known,
     },
     google({
-      clientId: config_json.auth.google.client_id,
-      clientSecret: config_json.auth.google.client_secret,
+      clientId: env_config.auth.google.client_id,
+      clientSecret: env_config.auth.google.client_secret,
     }),
   ],
   basePath: "/auth",
@@ -79,7 +79,7 @@ export const config = {
     },
     jwt({ token, trigger, session }) {
       // console.log("jwt", token)
-      const devUserData = config_json.dev_user;
+      const devUserData = env_config.dev_user;
 
       token!.kdd_user = new KddUser(devUserData).toJSON();
 
@@ -87,7 +87,7 @@ export const config = {
       return token;
     },
   },
-  secret: config_json.auth.secret,
+  secret: env_config.auth.secret,
 } satisfies NextAuthConfig;
 
 export const { handlers, auth, signIn, signOut } = NextAuth(config);
