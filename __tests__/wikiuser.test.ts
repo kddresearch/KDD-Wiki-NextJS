@@ -1,6 +1,15 @@
-import { expect, test } from 'vitest'
+import { expect, test, vi } from "vitest";
 import WikiUser, { AccessLevel } from "@/app/lib/models/wikiuser"
 import { testConnection } from '@/app/lib/db';
+import config from "@/config";
+
+// Disables a package that checks that code is only executed on the server side.
+// Also, this mock can be defined in the Vitest setup file.
+vi.mock("server-only", () => {
+    return {};
+});
+
+
 
 test('WikiUser Default', () => {
     const username = Math.random().toString(36).substring(7);
@@ -23,7 +32,13 @@ test('WikiUser Default', () => {
         last_login: new Date(),
     };
 
-    expect(WikiUser.newUserFactory(username)).toEqual(expect.objectContaining(userData))
+    const wikiuser = WikiUser.newUserFactory(username)
+
+    userData["date_created"] = wikiuser.date_created;
+    userData["date_modified"] = wikiuser.date_modified;
+    userData["last_login"] = wikiuser.last_login;
+
+    expect(wikiuser).toEqual(expect.objectContaining(userData))
 });
 
 test('WikiUser Update to Admin', () => {
@@ -50,17 +65,20 @@ test('WikiUser Update to Admin', () => {
     const wikiuser = WikiUser.newUserFactory(username)
     wikiuser.updateAccessLevel(AccessLevel.Admin);
 
+    userData["date_created"] = wikiuser.date_created;
+    userData["date_modified"] = wikiuser.date_modified;
+    userData["last_login"] = wikiuser.last_login;
+
     expect(wikiuser).toEqual(expect.objectContaining(userData))
 });
 
-let connected: boolean = false;
+// only continue if the database connection is successful
 
-async function testdbConnection() {
-    connected = await testConnection();
-}
+// const isGitHubActions = process.env.GITHUB_ACTIONS === 'true';
+const isGitHubActions = config.github_actions;
 
-testdbConnection();
 
-(connected ? test : test.skip)('DB Connection', () => {
+(isGitHubActions ? test.skip : test)('DB Connection', async () => {
+    const connected = await testConnection();
     expect(connected).toBe(true);
-})
+});

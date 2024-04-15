@@ -17,8 +17,8 @@ function connect(): void {
       console.error("Database connection error", err.stack);
     } else {
       console.log("Connected to PostgreSQL");
+      client.release();
     }
-    client.release();
   });
 
   connected = true;
@@ -49,6 +49,7 @@ async function query(text: string, params?: any[]): Promise<QueryResult> {
 // can connect
 async function testConnection(): Promise<boolean> {
   try {
+    connect();
     await query("SELECT NOW()");
     return true;
   } catch (err) {

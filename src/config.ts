@@ -32,7 +32,8 @@ const config = {
         "date_created": "2016-04-20T15:00:00.000Z",
         "date_modified": "2016-04-20T15:00:00.000Z",
         "is_kdd_only": false
-    }
+    },
+    "github_actions": process.env.GITHUB_ACTIONS === 'true',
 }
 
 export default config;
