@@ -1,15 +1,15 @@
 FROM node:20-alpine AS base
 
 # remind me to never use docker again <3
-ENV AUTH_SECRET=/run/secrets/AUTH_SECRET \
-    AUTH_GOOGLE_CLIENT_ID=/run/secrets/AUTH_GOOGLE_CLIENT_ID \
-    AUTH_GOOGLE_CLIENT_SECRET=/run/secrets/AUTH_GOOGLE_CLIENT_SECRET \
-    AUTH_KSU_CLIENT_ID=/run/secrets/AUTH_KSU_CLIENT_ID \
-    AUTH_KSU_CLIENT_SECRET=/run/secrets/AUTH_KSU_CLIENT_SECRET \
-    DB_NAME=/run/secrets/DB_NAME \
-    DB_HOST=/run/secrets/DB_HOST \
-    DB_USERNAME=/run/secrets/DB_USERNAME \
-    DB_PASSWORD=/run/secrets/DB_PASSWORD
+# ENV AUTH_SECRET=/run/secrets/AUTH_SECRET \
+#     AUTH_GOOGLE_CLIENT_ID=/run/secrets/AUTH_GOOGLE_CLIENT_ID \
+#     AUTH_GOOGLE_CLIENT_SECRET=/run/secrets/AUTH_GOOGLE_CLIENT_SECRET \
+#     AUTH_KSU_CLIENT_ID=/run/secrets/AUTH_KSU_CLIENT_ID \
+#     AUTH_KSU_CLIENT_SECRET=/run/secrets/AUTH_KSU_CLIENT_SECRET \
+#     DB_NAME=/run/secrets/DB_NAME \
+#     DB_HOST=/run/secrets/DB_HOST \
+#     DB_USERNAME=/run/secrets/DB_USERNAME \
+#     DB_PASSWORD=/run/secrets/DB_PASSWORD
 
 # DEVELOPMENT
 FROM base AS dev
