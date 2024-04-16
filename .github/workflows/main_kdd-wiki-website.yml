@@ -32,7 +32,7 @@ jobs:
         push: true
         tags: ${{ secrets.AzureAppService_ContainerUsername_a41569c48ae7481a82306bff846d04d0 }}/kdd-wiki:latest
         file: ./Dockerfile
-        secret-envs: |
+        secrets: |
           AUTH_SECRET=${{ secrets.AUTH_SECRET }}
           AUTH_GOOGLE_CLIENT_ID=${{ secrets.AUTH_GOOGLE_CLIENT_ID }}
           AUTH_GOOGLE_CLIENT_SECRET=${{ secrets.AUTH_GOOGLE_CLIENT_SECRET }}
