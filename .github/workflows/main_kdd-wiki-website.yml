@@ -42,9 +42,9 @@ jobs:
         password: ${{ secrets.AzureAppService_ContainerPassword_168dfdb1e2474a84a79f72348365d322 }}
 
     - name: Build and push container image to registry
-      uses: docker/build-push-action@v3
+      uses: docker/build-push-action@v5
       with:
-        # context: .
+        context: .
         push: true
         tags: ${{ secrets.AzureAppService_ContainerUsername_a41569c48ae7481a82306bff846d04d0 }}/kdd-wiki:latest
         file: ./Dockerfile
