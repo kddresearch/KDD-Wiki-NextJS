@@ -3,7 +3,7 @@ const nextConfig = {
   images: {
     domains: ["www.datocms-assets.com"],
   },
-  output: "standalone",
+  // output: "standalone",
   webpack: (config, context) => {
     // Enable polling based on env variable being set
     if(process.env.NEXT_WEBPACK_USEPOLLING) {
