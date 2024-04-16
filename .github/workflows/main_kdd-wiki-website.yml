@@ -30,7 +30,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: index.docker.io/${{ secrets.AzureAppService_ContainerUsername_a41569c48ae7481a82306bff846d04d0 }}/kdd-wiki:${{ github.sha }}
+        tags: ${{ secrets.AzureAppService_ContainerUsername_a41569c48ae7481a82306bff846d04d0 }}/kdd-wiki:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
