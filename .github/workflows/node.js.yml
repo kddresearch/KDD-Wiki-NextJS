@@ -3,18 +3,18 @@
 
 name: Kdd Wiki Build/Unit testing
 env:
-    config: ${{ secrets.config }}
-    AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-    AUTH_GOOGLE_CLIENT_ID: ${{ secrets.AUTH_GOOGLE_CLIENT_ID }}
-    AUTH_GOOGLE_CLIENT_SECRET: ${{ secrets.AUTH_GOOGLE_CLIENT_SECRET }}
-    
-    AUTH_KSU_CLIENT_ID: ${{ secrets.AUTH_KSU_CLIENT_ID }}
-    AUTH_KSU_CLIENT_SECRET: ${{ secrets.AUTH_KSU_CLIENT_SECRET }}
-    
-    DB_NAME: ${{ secrets.DB_NAME }}
-    DB_HOST: ${{ secrets.DB_HOST }}
-    DB_USERNAME: ${{ secrets.DB_USERNAME }}
-    DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  config: ${{ secrets.config }}
+  AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+  AUTH_GOOGLE_CLIENT_ID: ${{ secrets.AUTH_GOOGLE_CLIENT_ID }}
+  AUTH_GOOGLE_CLIENT_SECRET: ${{ secrets.AUTH_GOOGLE_CLIENT_SECRET }}
+  
+  AUTH_KSU_CLIENT_ID: ${{ secrets.AUTH_KSU_CLIENT_ID }}
+  AUTH_KSU_CLIENT_SECRET: ${{ secrets.AUTH_KSU_CLIENT_SECRET }}
+  
+  DB_NAME: ${{ secrets.DB_NAME }}
+  DB_HOST: ${{ secrets.DB_HOST }}
+  DB_USERNAME: ${{ secrets.DB_USERNAME }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
 on:
   push:
@@ -42,5 +42,5 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run build --if-present
-    - name: run unit tests
+    - name: Run unit tests
       run: npm test
