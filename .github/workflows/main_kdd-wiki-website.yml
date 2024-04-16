@@ -47,7 +47,7 @@ jobs:
         echo "AUTH_GOOGLE_CLIENT_ID=${{ secrets.AUTH_GOOGLE_CLIENT_ID }}" >> .env.local
         echo "AUTH_GOOGLE_CLIENT_SECRET=${{ secrets.AUTH_GOOGLE_CLIENT_SECRET }}" >> .env.local
         echo "AUTH_KSU_CLIENT_ID=${{ secrets.AUTH_KSU_CLIENT_ID }}" >> .env.local
-        echo "AUTH_KSU_CLIENT_SECRET=${{ secrets.AUTH_KSU_CLIENT_SECRET }}" >>
+        echo "AUTH_KSU_CLIENT_SECRET=${{ secrets.AUTH_KSU_CLIENT_SECRET }}" >> .env.local
         echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env.local
         echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env.local
         echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env.local
