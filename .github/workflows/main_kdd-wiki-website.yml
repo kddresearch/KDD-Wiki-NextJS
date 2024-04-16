@@ -29,19 +29,20 @@ jobs:
     - name: Build and push container image to registry
       uses: docker/build-push-action@v3
       with:
+        context: .
         push: true
         tags: ${{ secrets.AzureAppService_ContainerUsername_a41569c48ae7481a82306bff846d04d0 }}/kdd-wiki:latest
         file: ./Dockerfile
         secrets: |
-          AUTH_SECRET=${{ secrets.AUTH_SECRET }}
-          AUTH_GOOGLE_CLIENT_ID=${{ secrets.AUTH_GOOGLE_CLIENT_ID }}
-          AUTH_GOOGLE_CLIENT_SECRET=${{ secrets.AUTH_GOOGLE_CLIENT_SECRET }}
-          AUTH_KSU_CLIENT_ID=${{ secrets.AUTH_KSU_CLIENT_ID }}
-          AUTH_KSU_CLIENT_SECRET=${{ secrets.AUTH_KSU_CLIENT_SECRET }}
-          DB_NAME=${{ secrets.DB_NAME }}
-          DB_HOST=${{ secrets.DB_HOST }}
-          DB_USERNAME=${{ secrets.DB_USERNAME }}
-          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          "AUTH_SECRET=${{ secrets.AUTH_SECRET }}"
+          "AUTH_GOOGLE_CLIENT_ID=${{ secrets.AUTH_GOOGLE_CLIENT_ID }}"
+          "AUTH_GOOGLE_CLIENT_SECRET=${{ secrets.AUTH_GOOGLE_CLIENT_SECRET }}"
+          "AUTH_KSU_CLIENT_ID=${{ secrets.AUTH_KSU_CLIENT_ID }}"
+          "AUTH_KSU_CLIENT_SECRET=${{ secrets.AUTH_KSU_CLIENT_SECRET }}"
+          "DB_NAME=${{ secrets.DB_NAME }}"
+          "DB_HOST=${{ secrets.DB_HOST }}"
+          "DB_USERNAME=${{ secrets.DB_USERNAME }}"
+          "DB_PASSWORD=${{ secrets.DB_PASSWORD }}"
 
   deploy:
     runs-on: ubuntu-latest
