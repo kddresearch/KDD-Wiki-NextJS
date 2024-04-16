@@ -55,6 +55,10 @@ jobs:
         echo $'LOADED=true\n' >> .env.local
         echo $'GITHUB_ACTIONS=true\n' >> .env.local
 
+      # give permissions to the .env.local file
+    - name: Give permissions to .env.local
+      run: chmod 644 .env.local
+
     - name: Build and push container image to registry
       uses: docker/build-push-action@v5
       with:
