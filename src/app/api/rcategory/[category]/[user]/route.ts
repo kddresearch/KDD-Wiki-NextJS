@@ -24,16 +24,18 @@ export async function GET(
     try {
         rcategory = await categoryUtils.fetchrCategory(params.category)
         user = await userUtils.fetchUser(params.user, authUser);
-    
+
         if (rcategory === null) 
             throw { status: 404, message: "rCategory not found" };
-        if (user === null) 
-            throw { status: 404, message: "User not found" };
 
         if (params.user === FETCHALL) {
             const rCategoryMembers = await rCategoryMemberdb.fetchByCategoryId(rcategory.id);
             return NextResponse.json(rCategoryMembers);
         }
+        
+        if (user === null) 
+            throw { status: 404, message: "User not found" };
+
 
         rcategoryMember = await rCategoryMemberdb.fetchByCategoryandUser(rcategory.id, user.id);
         return NextResponse.json(rcategoryMember);

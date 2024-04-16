@@ -43,15 +43,15 @@ jobs:
 
     - name: Create .env.local with secrets
       run: |
-        echo $'AUTH_SECRET=${{ secrets.AUTH_SECRET }}\n' >> .env.local
-        echo $'AUTH_GOOGLE_CLIENT_ID=${{ secrets.AUTH_GOOGLE_CLIENT_ID }}\n' >> .env.local
-        echo $'AUTH_GOOGLE_CLIENT_SECRET=${{ secrets.AUTH_GOOGLE_CLIENT_SECRET }}\n' >> .env.local
-        echo $'AUTH_KSU_CLIENT_ID=${{ secrets.AUTH_KSU_CLIENT_ID }}\n' >> .env.local
-        echo $'AUTH_KSU_CLIENT_SECRET=${{ secrets.AUTH_KSU_CLIENT_SECRET }}\n' >> .env.local
-        echo $'DB_NAME=${{ secrets.DB_NAME }}\n' >> .env.local
-        echo $'DB_HOST=${{ secrets.DB_HOST }}\n' >> .env.local
-        echo $'DB_USERNAME=${{ secrets.DB_USERNAME }}\n' >> .env.local
-        echo $'DB_PASSWORD=${{ secrets.DB_PASSWORD }}\n' >> .env.local
+        echo $'AUTH_SECRET="${{ secrets.AUTH_SECRET }}"\n' >> .env.local
+        echo $'AUTH_GOOGLE_CLIENT_ID="${{ secrets.AUTH_GOOGLE_CLIENT_ID }}"\n' >> .env.local
+        echo $'AUTH_GOOGLE_CLIENT_SECRET="${{ secrets.AUTH_GOOGLE_CLIENT_SECRET }}"\n' >> .env.local
+        echo $'AUTH_KSU_CLIENT_ID="${{ secrets.AUTH_KSU_CLIENT_ID }}"\n' >> .env.local
+        echo $'AUTH_KSU_CLIENT_SECRET="${{ secrets.AUTH_KSU_CLIENT_SECRET }}"\n' >> .env.local
+        echo $'DB_NAME="${{ secrets.DB_NAME }}"\n' >> .env.local
+        echo $'DB_HOST="${{ secrets.DB_HOST }}"\n' >> .env.local
+        echo $'DB_USERNAME="${{ secrets.DB_USERNAME }}"\n' >> .env.local
+        echo $'DB_PASSWORD="${{ secrets.DB_PASSWORD }}"\n' >> .env.local
         echo $'LOADED=true\n' >> .env.local
         echo $'GITHUB_ACTIONS=true\n' >> .env.local
 

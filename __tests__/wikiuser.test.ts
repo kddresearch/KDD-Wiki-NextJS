@@ -9,8 +9,6 @@ vi.mock("server-only", () => {
     return {};
 });
 
-
-
 test('WikiUser Default', () => {
     const username = Math.random().toString(36).substring(7);
 
@@ -76,7 +74,6 @@ test('WikiUser Update to Admin', () => {
 
 // const isGitHubActions = process.env.GITHUB_ACTIONS === 'true';
 const isGitHubActions = config.github_actions;
-
 
 (isGitHubActions ? test.skip : test)('DB Connection', async () => {
     const connected = await testConnection();
