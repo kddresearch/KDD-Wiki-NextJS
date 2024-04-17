@@ -39,4 +39,6 @@ const config = {
 
 console.log("Enviorment Vars Loaded: ", process.env.LOADED)
 
+console.log("Config Loaded: ", config)
+
 export default config;
