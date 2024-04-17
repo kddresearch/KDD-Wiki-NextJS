@@ -43,18 +43,6 @@ export const config = {
   basePath: "/auth",
   callbacks: {
     async signIn({ user, account, profile }) {
-
-      // const userActivity = UserActivity({
-      //   id: -1,
-      //   userId: user.id,
-      //   status: 200,
-      //   activityType: ActivityType.Login,
-      //   endpoint: "auth/signin",
-      //   detected_ip: 
-      // })
-
-      // console.log
-
       return true;
     },
     async redirect({ url, baseUrl }) {
@@ -79,7 +67,6 @@ export const config = {
       return true;
     },
     jwt({ token, trigger, session }) {
-      // console.log("jwt", token)
       const devUserData = env_config.dev_user;
 
       token!.kdd_user = new KddUser(devUserData).toJSON();

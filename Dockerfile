@@ -33,8 +33,4 @@ RUN npm run ci-test
 
 EXPOSE 3000
 
-# CMD node ./.next/server.js
 CMD ["npm", "run", "start"]
-# CMD node .next/standalone/server.js
-
-# CMD node run start

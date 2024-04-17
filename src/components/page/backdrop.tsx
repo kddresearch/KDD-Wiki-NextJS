@@ -1,7 +1,8 @@
 function BackDrop({
   isRow,
+  image,
   ...props
-}: { isRow?: boolean } & React.HTMLProps<HTMLDivElement>) {
+}: { isRow?: boolean, image?: string } & React.HTMLProps<HTMLDivElement>) {
   var className;
 
   if (isRow) {
@@ -10,8 +11,14 @@ function BackDrop({
     className = "flex flex-col " + props.className;
   }
 
+  if (image) {
+    className = "bg-cover bg-[url('" + image + "')] " + className;
+  } else {
+    className = "bg-white bg-stripe " + className;
+  }
+
   className =
-    "bg-white min-h-full grow text-black bg-stripe items-center justify-center " +
+    "min-h-full grow text-black items-center justify-center " +
     className;
 
   return <div {...props} className={className} />;
