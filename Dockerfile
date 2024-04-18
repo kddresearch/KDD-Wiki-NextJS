@@ -24,6 +24,7 @@ WORKDIR /app
 
 ENV CI=true
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXTAUTH_URL=https://kdd-wiki-website.azurewebsites.net/
 
 COPY package*.json ./
 RUN npm install

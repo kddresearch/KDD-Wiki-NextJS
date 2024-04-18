@@ -41,9 +41,8 @@ const Dev = () => {
 
   return (
     <div className="h-full flex flex-col">
-      <h1>Dev</h1>
-      <Link href="/">Go back to home</Link>
       <Breadcrumb />
+
       <BackDrop>
         <Card title="hello testing">
           <Editor />

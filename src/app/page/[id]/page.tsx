@@ -34,7 +34,10 @@ async function pageView({ params }: { params: { id: string } }) {
     contentHTML = page.content;
   }
   return (
-    <BackDrop isRow={true}>
+    <BackDrop isRow={false}>
+      <Card className="w-12">
+        This is a nav menu
+      </Card>
       <Card title={page.title + page.id.toString()} className="mx-4">
         <div className="mt-4 prose max-w-none prose-a:text-purple prose-a:underline">
           <div dangerouslySetInnerHTML={{ __html: contentHTML }}></div>
