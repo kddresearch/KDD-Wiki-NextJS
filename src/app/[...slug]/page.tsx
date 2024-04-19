@@ -4,8 +4,8 @@ import { notFound } from "next/navigation";
 import { fetchByURL } from "../lib/db/custom_url";
 import { fetchByName, fetchById } from "../lib/db/_page";
 import { number } from "joi";
-import BackDrop from "@/components/page/backdrop";
-import Card from "@/components/page/card";
+import StripeBackDrop from "@/components/layout/backdrop";
+import Card from "@/components/layout/card";
 import { remark } from "remark";
 import html from "remark-html";
 import { UserActivity } from "../lib/models/user_activity";
@@ -34,12 +34,12 @@ export default async function Page({ params }: { params: { slug: string[] } }) {
     contentHTML = page.content;
   }
   return (
-    <BackDrop isRow={true}>
+    <StripeBackDrop isRow={true}>
       <Card title={page.title + page.id.toString()} className="mx-4">
         <div className="mt-4 prose max-w-none prose-a:text-purple prose-a:underline">
           <div dangerouslySetInnerHTML={{ __html: contentHTML }}></div>
         </div>
       </Card>
-    </BackDrop>
+    </StripeBackDrop>
   );
 }

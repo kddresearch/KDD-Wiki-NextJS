@@ -1,4 +1,4 @@
-import Card from "../page/card";
+import Card from "../layout/card";
 
 const AboutUs = () => {
   return (

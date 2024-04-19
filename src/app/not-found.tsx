@@ -5,15 +5,15 @@ import Link from "next/link";
 import Nav from "next/navigation";
 import { usePathname } from "next/navigation";
 import { BoxArrowUpRight } from "react-bootstrap-icons";
-import BackDrop from "@/components/page/backdrop";
-import Card from "@/components/page/card";
+import StripeBackDrop from "@/components/layout/backdrop";
+import Card from "@/components/layout/card";
 
 export default function NotFound() {
   const pathname = usePathname();
 
   return (
     <>
-      <BackDrop>
+      <StripeBackDrop>
         <Card isFlex={false}>
           <div className="flex flex-row">
             <h1 className="text-purple text-4xl md:text-6xl font-bold grow">
@@ -41,7 +41,7 @@ export default function NotFound() {
             Return Home
           </Link>
         </Card>
-      </BackDrop>
+      </StripeBackDrop>
     </>
   );
 }

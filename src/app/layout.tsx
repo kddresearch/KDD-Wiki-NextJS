@@ -1,31 +1,23 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-// import '@/app/lib/db';
-
-import { logRequestHeaders } from "@/app/logging";
 
 const inter = Inter({ subsets: ["latin"] });
-
 export const metadata: Metadata = {
   title: "KSU KDD Wiki",
   description: "Wiki for the KSU KDD Research group",
   icons: ["/favicon.ico"],
+  robots: "noindex, nofollow",
 };
 
-import { SessionProvider } from "next-auth/react";
-import type { AppProps } from "next/app";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
-import Head from "next/head";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // logRequestHeaders();
-
   return (
     <html lang="en">
       <body className={inter.className + " flex flex-col h-screen"}>

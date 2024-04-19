@@ -2,15 +2,20 @@ import { Announcement, fetchCurrent } from "@/app/lib/models/announcement";
 import Link from "next/link";
 import AnnouncementListComponent from "./announcement";
 import { BoxArrowUpRight } from "react-bootstrap-icons";
-import Card from "../page/card";
+import Card from "../layout/card";
 
-const AnnouncementComponent = async () => {
-  var listofAnnouncements: Announcement[] = [];
+interface AnnouncementComponentProps {
+  listofAnnouncements: Announcement[];
+}
 
-  var listofAnnouncements = await fetchCurrent();
+const AnnouncementComponent = ({ listofAnnouncements }: AnnouncementComponentProps) => {
+
+  if (listofAnnouncements.length === 0) {
+    return null;
+  } 
 
   return (
-    <Card className="-mt-8">
+    <Card className="-mt-8" title="Announcements" link="/announcement">
       <div className="">
         <Link
           href={"/announcement"}

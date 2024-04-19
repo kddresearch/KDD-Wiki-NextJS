@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
-import BackDrop from "@/components/page/backdrop";
-import Card from "@/components/page/card";
+import StripeBackDrop from "@/components/layout/backdrop";
+import Card from "@/components/layout/card";
 import Link from "next/link";
 // import { useRouter } from "next/router";
 // import React, { useState, useEffect } from "react";
@@ -40,7 +40,7 @@ export default async function AdminLayout({
   }
 
   return (
-    <BackDrop>
+    <StripeBackDrop>
       <Card title="Admin Dashboard"></Card>
 
       <div className="flex flex-row w-full container space-x-8">
@@ -84,6 +84,6 @@ export default async function AdminLayout({
         </div>
         {children}
       </div>
-    </BackDrop>
+    </StripeBackDrop>
   );
 }

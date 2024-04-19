@@ -1,5 +1,5 @@
-import BackDrop from "@/components/page/backdrop";
-import Card from "@/components/page/card";
+import StripeBackDrop from "@/components/layout/backdrop";
+import Card from "@/components/layout/card";
 
 // open markdown file
 import fs from 'fs';
@@ -24,7 +24,7 @@ async function copyrightPage() {
   var contentHTML = processedContent.toString();
 
   return (
-    <BackDrop>
+    <StripeBackDrop>
       <Card>
         <div className="m-4 p-4 font-mono bg-gray border-gray border rounded-lg"> 
           <div className="mt-4 prose max-w-none prose-h1:text-purple prose-a:text-purple prose-a:underline">
@@ -32,7 +32,7 @@ async function copyrightPage() {
           </div>
         </div>
       </Card>
-    </BackDrop>
+    </StripeBackDrop>
   )
 }
 

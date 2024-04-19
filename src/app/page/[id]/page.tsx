@@ -1,7 +1,7 @@
-import BackDrop from "@/components/page/backdrop";
+import StripeBackDrop from "@/components/layout/backdrop";
 import { notFound, redirect } from "next/navigation";
 import { fetchById, fetchByName } from "@/app/lib/db/_page";
-import Card from "@/components/page/card";
+import Card from "@/components/layout/card";
 
 import { remark } from "remark";
 import html from "remark-html";
@@ -34,7 +34,7 @@ async function pageView({ params }: { params: { id: string } }) {
     contentHTML = page.content;
   }
   return (
-    <BackDrop isRow={false}>
+    <StripeBackDrop isRow={false}>
       <Card className="w-12">
         This is a nav menu
       </Card>
@@ -43,7 +43,7 @@ async function pageView({ params }: { params: { id: string } }) {
           <div dangerouslySetInnerHTML={{ __html: contentHTML }}></div>
         </div>
       </Card>
-    </BackDrop>
+    </StripeBackDrop>
   );
 }
 

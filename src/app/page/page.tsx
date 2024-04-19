@@ -1,5 +1,5 @@
-import BackDrop from "@/components/page/backdrop";
-import Card from "@/components/page/card";
+import StripeBackDrop from "@/components/layout/backdrop";
+import Card from "@/components/layout/card";
 import { fetchAll } from "@/app/lib/db/_page";
 import Link from "next/link";
 
@@ -33,7 +33,7 @@ async function pageIndex() {
   });
 
   return (
-    <BackDrop isRow={false}>
+    <StripeBackDrop isRow={false}>
       <Card title="Page Index" actions={renderedSearch}>
         <h1 className="text-2xl text-bold">Sort by letter</h1>
         <p>A. B. C. Ect. and more I dont wanna write rn</p>
@@ -46,7 +46,7 @@ async function pageIndex() {
           </div>
         ))}
       </Card>
-    </BackDrop>
+    </StripeBackDrop>
   );
 }
 

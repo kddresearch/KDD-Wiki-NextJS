@@ -5,8 +5,8 @@ import { Arrow90degRight } from "react-bootstrap-icons";
 import Category from "@/models/nav-model/category";
 import NavItem from "@/models/nav-model/nav_item";
 import Breadcrumb from "@/components/breadcrumb";
-import BackDrop from "@/components/page/backdrop";
-import Card from "@/components/page/card";
+import StripeBackDrop from "@/components/layout/backdrop";
+import Card from "@/components/layout/card";
 import Editor from "@/components/editors/lexical/editor";
 import { useState, useEffect } from 'react';
 
@@ -43,7 +43,7 @@ const Dev = () => {
     <div className="h-full flex flex-col">
       <Breadcrumb />
 
-      <BackDrop>
+      <StripeBackDrop>
         <Card title="hello testing">
           <Editor />
         </Card>
@@ -56,7 +56,7 @@ const Dev = () => {
         <Card title="hello testing">dwa id</Card>
         <Card title="hello testing"> dwahidahi</Card>
 
-      </BackDrop>
+      </StripeBackDrop>
     </div>
   );
 };

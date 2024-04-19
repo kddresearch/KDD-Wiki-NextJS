@@ -1,4 +1,4 @@
-import Card from "@/components/page/card";
+import Card from "@/components/layout/card";
 import AdminLayout from "../layout";
 
 import * as React from "react";
