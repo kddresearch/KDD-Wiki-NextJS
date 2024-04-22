@@ -34,8 +34,9 @@ function Card({
       <div className="flex flex-row text-purple text-6xl font-bold">
         {link ? (
           <Link href={link} className="grow flex flex-row items-center">
-            <h1 className="border-b-8 py-2 border-gray grow">{title}</h1>
-            <BoxArrowUpRight className="ml-2" />
+            <h1 className="border-b-8 py-2 border-gray">{title}</h1>
+            <div className="grow"/>
+            <BoxArrowUpRight className="text-4xl inline-block justify-center my-auto" />
           </Link>
         ) : (
           <h1 className="border-b-8 py-2 border-gray">{title}</h1>

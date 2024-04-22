@@ -16,16 +16,6 @@ const AnnouncementComponent = ({ listofAnnouncements }: AnnouncementComponentPro
 
   return (
     <Card className="-mt-8" title="Announcements" link="/announcement">
-      <div className="">
-        <Link
-          href={"/announcement"}
-          className="flex flex-row text-purple text-6xl font-bold"
-        >
-          <h1 className="grow">Announcements</h1>
-          <BoxArrowUpRight className="text-4xl inline-block justify-center my-auto" />
-        </Link>
-      </div>
-
       <ol className="flex flex-col">
         {listofAnnouncements.map((announcement_model, index) => (
           <li key={announcement_model.id}>
