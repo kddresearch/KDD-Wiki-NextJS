@@ -87,12 +87,22 @@ jobs:
       name: 'production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
+    # steps:
+    # - name: Deploy to Azure Web App
+    #   id: deploy-to-webapp
+    #   uses: azure/webapps-deploy@v2
+    #   with:
+    #     app-name: 'kdd-wiki-website'
+    #     slot-name: 'production'
+    #     publish-profile: ${{ secrets.AzureAppService_PublishProfile_0a6678781b5e4a36850720ab95d56538 }}
+    #     images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_a41569c48ae7481a82306bff846d04d0 }}/kdd-wiki:latest'
     steps:
-    - name: Deploy to Azure Web App
-      id: deploy-to-webapp
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'kdd-wiki-website'
-        slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_0a6678781b5e4a36850720ab95d56538 }}
-        images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_a41569c48ae7481a82306bff846d04d0 }}/kdd-wiki:latest'
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: Azure/webapps-deploy@v3.0.1
+        with:
+          app-name: 'kdd-wiki-website'
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_0a6678781b5e4a36850720ab95d56538 }}
+          images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_a41569c48ae7481a82306bff846d04d0 }}/kdd-wiki:latest'
+          slot-name: 'production'
+          restart: true
