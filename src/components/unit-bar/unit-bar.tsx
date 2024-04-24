@@ -14,7 +14,6 @@ export default async function UnitBar({
   title: string;
   kdduser: any;
 }) {
-  const user = kdduser;
   const session = await auth();
 
   return (
@@ -39,7 +38,6 @@ export default async function UnitBar({
             {title}
           </p>
         </Link>
-        {/* Signin */}
         <div className="flex items-center justify-end ml-2">
           {session ? <SignOut /> : <SignIn />}
         </div>

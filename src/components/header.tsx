@@ -15,6 +15,7 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import AccountMenu from "./user-menu";
+import WikiUser from "@/app/lib/models/wikiuser";
 // import PersonAdd from '@mui/icons-material/PersonAdd';
 // import Settings from '@mui/icons-material/Settings';
 // import Logout from '@mui/icons-material/Logout';
@@ -26,9 +27,12 @@ export default async function Header() {
 
   if (session?.user) {
     user = new KddUser(session?.user);
+    user = WikiUser.fromKddUser(user);
   } else {
-    user = KddUser.guestFactory();
+    user = WikiUser.guestFactory();
   }
+
+  user = user.toJSON();
 
   return (
     <header className="bg-white">
@@ -39,14 +43,7 @@ export default async function Header() {
           </Link>
           <div className="grow"></div>
           {session ? (
-            <>
-              {/* <Link className="my-auto" href={`/member/${user.username}`}>
-                <h1 className="text-xs h-4">
-                  Welcome <span className="font-semibold">{user.username}</span>
-                </h1>
-              </Link> */}
-              <AccountMenu user={user.toJSON()} />
-            </>
+            <AccountMenu user={user}/>
           ) : (
             <Link className="my-auto" href={"/"}>
               <h1 className="text-xs h-4">KDD Research Lab</h1>
