@@ -41,21 +41,21 @@ function Card({
       <div className="flex flex-row text-purple text-4xl lg:text-6xl font-bold">
         {link ? (
           <Link href={link} className="grow flex flex-row items-center">
-            <h1 className="border-b-8 py-2 border-gray">{title}</h1>
+            <h1 className="border-b-8 py-2 border-lightgray">{title}</h1>
             <div className="grow"/>
             <BoxArrowUpRight className="text-4xl inline-block justify-center my-auto" />
           </Link>
         ) : (
-          <h1 className="border-b-8 py-2 border-gray">{title}</h1>
+          <h1 className="border-b-8 py-2 border-lightgray">{title}</h1>
         )}
         {actions}
-      </div>
+      </div> 
     )
   }
 
   const renderSubTitle = () => {
     return (
-      <h2 className="text-xl lg:text-3xl font-bold text-purple border-b-4 border-gray">{subTitle}</h2>
+      <h2 className="text-xl lg:text-2xl font-semibold text-purple my-1">{subTitle}</h2>
     );
   }
 

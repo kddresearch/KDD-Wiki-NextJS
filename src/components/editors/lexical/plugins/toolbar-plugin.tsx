@@ -120,7 +120,7 @@ export default function ToolbarPlugin() {
         }}
         className={
           "flex border-0  rounded-md p-1 spaced cursor-pointer align-middle mr-0.5 hover:bg-lightgray " +
-          (isItalic ? "bg-[#dfe8fa4d]" : "")
+          (isItalic ? "bg-[#dfe8fa4d] text-black" : "")
         }
         aria-label="Format Italics"
       >
@@ -132,7 +132,7 @@ export default function ToolbarPlugin() {
         }}
         className={
           "flex border-0  rounded-md p-1 spaced cursor-pointer align-middle mr-0.5 hover:bg-lightgray " +
-          (isUnderline ? "bg-[#dfe8fa4d]" : "")
+          (isUnderline ? "bg-[#dfe8fa4d] text-black" : "")
         }
         aria-label="Format Underline"
       >
@@ -144,7 +144,7 @@ export default function ToolbarPlugin() {
         }}
         className={
           "flex border-0 rounded-md p-1 spaced cursor-pointer align-middle mr-0.5 hover:bg-lightgray " +
-          (isStrikethrough ? "bg-[#dfe8fa4d]" : "")
+          (isStrikethrough ? "bg-[#dfe8fa4d] text-black" : "")
         }
         aria-label="Format Strikethrough"
       >

@@ -9,7 +9,7 @@ async function copyrightPage() {
   return (
     <StripeBackDrop>
         <Card>
-          <div className="m-4 p-4 font-mono bg-gray border-gray border rounded-lg"> 
+          <div className="m-4 p-4 font-mono bg-lightgray border-lightgray border rounded-lg"> 
             <RenderMarkdownFile filePath={COPYRIGHTFILE} />
           </div>
         </Card>

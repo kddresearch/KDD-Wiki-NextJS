@@ -36,7 +36,7 @@ export default async function Header() {
 
   return (
     <header className="bg-white">
-      <div className="w-full h-8 px-4 bg-gray text-purple">
+      <div className="w-full h-8 px-4 bg-lightgray text-purple">  
         <div className="flex flex-row justify-between h-full container">
           <Link className="my-auto" href={"https://k-state.edu"}>
             <h1 className="text-xs h-4">Kansas State University</h1>
@@ -53,7 +53,7 @@ export default async function Header() {
       </div>
       <UnitBar
         title="Laboratory for Knowledge Discovery in Databases (KSU KDD Lab)"
-        kdduser={KddUser.guestFactory().toJSON()}
+        kdduser={WikiUser.guestFactory().toJSON()}
       />
       <Navigation />
     </header>

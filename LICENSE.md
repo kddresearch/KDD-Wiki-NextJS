@@ -61,7 +61,7 @@ research group or the KDD Research Team
 
 # Licenses Used
 
-### Please contribute to open source projects!
+## Please contribute to open source projects!
 
 ## Lexical Text Editor [Github](https://github.com/facebook/lexical)
 
