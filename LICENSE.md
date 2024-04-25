@@ -59,7 +59,7 @@ If you have any questions or concerns regarding the licensing or use of
 specific research content on this wiki, please [contact](/contact) the appropriate 
 research group or the KDD Research Team
 
-# Licences Used
+# Licenses Used
 
 ### Please contribute to open source projects!
 
