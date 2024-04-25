@@ -19,13 +19,15 @@ export default async function UnitBar({
   return (
     <div className="flex items-center justify-between w-full h-16 lg:h-14 bg-white text-purple">
       <div className="container flex items-center">
-        <Image
-          src="/wildcat.svg"
-          alt="unit"
-          width="40"
-          height="32"
-          className="mr-4 h-8"
-        />
+        <Link href={"https://k-state.edu"}>
+          <Image
+            src="/wildcat.svg"
+            alt="unit"
+            width="40"
+            height="32"
+            className="mr-4 h-8 pointer-events-none"
+          />
+        </Link>
         <div
           id="bar"
           className="realitive pr-8 border-l-[1px] border-purple border-solid h-8 w-1"

@@ -22,7 +22,7 @@ const AnnouncementComponent = ({ listofAnnouncements }: AnnouncementComponentPro
             <AnnouncementListComponent announcement={announcement_model} />
 
             {index !== listofAnnouncements.length - 1 && (
-              <div className="mx-4 border-solid border-b-2 pb-2 border-purple" />
+              <div className="mx-4 border-solid border-b-2 pb-2 border-gray" />
             )}
           </li>
         ))}

@@ -21,6 +21,18 @@ const config: Config = {
       textDecorationThickness: {
         3: "3px",
       },
+      typography: (theme: any) => ({
+        DEFAULT: {
+          css: {
+            color: theme('colors.black'),
+          },
+        },
+        lg: {
+          css: {
+            lineHeight: '1.75rem', // Adjust the line height for prose-lg
+          },
+        },
+      }),
     },
     container: {
       padding: {
@@ -32,12 +44,12 @@ const config: Config = {
       },
       center: true,
     },
+    // https://www.k-state.edu/communications-marketing/documents/Brand-Guidelines.pdf
     colors: {
       purple: "#512888",
-      white: "#ffffff",
-      gray: "#eeeeee",
-      lightgray: "#eeeeee",
-      darkgray: "#333333",
+      white: "#FFFFFF",
+      gray: "#D1D1D1",
+      darkgray: "#A7A7A7",
       black: "#000000",
       yellow: "#f0ad00",
     },

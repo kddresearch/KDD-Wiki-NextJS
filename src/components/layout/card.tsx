@@ -5,25 +5,32 @@ import { BoxArrowUpRight } from "react-bootstrap-icons";
 
 function Card({
   title = undefined,
+  subTitle = undefined,
   actions = undefined,
   link = undefined,
   isFlex = true,
   ...props
 }: {
   title?: string;
+  subTitle?: string;
   actions?: ReactNode;
   link?: string;
   isFlex?: boolean;
 } & React.HTMLProps<HTMLDivElement>) {
 
+  const hasBackgroundColor = /bg-/.test(props.className || '');
+
   const baseClasses = classNames(
-    'container',
     'p-5',
-    'bg-white',
+    hasBackgroundColor ? '' : 'bg-white',
     'text-lg',
     'my-8',
     props.className
   );
+
+  // Check if actions and link are provided without title
+  if (title === undefined && (actions !== undefined || link !== undefined)) 
+    throw new Error("Actions and Link can only be provided if title is provided");
 
   const classes = classNames(baseClasses, {
     'flex flex-col': isFlex,
@@ -31,7 +38,7 @@ function Card({
 
   const renderTitleBar = () => {
     return (
-      <div className="flex flex-row text-purple text-6xl font-bold">
+      <div className="flex flex-row text-purple text-4xl lg:text-6xl font-bold">
         {link ? (
           <Link href={link} className="grow flex flex-row items-center">
             <h1 className="border-b-8 py-2 border-gray">{title}</h1>
@@ -46,9 +53,16 @@ function Card({
     )
   }
 
+  const renderSubTitle = () => {
+    return (
+      <h2 className="text-xl lg:text-3xl font-bold text-purple border-b-4 border-gray">{subTitle}</h2>
+    );
+  }
+
   return (
     <div {...props} className={classes}>
       {title && renderTitleBar()}
+      {subTitle && renderSubTitle()}
       {props.children}
     </div>
   );

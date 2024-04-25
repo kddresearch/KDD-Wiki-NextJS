@@ -1,6 +1,9 @@
 import classNames from 'classnames';
 import Image from 'next/image';
 
+/**
+ * Automatically adds a background image to the backdrop, with a container for the children.
+ */
 function ImageBackDrop({ 
   isRow,
   image,
@@ -30,7 +33,9 @@ function ImageBackDrop({
         sizes="100vw"
         className='relative object-cover pointer-events-none -z-[1]' 
       />
-      {children}
+      <div className='container'>
+        {children}
+      </div>
     </div>
   );
 }
