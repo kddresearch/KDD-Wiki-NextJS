@@ -49,13 +49,21 @@ jobs:
       with:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
 
-    - task: AzureCLI@2
-      displayName: Whitelist GitHub Runner IP
-      inputs:
-        azureSubscription: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
+    # - task: AzureCLI@2
+    #   displayName: Whitelist GitHub Runner IP
+    #   inputs:
+    #     azureSubscription: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    #     scriptType: 'bash'
+    #     scriptLocation: 'inlineScript'
+    #     inlineScript: |
+    #         az account show
+    #         az storage -h
+    - name: Whitelist GitHub Runner IP
+      uses: azure/cli@v2
+      with:
+        azcliversion: latest
         inlineScript: |
+
           set -eu
           agentIP=$(curl -s https://api.ipify.org/)
           az cosmosdb postgres firewall-rule create \
