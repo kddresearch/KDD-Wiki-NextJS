@@ -70,6 +70,36 @@ test('WikiUser Update to Admin', () => {
     expect(wikiuser).toEqual(expect.objectContaining(userData))
 });
 
+// Create guest wikiuser
+test('WikiUser Guest', () => {
+
+    const wikiuser = WikiUser.guestFactory();
+
+    const guestData = {
+        id: 0,
+        username: "Guest",
+        access_level: AccessLevel.Guest,
+        settings: {},
+        first_name: "John",
+        last_name: "Doe",
+        bio: "My Guest User!",
+        email: "guest@none.com",
+        profile_picture: "/images/default_profile.png",
+        phone_number: "785-000-0000",
+        social_media: {},
+        admin_teams: [],
+        date_created: new Date(),
+        date_modified: new Date(),
+        last_login: new Date(),
+    };
+
+    guestData["date_created"] = wikiuser.date_created;
+    guestData["date_modified"] = wikiuser.date_modified;
+    guestData["last_login"] = wikiuser.last_login;
+
+    expect(wikiuser).toEqual(expect.objectContaining(guestData))
+});
+
 // only continue if the database connection is successful
 
 // const isGitHubActions = process.env.GITHUB_ACTIONS === 'true';

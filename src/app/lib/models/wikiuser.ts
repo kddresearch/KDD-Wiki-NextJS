@@ -2,9 +2,10 @@ import Joi from "joi";
 import KddUser from "./kdd_user";
 
 enum AccessLevel {
+    Guest = "guest",
     ReadOnly = "readonly",
     Member = "member",
-    Admin = "admin",
+    Admin = "admin",   
 }
 
 enum SocialMedia {
@@ -105,19 +106,19 @@ class WikiUser {
         const guestData = {
             id: 0,
             username: "Guest",
-            access_level: AccessLevel.ReadOnly,
+            access_level: AccessLevel.Guest,
             settings: {},
-            first_name: "",
-            last_name: "",
-            bio: "",
-            email: "",
-            profile_picture: "",
-            phone_number: "",
+            first_name: "John",
+            last_name: "Doe",
+            bio: "My Guest User!",
+            email: "guest@none.com",
+            profile_picture: "/images/default_profile.png",
+            phone_number: "785-000-0000",
             social_media: {},
             admin_teams: [],
             date_created: new Date(),
             date_modified: new Date(),
-            last_login: null,
+            last_login: new Date(),
         };
 
         return new WikiUser(guestData);
