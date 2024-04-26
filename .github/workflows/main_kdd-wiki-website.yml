@@ -49,12 +49,21 @@ jobs:
       with:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
 
-    - name: Azure CLI script
+    - name: Whitelist GitHub Runner IP
       uses: azure/CLI@v1
       with:
         azcliversion: latest
         inlineScript: |
-          az account show
+          set -eu
+          agentIP=$(curl -s https://api.ipify.org/)
+          az cosmosdb postgres firewall-rule create \
+            --name "Github_Action_Runner_${{ github.sha }}" \
+            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
+            --cluster-name "${{ secrets.AZURE_COSMOS_CLUSTER }}" \
+            --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
+            --start-ip-address $agentIP \
+            --end-ip-address $agentIP
+          sleep 300
 
     - name: Build and push container image to registry
       uses: docker/build-push-action@v5
