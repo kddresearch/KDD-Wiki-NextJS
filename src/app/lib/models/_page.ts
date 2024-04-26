@@ -38,6 +38,27 @@ class Page {
     is_home: boolean;
     is_template: boolean;
 
+    /**
+     * Returns the url path for the page
+     */
+    get url() {
+        return `/page/${this.id}`;
+    }
+
+    /**
+     * Calculates the estimated minutes to read the content
+     */
+    get minutesToRead() {
+        return Math.max(1, Math.round(this.content.split(' ').length / 225));
+    }
+
+    /**
+     * Returns a string representation of the minutes to read
+     */
+    get minutesToReadString() {
+        return `${this.minutesToRead} minute read`;
+    }
+
     constructor(data: any) {
         // Convert author_id and category_id to numbers if they are strings
         data.author_id = Number(data.author_id);

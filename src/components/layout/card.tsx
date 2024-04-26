@@ -6,6 +6,7 @@ import { BoxArrowUpRight } from "react-bootstrap-icons";
 function Card({
   title = undefined,
   subTitle = undefined,
+  smallTitle = undefined,
   actions = undefined,
   link = undefined,
   isFlex = true,
@@ -13,6 +14,7 @@ function Card({
 }: {
   title?: string;
   subTitle?: string;
+  smallTitle?: string;
   actions?: ReactNode;
   link?: string;
   isFlex?: boolean;
@@ -38,7 +40,7 @@ function Card({
 
   const renderTitleBar = () => {
     return (
-      <div className="flex flex-row text-purple text-4xl lg:text-6xl font-bold">
+      <div className="flex flex-row text-purple text-4xl lg:text-5xl font-bold">
         {link ? (
           <Link href={link} className="grow flex flex-row items-center">
             <h1 className="border-b-8 py-2 border-lightgray">{title}</h1>
@@ -59,10 +61,17 @@ function Card({
     );
   }
 
+  const renderSmallTitle = () => {
+    return (
+      <h3 className="text-lg lg:text-lg font-semibold text-darkgray my-1">{smallTitle}</h3>
+    );
+  }
+
   return (
     <div {...props} className={classes}>
       {title && renderTitleBar()}
       {subTitle && renderSubTitle()}
+      {smallTitle && renderSmallTitle()}
       {props.children}
     </div>
   );

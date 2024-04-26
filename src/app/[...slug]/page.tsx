@@ -32,19 +32,16 @@ export default async function Page({
 
   title = baseTitle + page.title;
 
-  const contentHTML = page.content;
   return (
     <StripeBackDrop isRow={true}>
       <div id="nav-wrapper" className="w-1/4 mr-4">
         <Card subTitle="Navigation" className="bg-gray">
           TO BE IMPLEMENTED
-
-          Add a dynamic table of contents and create that page tree system uhhggggg
         </Card>
       </div>
-      <Card title={page.title} className="grow">
+      <Card title={page.title} smallTitle={page.minutesToReadString} className="grow">
         {isHTML ? (
-          <div className="mt-4 prose max-w-none prose-a:text-purple prose-a:underline" dangerouslySetInnerHTML={{ __html: contentHTML }}></div>
+          <div className="mt-4 prose max-w-none prose-a:text-purple prose-a:underline" dangerouslySetInnerHTML={{ __html: page.content }}></div>
         ) : (
           <RenderMarkdownString markdown={page.content}/>
         )}

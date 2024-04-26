@@ -5,6 +5,7 @@ import Card from "@/components/layout/card";
 
 import { remark } from "remark";
 import html from "remark-html";
+import { RenderMarkdownString } from "@/app/lib/utils/markdown";
 
 async function pageView({ params }: { params: { id: string } }) {
   // check if the id is a number
@@ -25,23 +26,19 @@ async function pageView({ params }: { params: { id: string } }) {
   const isHTML =
     page.content.trim().startsWith("<") && page.content.trim().endsWith(">");
 
-  var contentHTML;
-
-  if (!isHTML) {
-    const processedContent = await remark().use(html).process(page.content);
-    contentHTML = processedContent.toString();
-  } else { 
-    contentHTML = page.content;
-  }
   return (
-    <StripeBackDrop isRow={false}>
-      <Card className="w-12">
-        This is a nav menu
-      </Card>
-      <Card title={page.title + page.id.toString()} className="mx-4">
-        <div className="mt-4 prose max-w-none prose-a:text-purple prose-a:underline">
-          <div dangerouslySetInnerHTML={{ __html: contentHTML }}></div>
-        </div>
+    <StripeBackDrop isRow={true}>
+      <div id="nav-wrapper" className="w-1/4 mr-4">
+        <Card subTitle="Navigation" className="bg-gray">
+          TO BE IMPLEMENTED
+        </Card>
+      </div>
+      <Card title={page.title} smallTitle={page.minutesToReadString} className="mx-4">
+        {isHTML ? (
+          <div className="mt-4 prose max-w-none prose-a:text-purple prose-a:underline" dangerouslySetInnerHTML={{ __html: page.content }}></div>
+        ) : (
+          <RenderMarkdownString markdown={page.content}/>
+        )}
       </Card>
     </StripeBackDrop>
   );
