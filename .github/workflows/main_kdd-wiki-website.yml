@@ -50,9 +50,11 @@ jobs:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
 
     - name: Whitelist GitHub Runner IP
-      uses: azure/CLI@v0.0
-      with:
-        azcliversion: latest
+      uses: AzureCLI@2
+      inputs:
+        azureSubscription: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
         inlineScript: |
           set -eu
           agentIP=$(curl -s https://api.ipify.org/)
