@@ -7,7 +7,7 @@ import NavItem from "@/models/nav-model/nav_item";
 import Breadcrumb from "@/components/breadcrumb";
 import StripeBackDrop from "@/components/layout/backdrop";
 import Card from "@/components/layout/card";
-import Editor from "@/components/editors/lexical/editor";
+import TextEditor from "@/components/editors/lexical/editor";
 import { useState, useEffect } from 'react';
 
 // Lexical
@@ -45,7 +45,7 @@ const Dev = () => {
 
       <StripeBackDrop>
         <Card title="hello testing">
-          <Editor />
+          <TextEditor />
         </Card>
         <Card title="Testing the api!">
           <p className="prose prose-code">

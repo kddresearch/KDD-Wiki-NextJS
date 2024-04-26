@@ -11,6 +11,7 @@ import html from "remark-html";
 import { UserActivity } from "../lib/models/user_activity";
 import { RenderMarkdownString } from "../lib/utils/markdown";
 import { Metadata, ResolvingMetadata } from "next";
+import { Pencil } from "react-bootstrap-icons";
 
 const baseTitle = "KSU KDD Wiki: ";
 let title: string;
@@ -32,6 +33,17 @@ export default async function Page({
 
   title = baseTitle + page.title;
 
+  const PageOptions = () => {
+    return (
+      <div className="text-lg text-black mb-auto">
+        <Link href={page?.editUrl!} className="flex items-center text-2xl text-purple hover:underline">
+          <span className="mr-1"><Pencil color="#512888"/></span>
+          Edit
+        </Link>
+      </div>
+    );
+  };
+
   return (
     <StripeBackDrop isRow={true}>
       <div id="nav-wrapper" className="w-1/4 mr-4">
@@ -39,7 +51,7 @@ export default async function Page({
           TO BE IMPLEMENTED
         </Card>
       </div>
-      <Card title={page.title} smallTitle={page.minutesToReadString} className="grow">
+      <Card title={page.title} smallTitle={page.minutesToReadString} className="grow" actions={<PageOptions/>}>
         {isHTML ? (
           <div className="mt-4 prose max-w-none prose-a:text-purple prose-a:underline" dangerouslySetInnerHTML={{ __html: page.content }}></div>
         ) : (

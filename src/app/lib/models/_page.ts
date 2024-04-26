@@ -45,6 +45,11 @@ class Page {
         return `/page/${this.id}`;
     }
 
+    get editUrl() {
+        return `/page/${this.id}/edit`;
+    }
+
+
     /**
      * Calculates the estimated minutes to read the content
      */

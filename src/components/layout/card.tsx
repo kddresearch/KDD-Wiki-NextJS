@@ -40,21 +40,23 @@ function Card({
 
   const renderTitleBar = () => {
     return (
-      <div className="flex flex-row text-purple text-4xl lg:text-6xl font-bold">
+      <div className="flex flex-row items-center text-purple text-3xl lg:text-4xl xl:text-6xl font-bold mb-4">
         {link ? (
-          <Link href={link} className="grow flex flex-row items-center">
+          <Link href={link} className="grow flex items-center">
             <h1 className="border-b-8 py-2 border-lightgray">{title}</h1>
-            <div className="grow"/>
+            <div className="grow" />
             <BoxArrowUpRight className="text-4xl inline-block justify-center my-auto" />
           </Link>
         ) : (
-          <h1 className="border-b-8 py-2 border-lightgray">{title}</h1>
+          <>
+            <h1 className="border-b-8 py-2 border-lightgray mr-4">{title}</h1>
+            <div className="grow" />
+            {actions}
+          </>
         )}
-        <div className="grow"/>
-        {actions}
-      </div> 
-    )
-  }
+      </div>
+    );
+  };
 
   const renderSubTitle = () => {
     return (

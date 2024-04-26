@@ -51,13 +51,15 @@ function prePopulate() {
     const quote = $createQuoteNode();
     quote.append($createTextNode("This is a quote for everyone talking about how good lexical is as a framework."));
     root.append(quote);
-
-  } 
+  }
   const selection = $getSelection();
 
 }
 
-const Editor = () => {
+const TextEditor = (
+  { markdown }:
+  { markdown: string }
+) => {
 
   const [isClient, setIsClient] = useState(false);
 
@@ -66,7 +68,7 @@ const Editor = () => {
   }, []);
 
   const initialConfig = {
-    editorState: prePopulate,
+    editorState: markdown ? () => $convertFromMarkdownString(markdown) : prePopulate,
     namespace: "editor",
     nodes: [...editorNodes],
     onError: onError,
@@ -122,4 +124,4 @@ const Editor = () => {
   );
 };
 
-export default Editor;
+export default TextEditor;
