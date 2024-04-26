@@ -50,7 +50,7 @@ jobs:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
 
     - name: Whitelist GitHub Runner IP
-      uses: AzureCLI@2
+      uses: AzureCLI@v2
       inputs:
         azureSubscription: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         scriptType: 'bash'
