@@ -101,11 +101,8 @@ test('WikiUser Guest', () => {
 });
 
 // only continue if the database connection is successful
-
-// const isGitHubActions = process.env.GITHUB_ACTIONS === 'true';
 const isGitHubActions = config.github_actions;
-
-(isGitHubActions ? test.skip : test)('DB Connection', async () => {
+test('DB Connection', async () => {
     const connected = await testConnection();
     expect(connected).toBe(true);
 });

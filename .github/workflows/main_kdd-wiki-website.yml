@@ -88,7 +88,8 @@ jobs:
             --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
             --cluster-name "${{ secrets.AZURE_COSMOS_CLUSTER }}" \
             --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
-            --output "none"
+            --output "none" \
+            --yes
 
   deploy:
     runs-on: ubuntu-latest
