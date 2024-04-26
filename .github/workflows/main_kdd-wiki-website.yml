@@ -69,7 +69,6 @@ jobs:
       with:
         azcliversion: latest
         inlineScript: |
-
           set -eu
           az cosmosdb postgres firewall-rule create \
             --name "Github_Action_Runner_${{ github.sha }}" \
@@ -89,7 +88,7 @@ jobs:
         file: ./Dockerfile
         # secrets: |
         #   "AUTH_SECRET=${{ secrets.AUTH_SECRET }}"
-        #   "AUTH_GOOGLE_CLIENT_ID=${{ secrets.AUTH_GOOGLE_CLIENT_ID }}"
+        #   "AUTH_GOOGLE_CLIENT_ID=${{ secrets.AUTH_GOOGLE_CLIENT_ID }}"Microsoft.DBforPostgreSQL/serverGroupsv2/firewallRules/write
         #   "AUTH_GOOGLE_CLIENT_SECRET=${{ secrets.AUTH_GOOGLE_CLIENT_SECRET }}"
         #   "AUTH_KSU_CLIENT_ID=${{ secrets.AUTH_KSU_CLIENT_ID }}"
         #   "AUTH_KSU_CLIENT_SECRET=${{ secrets.AUTH_KSU_CLIENT_SECRET }}"
@@ -100,6 +99,21 @@ jobs:
       # run: |
       #   docker build . --tag ${{ secrets.AzureAppService_ContainerUsername_a41569c48ae7481a82306bff846d04d0 }}/kdd-wiki:latest
       #   docker push ${{ secrets.AzureAppService_ContainerUsername_a41569c48ae7481a82306bff846d04d0 }}/kdd-wiki:latest
+
+    - name: Remove Whitelist For GitHub Runner IP
+      uses: azure/cli@v2
+      with:
+        azcliversion: latest
+        inlineScript: |
+          set -eu
+          az cosmosdb postgres firewall-rule delete \
+            --name "Github_Action_Runner_${{ github.sha }}" \
+            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
+            --cluster-name "${{ secrets.AZURE_COSMOS_CLUSTER }}" \
+            --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
+            --start-ip-address ${{ env.RUNNER_IP }} \
+            --end-ip-address ${{ env.RUNNER_IP }}
+          sleep 300
 
   deploy:
     runs-on: ubuntu-latest
