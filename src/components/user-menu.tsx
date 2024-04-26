@@ -12,11 +12,6 @@ import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import { Alt, ArrowUpRight, ArrowUpRightSquare, Gear, PersonAdd } from 'react-bootstrap-icons';
 import { QueryClient, QueryClientProvider } from "react-query";
-// import PersonAdd from '@mui/icons-material/PersonAdd';
-// import Settings from '@mui/icons-material/Settings';
-// import Logout from '@mui/icons-material/Logout';
-
-// import { signOut } from "@/auth";
 
 import { redirect } from 'next/navigation'
 import WikiUser from '@/app/lib/models/wikiuser';
