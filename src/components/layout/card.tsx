@@ -40,7 +40,7 @@ function Card({
 
   const renderTitleBar = () => {
     return (
-      <div className="flex flex-row text-purple text-4xl lg:text-5xl font-bold">
+      <div className="flex flex-row text-purple text-4xl lg:text-6xl font-bold">
         {link ? (
           <Link href={link} className="grow flex flex-row items-center">
             <h1 className="border-b-8 py-2 border-lightgray">{title}</h1>
@@ -50,6 +50,7 @@ function Card({
         ) : (
           <h1 className="border-b-8 py-2 border-lightgray">{title}</h1>
         )}
+        <div className="grow"/>
         {actions}
       </div> 
     )

@@ -1,4 +1,4 @@
-# [KDD Research Wiki](https://www.kddresearch.org/)
+# [KDD Research Wiki](https://kdd-wiki-website.azurewebsites.net/)
 
 This is a wiki for the KDD Research Lab.
 
