@@ -49,16 +49,6 @@ jobs:
       with:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
 
-    # - task: AzureCLI@2
-    #   displayName: Whitelist GitHub Runner IP
-    #   inputs:
-    #     azureSubscription: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-    #     scriptType: 'bash'
-    #     scriptLocation: 'inlineScript'
-    #     inlineScript: |
-    #         az account show
-    #         az storage -h
-
     - name: Get Runner IP
       run: |
         RUNNER_IP=$(curl -s https://api.ipify.org/)
@@ -76,7 +66,8 @@ jobs:
             --cluster-name "${{ secrets.AZURE_COSMOS_CLUSTER }}" \
             --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
             --start-ip-address ${{ env.RUNNER_IP }} \
-            --end-ip-address ${{ env.RUNNER_IP }}
+            --end-ip-address ${{ env.RUNNER_IP }} \
+            --output "none"
 
     - name: Build and push container image to registry
       uses: docker/build-push-action@v5
@@ -85,19 +76,6 @@ jobs:
         push: true
         tags: ${{ secrets.AzureAppService_ContainerUsername_a41569c48ae7481a82306bff846d04d0 }}/kdd-wiki:latest
         file: ./Dockerfile
-        # secrets: |
-        #   "AUTH_SECRET=${{ secrets.AUTH_SECRET }}"
-        #   "AUTH_GOOGLE_CLIENT_ID=${{ secrets.AUTH_GOOGLE_CLIENT_ID }}"Microsoft.DBforPostgreSQL/serverGroupsv2/firewallRules/write
-        #   "AUTH_GOOGLE_CLIENT_SECRET=${{ secrets.AUTH_GOOGLE_CLIENT_SECRET }}"
-        #   "AUTH_KSU_CLIENT_ID=${{ secrets.AUTH_KSU_CLIENT_ID }}"
-        #   "AUTH_KSU_CLIENT_SECRET=${{ secrets.AUTH_KSU_CLIENT_SECRET }}"
-        #   "DB_NAME=${{ secrets.DB_NAME }}"
-        #   "DB_HOST=${{ secrets.DB_HOST }}"
-        #   "DB_USERNAME=${{ secrets.DB_USERNAME }}"
-        #   "DB_PASSWORD=${{ secrets.DB_PASSWORD }}"
-      # run: |
-      #   docker build . --tag ${{ secrets.AzureAppService_ContainerUsername_a41569c48ae7481a82306bff846d04d0 }}/kdd-wiki:latest
-      #   docker push ${{ secrets.AzureAppService_ContainerUsername_a41569c48ae7481a82306bff846d04d0 }}/kdd-wiki:latest
 
     - name: Remove Whitelist For GitHub Runner IP
       uses: azure/cli@v2
@@ -110,8 +88,7 @@ jobs:
             --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
             --cluster-name "${{ secrets.AZURE_COSMOS_CLUSTER }}" \
             --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
-            --start-ip-address ${{ env.RUNNER_IP }} \
-            --end-ip-address ${{ env.RUNNER_IP }}
+            --output "none"
 
   deploy:
     runs-on: ubuntu-latest
