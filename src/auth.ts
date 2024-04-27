@@ -150,11 +150,17 @@ export async function checkAuth(access_level: AccessLevel): Promise<any> {
   const session = await auth();
 
   let user;
+  let ret_user;
 
   if (!session) return null;
 
   try {
     user = new KddUser(session?.user);
+
+    ret_user = await fetchByUsername(user.username);
+    if (ret_user === null) {
+      ret_user = user;
+    }
   } catch (err) {
     console.error("Error occurred during fetchByUsername:", err);
     return null;

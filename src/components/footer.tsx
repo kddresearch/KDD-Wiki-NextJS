@@ -18,7 +18,7 @@ export default function Footer() {
               alt="unit"
               width="250"
               height="58"
-              className="pr-4 h-full mx-auto md:mx-0 pointer-events-none"
+              className="pr-4 h-full mx-auto md:mx-0 pointer-events-none select-none"
             />
           </Link>
           <div className="flex flex-col py-8 h-full text-black px-4 grow">

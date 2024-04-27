@@ -25,7 +25,7 @@ export default async function UnitBar({
             alt="unit"
             width="40"
             height="32"
-            className="mr-4 h-8 pointer-events-none"
+            className="mr-4 h-8 pointer-events-none select-none"
           />
         </Link>
         <div

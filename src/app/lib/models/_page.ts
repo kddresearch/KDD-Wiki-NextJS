@@ -118,6 +118,30 @@ class Page {
         this.is_home = page.is_home;
         this.is_template = page.is_template;
     }
+
+    /**
+     * Returns a JSON representation of the Page object
+     */
+    toJSON() {
+        return {
+            id: this.id,
+            title: this.title,
+            priority: this.priority,
+            content: this.content,
+            discussion: this.discussion,
+            is_private: this.is_private,
+            date_created: this.date_created,
+            date_modified: this.date_modified,
+            category_id: this.category_id,
+            author_id: this.author_id,
+            name: this.name,
+            has_publication: this.has_publication,
+            is_kdd_only: this.is_kdd_only,
+            last_updated: this.last_updated,
+            is_home: this.is_home,
+            is_template: this.is_template,
+        };
+    }
 }
 
 export default Page;

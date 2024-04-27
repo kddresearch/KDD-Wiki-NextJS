@@ -31,7 +31,7 @@ function ImageBackDrop({
         src={image}
         fill
         sizes="100vw"
-        className='relative object-cover pointer-events-none -z-[1]' 
+        className='relative object-cover pointer-events-none -z-[1] select-none' 
       />
       <div className='container'>
         {children}

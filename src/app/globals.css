@@ -41,3 +41,8 @@ body {
     #f0f0f0 12.72792px
   );
 }
+
+::selection {
+  background-color: rgba(81, 40, 136, .9); /* Set the selection background color to purple */
+  color: white; /* Set the text color to white */
+}
