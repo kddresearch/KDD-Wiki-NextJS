@@ -45,7 +45,7 @@ function Card({
           <Link href={link} className="grow flex items-center">
             <h1 className="border-b-8 py-2 border-lightgray">{title}</h1>
             <div className="grow" />
-            <BoxArrowUpRight className="text-4xl inline-block justify-center my-auto" />
+            <BoxArrowUpRight className="text-2xl lg:text-4xl inline-block justify-center my-auto" />
           </Link>
         ) : (
           <>
