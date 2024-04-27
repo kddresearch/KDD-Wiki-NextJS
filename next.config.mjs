@@ -10,14 +10,6 @@ const nextConfig = {
         protocol: "https",
         hostname: "www.k-state.edu",
       },
-      { 
-        protocol: "https",
-        hostname: "ksu.edu",
-      },
-      { 
-        protocol: "https",
-        hostname: "k-state.edu",
-      },
       {
         protocol: "https",
         hostname: "kdd-wiki-website.azurewebsites.net",
