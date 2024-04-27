@@ -58,7 +58,7 @@ function prePopulate() {
 
 const TextEditor = (
   { markdown }:
-  { markdown: string }
+  { markdown?: string }
 ) => {
 
   const [isClient, setIsClient] = useState(false);
