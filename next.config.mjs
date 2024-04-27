@@ -18,6 +18,18 @@ const nextConfig = {
         protocol: "https",
         hostname: "k-state.edu",
       },
+      {
+        protocol: "https",
+        hostname: "kdd-wiki-website.azurewebsites.net",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+      },
+      {
+        protocol: "https",
+        hostname: "www.kddresearch.org",
+      }
     ],
   },
   webpack: (config, context) => {
