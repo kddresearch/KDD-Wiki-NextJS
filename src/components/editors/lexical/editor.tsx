@@ -56,11 +56,13 @@ function prePopulate() {
 
 }
 
-const TextEditor = (
-  { markdown }:
-  { markdown?: string }
-) => {
-
+const TextEditor = ({
+  markdown,
+  onContentChange,
+}: {
+  markdown?: string;
+  onContentChange: (newContent: string) => void;
+}) => {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -75,8 +77,6 @@ const TextEditor = (
     theme: theme,
   };
 
-
-
   const [foatingAnchorElm, setFloatingAnchorElm] = useState<HTMLDivElement | null>(null);
 
   const onRef = (_floatingAnchorElem: HTMLDivElement) => {
@@ -89,38 +89,60 @@ const TextEditor = (
 
   return (
     <>
-      {isClient ?  (
+      {isClient ? (
         <LexicalComposer initialConfig={initialConfig}>
-          <div id="hello" className="my-5 text-black relative leading-5 font-normal text-left rounded-t-lg border-gray border rounded-b-lg">
-            <ToolbarPlugin />
-            <div id="world" className="bg-white relative prose max-w-none prose-h1:text-purple prose-a:text-purple prose-a:underline">
-              <RichTextPlugin 
-                contentEditable={
-                  <div className="editor-scroller">
-                    <div className="editor" ref={onRef}>
-                      <ContentEditable className="min-h-[150px] resize-none text-[15px] caret-[#444)] relative tab-[1] outline-none p-[15px_10px] caret-[#444] pl-7" />
-                    </div>
-                  </div>
-                } 
-                placeholder={<Placeholder />} 
-                ErrorBoundary={LexicalErrorBoundary}
-              />
-              <HistoryPlugin />
-              <MarkdownPlugin />
-              <MarkdownShortcutPlugin />
-              <AutoFocusPlugin />
-              { foatingAnchorElm ? (
-                <DraggableBlockPlugin anchorElem={foatingAnchorElm} /> 
-              ) : (
-                null
-              )}
-            </div>
-          </div>
+          <Editor
+            onContentChange={onContentChange}
+            onRef={onRef}
+            foatingAnchorElm={foatingAnchorElm}
+          />
         </LexicalComposer>
       ) : (
         <div>Loading editor... (enable javascript)</div>
       )}
     </>
+  );
+};
+
+const Editor = ({ 
+  onContentChange,
+  onRef,
+  foatingAnchorElm,
+}: { 
+  onContentChange: (newContent: string) => void; 
+  onRef: (elem: HTMLDivElement) => void;
+  foatingAnchorElm: HTMLDivElement | null;
+}) => {
+  const [editor] = useLexicalComposerContext();
+
+  useEffect(() => {
+    return editor.registerUpdateListener(({ editorState }) => {
+      onContentChange(editorState.read(() => $convertToMarkdownString()));
+    });
+  }, [editor, onContentChange]);
+
+  return (
+    <div id="hello" className="my-5 text-black relative leading-5 font-normal text-left rounded-t-lg border-gray border rounded-b-lg">
+      <ToolbarPlugin />
+      <div id="world" className="bg-white relative prose max-w-none prose-h1:text-purple prose-a:text-purple prose-a:underline">
+        <RichTextPlugin
+          contentEditable={
+            <div className="editor-scroller">
+              <div className="editor" ref={onRef}>
+                <ContentEditable className="min-h-[150px] resize-none text-[15px] caret-[#444)] relative tab-[1] outline-none p-[15px_10px] caret-[#444] pl-7" />
+              </div>
+            </div>
+          }
+          placeholder={<Placeholder />}
+          ErrorBoundary={LexicalErrorBoundary}
+        />
+        <HistoryPlugin />
+        {/* <MarkdownPlugin /> */}
+        <MarkdownShortcutPlugin />
+        <AutoFocusPlugin />
+        {foatingAnchorElm ? <DraggableBlockPlugin anchorElem={foatingAnchorElm} /> : null}
+      </div>
+    </div>
   );
 };
 

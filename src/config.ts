@@ -37,6 +37,4 @@ const config = {
     "github_actions": process.env.GITHUB_ACTIONS === 'true',
 }
 
-console.log("Enviorment Vars Loaded: ", process.env.LOADED)
-
 export default config;
