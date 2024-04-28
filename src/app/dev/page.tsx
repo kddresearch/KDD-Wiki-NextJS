@@ -45,7 +45,9 @@ const Dev = () => {
 
       <StripeBackDrop>
         <Card title="hello testing">
-          <TextEditor />
+          <TextEditor 
+            onContentChange={() => {}}
+          />
         </Card>
         <Card title="Testing the api!">
           <p className="prose prose-code">
