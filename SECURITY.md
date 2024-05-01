@@ -9,14 +9,10 @@ maintainer via email to ensure confidentiality.
 
 ### How to Report a Vulnerability
 
-1. **Email**: Send an email to the main wiki maintainer at
-wnbaldwin@ksu.edu. 
-2. **Subject Line**: Please use "KSU KDD Wiki Responsible Disclosure" as
-the subject line to ensure that your report is handled promptly.
-3. **Details**: Include as much information as possible about the
-vulnerability, such as the steps to reproduce it, the potential
-impact, and any other details that would help in evaluating the
-severity and urgency of the issue.
+Follow the instructions under the [Security tab](https://github.com/kddresearch/KDD-Wiki-NextJS/security) 
+of the Github Repo, and press "Report a vulnerability." This will 
+privately notify the maintainers of the wiki to ensure that the proper 
+security precautions are taken place
 
 ### Recognition
 
@@ -25,4 +21,5 @@ we acknowledge the importance of your contributions. We may offer an
 award depending on the severity of the reported vulnerability as a token
 of our appreciation for your efforts in improving our security.
 
-Thank you for helping us keep our community and the KSU KDD safe.
+Thank you for helping us keep our community and the KSU KDD Research Lab
+safe.
