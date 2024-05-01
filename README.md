@@ -1,6 +1,9 @@
 # [KDD Research Wiki](https://kdd-wiki-website.azurewebsites.net/)
 
-This is a wiki for the KDD Research Lab.
+This is a wiki for the KDD Research Lab. 
+
+**ONLY ACCESSABLE ON THE K-STATE NETWORK**
+To access the website, you must be signed into the global protect vpn
 
 ## Getting Started
 
