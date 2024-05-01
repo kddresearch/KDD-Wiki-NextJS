@@ -2,6 +2,7 @@ import { expect, test, vi } from "vitest";
 import WikiUser, { AccessLevel } from "@/app/lib/models/wikiuser"
 import { testConnection } from '@/app/lib/db';
 import config from "@/config";
+import { getRandomValues } from "crypto";
 
 // Disables a package that checks that code is only executed on the server side.
 // Also, this mock can be defined in the Vitest setup file.
@@ -9,8 +10,10 @@ vi.mock("server-only", () => {
     return {};
 });
 
+
 test('WikiUser Default', () => {
-    const username = Math.random().toString(36).substring(7);
+    const array = new Uint32Array(1);
+    const username = getRandomValues(array).toString().substring(7);
 
     const userData = {
         id: -1,
@@ -40,7 +43,8 @@ test('WikiUser Default', () => {
 });
 
 test('WikiUser Update to Admin', () => {
-    const username = Math.random().toString(36).substring(7);
+    const array = new Uint32Array(1);
+    const username = getRandomValues(array).toString().substring(7);
 
     const userData = {
         id: -1,
