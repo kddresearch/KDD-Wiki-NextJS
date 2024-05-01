@@ -9,11 +9,20 @@ import {
   ChevronRight,
   HouseFill,
 } from "react-bootstrap-icons";
+import config from "@/config";
 
 const Breadcrumb = () => {
   const pathname = usePathname();
 
   const paths = pathname?.split("/").filter((path) => path !== "");
+
+  const baseGithubUrl = new URL(`https://github.com/${config.github.owner}/${config.github.repo}/issues/new`);
+  baseGithubUrl.searchParams.append("assignees", `[${config.github.maintainers.join(",")}]`);
+  baseGithubUrl.searchParams.append("labels", "missing+content");
+  baseGithubUrl.searchParams.append("template", "report-page-missing.md");
+  baseGithubUrl.searchParams.append("title", `Report Page at ${pathname}`);
+
+  const githubIssueUrl = baseGithubUrl.toString();
 
   return (
     <nav className="bg-white text-purple h-14 font-light">
@@ -42,8 +51,8 @@ const Breadcrumb = () => {
         })}
         <li className="grow" />
         <li className="justify-end">
-          <Link href={`/report?page=${pathname}`}>
-            Report page{" "}
+          <Link href={githubIssueUrl} className="mr-2">
+            Report page
             <span>
               <BoxArrowUpRight className="inline" />
             </span>

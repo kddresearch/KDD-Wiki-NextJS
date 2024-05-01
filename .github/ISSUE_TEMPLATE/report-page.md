@@ -1,7 +1,7 @@
 ---
-name: 'Report Page Missing'
+name: 'Report Page Issue'
 about: Report a missing page on the website
-title: 'Missing Page at [PAGE]'
+title: 'Report Page at [PAGE]'
 labels: missing content
 assignees: Legonois
 
@@ -9,7 +9,7 @@ assignees: Legonois
 
 # Missing Page
 
-## **What page were you expecting to be here?**
+## **What went wrong / What page were you expecting to be here?**
 Insert context about what you expect to be at this location
 
 ## **Additional context**

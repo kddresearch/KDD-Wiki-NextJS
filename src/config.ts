@@ -35,6 +35,11 @@ const config = {
         "is_kdd_only": false
     },
     "github_actions": process.env.GITHUB_ACTIONS === 'true',
+    "github": {
+        "owner": "kddresearch",
+        "repo": "KDD-Wiki-NextJS",
+        "maintainers": ["Legonois"],
+    },
 }
 
 export default config;
