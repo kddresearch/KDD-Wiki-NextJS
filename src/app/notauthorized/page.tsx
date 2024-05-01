@@ -15,7 +15,7 @@ export default function NotAuthorized() {
     return (
       <Link
         className="bg-lightgray text-xl text-black p-1 rounded-md my-auto font-normal"
-        href={`/report/401?page=${callback}`}
+        href={``}
       >
         Report{" "}
         <span>

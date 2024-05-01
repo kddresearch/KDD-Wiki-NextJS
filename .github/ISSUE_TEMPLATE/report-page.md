@@ -1,6 +1,6 @@
 ---
 name: 'Report Page Issue'
-about: Report a missing page on the website
+about: Report a issue on a page
 title: 'Report Page at [PAGE]'
 labels: missing content
 assignees: Legonois
