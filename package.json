@@ -38,7 +38,8 @@
     "remark-html": "^16.0.1",
     "remark-mdx": "^3.0.1",
     "request-ip": "^3.3.0",
-    "sanitize-html": "^2.13.0"
+    "sanitize-html": "^2.13.0",
+    "whatwg-url": "^14.0.0"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.12",
@@ -48,6 +49,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/sanitize-html": "^2.11.0",
+    "@types/whatwg-url": "^11.0.4",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",

@@ -34,7 +34,7 @@ async function query(text: string, params?: any[]): Promise<QueryResult> {
   }
 
   // time the query
-  const start = Date.now();
+  // const start = Date.now();
 
   try {
     // console Debug
@@ -42,9 +42,9 @@ async function query(text: string, params?: any[]): Promise<QueryResult> {
     const result = await pool.query(text, params);
 
     // time the query
-    const duration = Date.now() - start;
-    console.log("table : ", text);
-    console.log("Query duration: ", duration);
+    // const duration = Date.now() - start;
+    // console.log("table : ", text);
+    // console.log("Query duration: ", duration);
 
     return result;
   } catch (err) {

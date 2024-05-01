@@ -4,21 +4,25 @@ import StripeBackDrop from "@/components/layout/backdrop"
 import Card from "@/components/layout/card"
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { BoxArrowUpRight } from "react-bootstrap-icons";
+import { BoxArrowUpRight, Github } from "react-bootstrap-icons";
+import config from "@/config";
 
 export default function NotAuthorized() {
 
   const message = useSearchParams()?.get("message");
   const callback = useSearchParams()?.get("callback");
 
+  const baseGithubUrl = new URL(`https://github.com/${config.github.owner}/${config.github.repo}`);
+
+  // TODO: Implement a way to report unauthorized access
   const ReportRedirect = () => {
     return (
       <Link
         className="bg-lightgray text-xl text-black p-1 rounded-md my-auto font-normal"
-        href={``}
+        href={baseGithubUrl.toString()}
       >
-        Report{" "}
-        <span>
+        Report
+        <span className="ml-2">
           <BoxArrowUpRight className="inline" />
         </span>
       </Link>

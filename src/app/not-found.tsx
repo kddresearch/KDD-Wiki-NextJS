@@ -7,15 +7,15 @@ import { usePathname } from "next/navigation";
 import { BoxArrowUpRight } from "react-bootstrap-icons";
 import StripeBackDrop from "@/components/layout/backdrop";
 import Card from "@/components/layout/card";
-import { URL } from "url";
+import { URL } from 'whatwg-url';
 import config from "@/config";
 
 export default function NotFound() {
   const pathname = usePathname();
 
   const baseGithubUrl = new URL(`https://github.com/${config.github.owner}/${config.github.repo}/issues/new`);
-  baseGithubUrl.searchParams.append("assignees", `[${config.github.maintainers.join(",")}]`);
-  baseGithubUrl.searchParams.append("labels", "missing+content");
+  baseGithubUrl.searchParams.append("assignees", `${config.github.maintainers.join(",")}`);
+  baseGithubUrl.searchParams.append("labels", "missing content");
   baseGithubUrl.searchParams.append("template", "report-page-missing.md");
   baseGithubUrl.searchParams.append("title", `Missing Page at ${pathname}`);
 
@@ -53,6 +53,3 @@ export default function NotFound() {
     </StripeBackDrop>
   );
 }
-
-// how do I find the request path?
-// A: You can use the useRouter hook from next/router to get the current path

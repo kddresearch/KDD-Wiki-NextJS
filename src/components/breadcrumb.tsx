@@ -10,6 +10,7 @@ import {
   HouseFill,
 } from "react-bootstrap-icons";
 import config from "@/config";
+import { URL } from 'whatwg-url';
 
 const Breadcrumb = () => {
   const pathname = usePathname();
@@ -17,9 +18,9 @@ const Breadcrumb = () => {
   const paths = pathname?.split("/").filter((path) => path !== "");
 
   const baseGithubUrl = new URL(`https://github.com/${config.github.owner}/${config.github.repo}/issues/new`);
-  baseGithubUrl.searchParams.append("assignees", `[${config.github.maintainers.join(",")}]`);
-  baseGithubUrl.searchParams.append("labels", "missing+content");
-  baseGithubUrl.searchParams.append("template", "report-page-missing.md");
+  baseGithubUrl.searchParams.append("assignees", `${config.github.maintainers.join(",")}`);
+  // baseGithubUrl.searchParams.append("labels", "missing+content");
+  baseGithubUrl.searchParams.append("template", "report-page.md");
   baseGithubUrl.searchParams.append("title", `Report Page at ${pathname}`);
 
   const githubIssueUrl = baseGithubUrl.toString();
@@ -51,9 +52,9 @@ const Breadcrumb = () => {
         })}
         <li className="grow" />
         <li className="justify-end">
-          <Link href={githubIssueUrl} className="mr-2">
+          <Link href={githubIssueUrl} className="">
             Report page
-            <span>
+            <span className="ml-2">
               <BoxArrowUpRight className="inline" />
             </span>
           </Link>

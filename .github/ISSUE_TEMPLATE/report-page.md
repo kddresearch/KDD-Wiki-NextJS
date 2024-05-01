@@ -7,7 +7,7 @@ assignees: Legonois
 
 ---
 
-# Missing Page
+# Page Issue
 
 ## **What went wrong / What page were you expecting to be here?**
 Insert context about what you expect to be at this location
