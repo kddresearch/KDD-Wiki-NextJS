@@ -14,11 +14,19 @@ jobs:
     runs-on: 'ubuntu-latest'
     # runs-on: self-hosted
 
+    
+
     steps:
     - uses: actions/checkout@v2
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
+
+    - name: Setup Google DNS
+      run: |
+         echo "nameserver 8.8.8.8" |  sudo tee  /etc/resolv.conf.DNSoverride
+         sudo ln -sf /etc/resolv.conf.DNSoverride /etc/resolv.conf
+         cat /etc/resolv.conf 
 
     - name: Log in to registry
       uses: docker/login-action@v3
