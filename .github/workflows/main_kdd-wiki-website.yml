@@ -77,21 +77,6 @@ jobs:
         RUNNER_IP=$(curl -s https://api.ipify.org/)
         echo "RUNNER_IP=$RUNNER_IP" >> $GITHUB_ENV
 
-    # - name: Whitelist GitHub Runner IP
-    #   uses: azure/cli@v2
-    #   with:
-    #     azcliversion: latest
-    #     inlineScript: |
-    #       set -eu
-    #       az cosmosdb postgres firewall-rule create \
-    #         --name "Github_Action_Runner_${{ github.sha }}" \
-    #         --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-    #         --cluster-name "${{ secrets.AZURE_COSMOS_CLUSTER }}" \
-    #         --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
-    #         --start-ip-address ${{ env.RUNNER_IP }} \
-    #         --end-ip-address ${{ env.RUNNER_IP }} \
-    #         --output "none"
-
     - name: Whitelist Github Runner IP
       run: |
         echo "RUNNER_IP=$RUNNER_IP" >> $GITHUB_ENV
@@ -113,20 +98,6 @@ jobs:
         file: ./Dockerfile
         builder: mybuilder
         network: host
-
-    # - name: Remove Whitelist For GitHub Runner IP
-    #   uses: azure/cli@v2
-    #   with:
-    #     azcliversion: latest
-    #     inlineScript: |
-    #       set -eu
-    #       az cosmosdb postgres firewall-rule delete \
-    #         --name "Github_Action_Runner_${{ github.sha }}" \
-    #         --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-    #         --cluster-name "${{ secrets.AZURE_COSMOS_CLUSTER }}" \
-    #         --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
-    #         --output "none" \
-    #         --yes
 
     - name: Whitelist Github Runner IP
       run: |
