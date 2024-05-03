@@ -20,13 +20,13 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      # uses: docker/setup-buildx-action@v2
       # with:
       #   driver-opts: |
       #     network=host 
-      # run: |
-      #   docker buildx create --use --driver-opt network=host --name mybuilder
-      #   docker buildx inspect --bootstrap
+      run: |
+        docker buildx create --use --driver-opt network=host --name mybuilder
+        docker buildx inspect --bootstrap
 
     - name: Setup Google DNS
       run: |
@@ -44,6 +44,7 @@ jobs:
       run: |
         echo "${{ env.REGISTRY_IP }} ${{ secrets.ContainerRegistry }}" | sudo tee -a /etc/hosts
         cat /etc/hosts
+        sudo systemd-resolve –flush-caches
 
     - name: Restart Docker
       run: sudo systemctl restart docker
@@ -114,7 +115,7 @@ jobs:
         push: true
         tags: ${{ secrets.ContainerRegistryUsername }}/kdd-wiki:latest
         file: ./Dockerfile
-        # builder: mybuilder
+        builder: mybuilder
         network: host
 
     - name: Remove Whitelist For GitHub Runner IP
