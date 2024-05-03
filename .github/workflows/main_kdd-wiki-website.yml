@@ -32,7 +32,7 @@ jobs:
       run: |
          echo "nameserver 8.8.8.8" |  sudo tee  /etc/resolv.conf.DNSoverride
          sudo ln -sf /etc/resolv.conf.DNSoverride /etc/resolv.conf
-         cat /etc/resolv.conf 
+         cat /etc/resolv.conf
     
     - name: Lookup Registry IP
       id: lookup_ip
@@ -47,7 +47,7 @@ jobs:
 
     - name: Flush DNS Cache
       run:
-        sudo systemd-resolve --flush-caches
+        sudo service nscd restart
 
     - name: Restart Docker
       run: sudo systemctl restart docker
