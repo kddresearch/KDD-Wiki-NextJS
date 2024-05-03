@@ -1,7 +1,7 @@
 import fs from 'fs';
 import React from 'react';
 import classNames from 'classnames';
-import { MDXRemote } from 'next-mdx-remote/rsc'
+import { MDXRemote } from 'next-mdx-remote/rsc';
 import Card from '@/components/layout/card';
 import Link from 'next/link';
 
