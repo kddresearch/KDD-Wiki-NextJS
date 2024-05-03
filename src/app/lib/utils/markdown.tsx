@@ -1,14 +1,18 @@
 import fs from 'fs';
+// import * as prod from 'react/jsx-runtime'
 import React from 'react';
 import classNames from 'classnames';
-import rehypeParse from 'rehype-parse';
-import rehypeReact from 'rehype-react';
-import {unified} from 'unified';
+// import rehypeParse from 'rehype-parse';
+// import rehypeSanitize from 'rehype-sanitize'
+// import rehypeStringify from 'rehype-stringify'
+// import rehypeReact from 'rehype-react';
+// import { unified } from 'unified';
+import { MDXRemote } from 'next-mdx-remote/rsc'
 
-// @ts-expect-error: the react types are missing.
-const production = {Fragment: prod.Fragment, jsx: prod.jsx, jsxs: prod.jsxs}
+// TODO: Fix this type issue
+// const production = {Fragment: prod.Fragment, jsx: prod.jsx, jsxs: prod.jsxs} as any;
 
-function RenderMarkdownString({ 
+async function RenderMarkdownString({ 
   markdown, 
   ...props 
 }: { 
@@ -17,13 +21,21 @@ function RenderMarkdownString({
 ) {
   const proseClasses = classNames('prose', 'max-w-none', 'prose-h1:text-purple', 'prose-a:text-purple', 'prose-a:underline', props.className);
 
-  const processor = unified()
-    .use(rehypeParse, {fragment: true})
-    .use(rehypeReact, production)
+  // const processor = unified()
+  //   .use(rehypeParse, {fragment: true})
+  //   .use(rehypeSanitize)
+  //   .use(rehypeStringify)
+  //   .use(rehypeReact, production)
 
-  const content = processor.processSync(markdown).result;
+  // const content = await processor.process(markdown);
 
-  return <div className={proseClasses} {...props}>{content}</div>;
+  // const content = <MDXRemote source={markdown} />
+
+  return (
+    <div className={proseClasses} {...props}>
+      <MDXRemote source={markdown} />
+    </div>
+  );
 }
 
 function RenderMarkdownFile({ 
