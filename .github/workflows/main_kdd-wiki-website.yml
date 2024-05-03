@@ -27,16 +27,20 @@ jobs:
          echo "nameserver 8.8.8.8" |  sudo tee  /etc/resolv.conf.DNSoverride
          sudo ln -sf /etc/resolv.conf.DNSoverride /etc/resolv.conf
          cat /etc/resolv.conf 
+    
+    - name: Restart Docker
+      run: sudo systemctl restart docker
 
-    - name: Lookup
-      run: | 
-        REGISTRY_IP=$(nslookup ${{ secrets.ContainerRegistry }} | grep Address | tail -n 1 | awk '{print $2}')
-        echo "REGISTRY_IP=$REGISTRY_IP" >> $GITHUB_ENV
+    # - name: Lookup
+    #   run: | 
+    #     REGISTRY_IP=$(nslookup ${{ secrets.ContainerRegistry }} | grep Address | tail -n 1 | awk '{print $2}')
+    #     echo "REGISTRY_IP=$REGISTRY_IP" >> $GITHUB_ENV
+    #     sudo systemctl restart docker
 
     - name: Log in to registry
       uses: docker/login-action@v3
       with: 
-        registry: ${{ env.REGISTRY_IP }}
+        registry: ${{ secrets.ContainerRegistry }}
         username: ${{ secrets.ContainerRegistryUsername }}
         password: ${{ secrets.ContainerRegistryPassword }}
 
