@@ -118,15 +118,21 @@ jobs:
     #     network: host
 
     # For testing, build and push hello-world image
-    - name: Push hello-world image to registry
-      uses: docker/build-push-action@v5
-      with:
-        push: true
-        tags: ${{ secrets.CONTAINERREGISTRYUSERNAME }}/kdd-wiki:latest
-        builder: mybuilder
-        network: host
-        build-args: |
-          IMAGE=hello-world
+    # - name: Push hello-world image to registry
+    #   uses: docker/build-push-action@v5
+    #   with:
+    #     push: true
+    #     tags: ${{ secrets.CONTAINERREGISTRYUSERNAME }}/kdd-wiki:latest
+    #     builder: mybuilder
+    #     network: host
+    #     build-args: |
+    #       IMAGE=hello-world
+
+    - name: Pull and push hello-world image
+      run: |
+        docker pull hello-world:latest
+        docker tag hello-world:latest ${{ secrets.CONTAINERREGISTRYUSERNAME }}/kdd-wiki:latest  
+        docker push ${{ secrets.CONTAINERREGISTRYUSERNAME }}/kdd-wiki:latest
 
     - name: Remove Whitelist For GitHub Runner IP
       uses: azure/cli@v2
