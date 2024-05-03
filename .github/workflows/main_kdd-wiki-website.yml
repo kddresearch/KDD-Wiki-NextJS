@@ -107,34 +107,22 @@ jobs:
     #         --end-ip-address ${{ env.RUNNER_IP }} \
     #         --output "none"
 
-    # - name: Build and push container image to registry
-    #   uses: docker/build-push-action@v5
-    #   with:
-    #     context: .
-    #     push: true
-    #     tags: ${{ secrets.CONTAINERREGISTRYUSERNAME }}/kdd-wiki:latest
-    #     file: ./Dockerfile
-    #     builder: mybuilder
-    #     network: host
-
-    # For testing, build and push hello-world image
-    # - name: Push hello-world image to registry
-    #   uses: docker/build-push-action@v5
-    #   with:
-    #     push: true
-    #     tags: ${{ secrets.CONTAINERREGISTRYUSERNAME }}/kdd-wiki:latest
-    #     builder: mybuilder
-    #     network: host
-    #     build-args: |
-    #       IMAGE=hello-world
-
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: ${{ secrets.CONTAINERREGISTRY }}/${{ secrets.CONTAINERREGISTRYUSERNAME }}/kdd-wiki:latest
+        file: ./Dockerfile
+        builder: mybuilder
+        network: host
 
     # docker login -u ${{ secrets.CONTAINERREGISTRYUSERNAME }} -p ${{ secrets.CONTAINERREGISTRYPASSWORD }} ${{ secrets.CONTAINERREGISTRY }}
-    - name: Pull and push hello-world image
-      run: |
-        docker pull hello-world:latest
-        docker tag hello-world:latest ${{ secrets.CONTAINERREGISTRY }}/${{ secrets.CONTAINERREGISTRYUSERNAME }}/hello-world:latest
-        docker push ${{ secrets.CONTAINERREGISTRY }}/${{ secrets.CONTAINERREGISTRYUSERNAME }}/hello-world:latest
+    # - name: Pull and push hello-world image
+    #   run: |
+    #     docker pull hello-world:latest
+    #     docker tag hello-world:latest ${{ secrets.CONTAINERREGISTRY }}/${{ secrets.CONTAINERREGISTRYUSERNAME }}/hello-world:latest
+    #     docker push ${{ secrets.CONTAINERREGISTRY }}/${{ secrets.CONTAINERREGISTRYUSERNAME }}/hello-world:latest
 
     # - name: Remove Whitelist For GitHub Runner IP
     #   uses: azure/cli@v2
