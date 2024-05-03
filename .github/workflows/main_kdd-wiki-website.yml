@@ -44,7 +44,10 @@ jobs:
       run: |
         echo "${{ env.REGISTRY_IP }} ${{ secrets.ContainerRegistry }}" | sudo tee -a /etc/hosts
         cat /etc/hosts
-        sudo systemd-resolve –flush-caches
+
+    - name: Flush DNS Cache
+      run:
+        sudo systemd-resolve --flush-caches
 
     - name: Restart Docker
       run: sudo systemctl restart docker
