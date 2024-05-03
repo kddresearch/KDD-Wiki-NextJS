@@ -37,36 +37,32 @@ jobs:
     - name: Lookup Registry IP
       id: lookup_ip
       run: |
-        REGISTRY_IP=$(nslookup ${{ secrets.ContainerRegistry }} | grep Address | tail -n 1 | awk '{print $2}')
+        REGISTRY_IP=$(nslookup ${{ secrets.CONTAINERREGISTRY }} | grep Address | tail -n 1 | awk '{print $2}')
         echo "REGISTRY_IP=$REGISTRY_IP" >> $GITHUB_ENV
     
     - name: Modify /etc/hosts
       run: |
-        echo "${{ env.REGISTRY_IP }} ${{ secrets.ContainerRegistry }}" | sudo tee -a /etc/hosts
+        echo "${{ env.REGISTRY_IP }} ${{ secrets.CONTAINERREGISTRY }}" | sudo tee -a /etc/hosts
         cat /etc/hosts
-
-    - name: Flush DNS Cache
-      run:
-        sudo service nscd restart
 
     - name: Restart Docker
       run: sudo systemctl restart docker
 
     # - name: Lookup
     #   run: | 
-    #     REGISTRY_IP=$(nslookup ${{ secrets.ContainerRegistry }} | grep Address | tail -n 1 | awk '{print $2}')
+    #     REGISTRY_IP=$(nslookup ${{ secrets.CONTAINERREGISTRY }} | grep Address | tail -n 1 | awk '{print $2}')
     #     echo "REGISTRY_IP=$REGISTRY_IP" >> $GITHUB_ENV
     #     sudo systemctl restart docker
 
     - name: Lookup
-      run: nslookup ${{ secrets.ContainerRegistry }}
+      run: nslookup ${{ secrets.CONTAINERREGISTRY }}
 
     - name: Log in to registry
       uses: docker/login-action@v3
       with: 
-        registry: ${{ secrets.ContainerRegistry }}
-        username: ${{ secrets.ContainerRegistryUsername }}
-        password: ${{ secrets.ContainerRegistryPassword }}
+        registry: ${{ secrets.CONTAINERREGISTRY }}
+        username: ${{ secrets.CONTAINERREGISTRYUSERNAME }}
+        password: ${{ secrets.CONTAINERREGISTRYPASSWORD }}
 
     - name: Create .env.local with secrets
       run: |
@@ -82,7 +78,7 @@ jobs:
         echo $'LOADED=true\n' >> .env.local
         echo $'GITHUB_ACTIONS=true\n' >> .env.local
 
-      # give permissions to the .env.local file
+    # give permissions to the .env.local file
     - name: Give permissions to .env.local
       run: chmod 644 .env.local
 
