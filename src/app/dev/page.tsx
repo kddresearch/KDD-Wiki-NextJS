@@ -54,7 +54,7 @@ const Dev = () => {
             <pre>{apiData}</pre>
           </p>
         </Card>
-        <Card title="hello testing">woiahdi</Card>
+        <Card title="hello testing">THIS IS THE NEW VERSION pushed from the azure registry</Card>
         <Card title="hello testing">dwa id</Card>
         <Card title="hello testing"> dwahidahi</Card>
 
