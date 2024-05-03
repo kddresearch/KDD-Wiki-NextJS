@@ -114,7 +114,7 @@ jobs:
         push: true
         tags: ${{ secrets.ContainerRegistryUsername }}/kdd-wiki:latest
         file: ./Dockerfile
-        builder: mybuilder
+        # builder: mybuilder
         network: host
 
     - name: Remove Whitelist For GitHub Runner IP
