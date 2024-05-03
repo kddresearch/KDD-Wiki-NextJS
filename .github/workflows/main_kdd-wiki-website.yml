@@ -132,7 +132,8 @@ jobs:
       run: |
         docker pull hello-world:latest
           docker tag hello-world:latest ${{ secrets.CONTAINERREGISTRYUSERNAME }}/kdd-wiki:latest  
-          docker push ${{ secrets.CONTAINERREGISTRY }}/${{ secrets.CONTAINERREGISTRYUSERNAME }}/kdd-wiki:latest
+          docker push ${{ secrets.CONTAINERREGISTRY }}/${{ secrets.CONTAINERREGISTRYUSERNAME }}/hello-world:latest
+      # docker push ${{ secrets.CONTAINERREGISTRY }}/${{ secrets.CONTAINERREGISTRYUSERNAME }}/kdd-wiki:latest
 
     - name: Remove Whitelist For GitHub Runner IP
       uses: azure/cli@v2
