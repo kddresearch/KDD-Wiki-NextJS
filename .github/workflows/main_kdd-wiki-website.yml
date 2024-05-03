@@ -22,9 +22,9 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
       with:
-        buildkitd-flags: "--allow-insecure-entitlement network.host --driver-opt network=host"
-        # append: |
-        #   '"driver-opts: network=host"'
+        buildkitd-flags: --allow-insecure-entitlement network.host
+        append: |
+          --driver-opt network=host
 
     - name: Setup Google DNS
       run: |
