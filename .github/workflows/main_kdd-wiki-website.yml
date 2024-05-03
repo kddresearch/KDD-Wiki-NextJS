@@ -78,6 +78,10 @@ jobs:
             --end-ip-address ${{ env.RUNNER_IP }} \
             --output "none"
 
+
+    - name: Lookup
+      run: nslookup ${{ secrets.REGISTRY_URL }}
+
     - name: Build and push container image to registry
       uses: docker/build-push-action@v5
       with:
