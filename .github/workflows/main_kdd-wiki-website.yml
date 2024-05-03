@@ -28,10 +28,15 @@ jobs:
          sudo ln -sf /etc/resolv.conf.DNSoverride /etc/resolv.conf
          cat /etc/resolv.conf 
 
+    - name: Lookup
+      run: | 
+        REGISTRY_IP=$(nslookup ${{ secrets.ContainerRegistry }} | grep Address | tail -n 1 | awk '{print $2}')
+        echo "REGISTRY_IP=$REGISTRY_IP" >> $GITHUB_ENV
+
     - name: Log in to registry
       uses: docker/login-action@v3
       with: 
-        registry: ${{ secrets.ContainerRegistry }}
+        registry: ${{ env.REGISTRY_IP }}
         username: ${{ secrets.ContainerRegistryUsername }}
         password: ${{ secrets.ContainerRegistryPassword }}
 
@@ -77,10 +82,6 @@ jobs:
             --start-ip-address ${{ env.RUNNER_IP }} \
             --end-ip-address ${{ env.RUNNER_IP }} \
             --output "none"
-
-
-    - name: Lookup
-      run: nslookup ${{ secrets.ContainerRegistry }}
 
     - name: Build and push container image to registry
       uses: docker/build-push-action@v5
