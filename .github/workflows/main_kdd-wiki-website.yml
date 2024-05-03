@@ -87,35 +87,46 @@ jobs:
       with:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
 
-    - name: Get Runner IP
-      run: |
-        RUNNER_IP=$(curl -s https://api.ipify.org/)
-        echo "RUNNER_IP=$RUNNER_IP" >> $GITHUB_ENV
+    # - name: Get Runner IP
+    #   run: |
+    #     RUNNER_IP=$(curl -s https://api.ipify.org/)
+    #     echo "RUNNER_IP=$RUNNER_IP" >> $GITHUB_ENV
 
-    - name: Whitelist GitHub Runner IP
-      uses: azure/cli@v2
-      with:
-        azcliversion: latest
-        inlineScript: |
-          set -eu
-          az cosmosdb postgres firewall-rule create \
-            --name "Github_Action_Runner_${{ github.sha }}" \
-            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-            --cluster-name "${{ secrets.AZURE_COSMOS_CLUSTER }}" \
-            --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
-            --start-ip-address ${{ env.RUNNER_IP }} \
-            --end-ip-address ${{ env.RUNNER_IP }} \
-            --output "none"
+    # - name: Whitelist GitHub Runner IP
+    #   uses: azure/cli@v2
+    #   with:
+    #     azcliversion: latest
+    #     inlineScript: |
+    #       set -eu
+    #       az cosmosdb postgres firewall-rule create \
+    #         --name "Github_Action_Runner_${{ github.sha }}" \
+    #         --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
+    #         --cluster-name "${{ secrets.AZURE_COSMOS_CLUSTER }}" \
+    #         --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
+    #         --start-ip-address ${{ env.RUNNER_IP }} \
+    #         --end-ip-address ${{ env.RUNNER_IP }} \
+    #         --output "none"
 
-    - name: Build and push container image to registry
+    # - name: Build and push container image to registry
+    #   uses: docker/build-push-action@v5
+    #   with:
+    #     context: .
+    #     push: true
+    #     tags: ${{ secrets.CONTAINERREGISTRYUSERNAME }}/kdd-wiki:latest
+    #     file: ./Dockerfile
+    #     builder: mybuilder
+    #     network: host
+
+    # For testing, build and push hello-world image
+    - name: Push hello-world image to registry
       uses: docker/build-push-action@v5
       with:
-        context: .
         push: true
-        tags: ${{ secrets.ContainerRegistryUsername }}/kdd-wiki:latest
-        file: ./Dockerfile
+        tags: ${{ secrets.CONTAINERREGISTRYUSERNAME }}/kdd-wiki:latest
         builder: mybuilder
         network: host
+        build-args: |
+          IMAGE=hello-world
 
     - name: Remove Whitelist For GitHub Runner IP
       uses: azure/cli@v2
