@@ -2,10 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import Breadcrumb from "./breadcrumb";
 import { Github, Opencollective } from "react-bootstrap-icons";
+import config from "@/config";
 
 export default function Footer() {
 
-  const GITHUB_URL = "https://github.com/Legonois/Kdd-Wiki-React";
+  const GITHUB_URL = `https://github.com/${config.github.owner}/${config.github.repo}`;
 
   return (
     <>
