@@ -57,12 +57,12 @@ jobs:
     - name: Lookup
       run: nslookup ${{ secrets.CONTAINERREGISTRY }}
 
-    - name: Log in to registry
-      uses: docker/login-action@v3
-      with: 
-        registry: ${{ secrets.CONTAINERREGISTRY }}
-        username: ${{ secrets.CONTAINERREGISTRYUSERNAME }}
-        password: ${{ secrets.CONTAINERREGISTRYPASSWORD }}
+    # - name: Log in to registry
+    #   uses: docker/login-action@v3
+    #   with: 
+    #     registry: ${{ secrets.CONTAINERREGISTRY }}
+    #     username: ${{ secrets.CONTAINERREGISTRYUSERNAME }}
+    #     password: ${{ secrets.CONTAINERREGISTRYPASSWORD }}
 
     - name: Create .env.local with secrets
       run: |
@@ -82,10 +82,10 @@ jobs:
     - name: Give permissions to .env.local
       run: chmod 644 .env.local
 
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: '${{ secrets.AZURE_CREDENTIALS }}'
+    # - name: Azure Login
+    #   uses: azure/login@v1
+    #   with:
+    #     creds: '${{ secrets.AZURE_CREDENTIALS }}'
 
     # - name: Get Runner IP
     #   run: |
@@ -130,38 +130,38 @@ jobs:
 
     - name: Pull and push hello-world image
       run: |
+        docker login -u ${{ secrets.CONTAINERREGISTRYUSERNAME }} -p ${{ secrets.CONTAINERREGISTRYPASSWORD }} ${{ secrets.CONTAINERREGISTRY }}
         docker pull hello-world:latest
-          docker tag hello-world:latest ${{ secrets.CONTAINERREGISTRYUSERNAME }}/kdd-wiki:latest  
-          docker push ${{ secrets.CONTAINERREGISTRY }}/${{ secrets.CONTAINERREGISTRYUSERNAME }}/hello-world:latest
-      # docker push ${{ secrets.CONTAINERREGISTRY }}/${{ secrets.CONTAINERREGISTRYUSERNAME }}/kdd-wiki:latest
+        docker tag hello-world:latest ${{ secrets.CONTAINERREGISTRY }}/${{ secrets.CONTAINERREGISTRYUSERNAME }}/hello-world:latest
+        docker push ${{ secrets.CONTAINERREGISTRY }}/${{ secrets.CONTAINERREGISTRYUSERNAME }}/hello-world:latest
 
-    - name: Remove Whitelist For GitHub Runner IP
-      uses: azure/cli@v2
-      with:
-        azcliversion: latest
-        inlineScript: |
-          set -eu
-          az cosmosdb postgres firewall-rule delete \
-            --name "Github_Action_Runner_${{ github.sha }}" \
-            --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-            --cluster-name "${{ secrets.AZURE_COSMOS_CLUSTER }}" \
-            --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
-            --output "none" \
-            --yes
+    # - name: Remove Whitelist For GitHub Runner IP
+    #   uses: azure/cli@v2
+    #   with:
+    #     azcliversion: latest
+    #     inlineScript: |
+    #       set -eu
+    #       az cosmosdb postgres firewall-rule delete \
+    #         --name "Github_Action_Runner_${{ github.sha }}" \
+    #         --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
+    #         --cluster-name "${{ secrets.AZURE_COSMOS_CLUSTER }}" \
+    #         --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
+    #         --output "none" \
+    #         --yes
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: 'production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    steps:
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: Azure/webapps-deploy@v3.0.1
-        with:
-          app-name: 'kdd-wiki-website'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_0a6678781b5e4a36850720ab95d56538 }}
-          images: '${{ secrets.ContainerRegistry }}/${{ secrets.ContainerRegistryUsername }}/kdd-wiki:latest'
-          slot-name: 'production'
-          restart: true
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   environment:
+  #     name: 'production'
+  #     url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+  #   steps:
+  #     - name: Deploy to Azure Web App
+  #       id: deploy-to-webapp
+  #       uses: Azure/webapps-deploy@v3.0.1
+  #       with:
+  #         app-name: 'kdd-wiki-website'
+  #         publish-profile: ${{ secrets.AzureAppService_PublishProfile_0a6678781b5e4a36850720ab95d56538 }}
+  #         images: '${{ secrets.ContainerRegistry }}/${{ secrets.ContainerRegistryUsername }}/kdd-wiki:latest'
+  #         slot-name: 'production'
+  #         restart: true
