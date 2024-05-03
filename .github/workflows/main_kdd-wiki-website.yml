@@ -23,8 +23,6 @@ jobs:
       uses: docker/setup-buildx-action@v3
       with:
         buildkitd-flags: "--allow-insecure-entitlement network.host"
-        driver-opts: |
-          network=host
 
     - name: Setup Google DNS
       run: |
@@ -101,6 +99,7 @@ jobs:
         push: true
         tags: ${{ secrets.ContainerRegistryUsername }}/kdd-wiki:latest
         file: ./Dockerfile
+        driver-opts: network=host
 
     - name: Remove Whitelist For GitHub Runner IP
       uses: azure/cli@v2
