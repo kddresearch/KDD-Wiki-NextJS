@@ -80,10 +80,10 @@ jobs:
     - name: Whitelist Github Runner IP
       run: |
         echo "RUNNER_IP=$RUNNER_IP" >> $GITHUB_ENV
-        az cosmosdb postgres firewall-rule create \
-          --name "Github_Action_Runner_${{ github.sha }}" \
+        az postgres flexible-server firewall-rule create \
+          --rule-name "Github_Action_Runner_${{ github.sha }}" \
           --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-          --cluster-name "${{ secrets.AZURE_COSMOS_CLUSTER }}" \
+          --name "${{ secrets.AZURE_DATABASE }}" \
           --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
           --start-ip-address ${{ env.RUNNER_IP }} \
           --end-ip-address ${{ env.RUNNER_IP }} \
@@ -102,9 +102,9 @@ jobs:
     - name: Whitelist Github Runner IP
       run: |
         az cosmosdb postgres firewall-rule delete \
-        --name "Github_Action_Runner_${{ github.sha }}" \
+        --rule-name "Github_Action_Runner_${{ github.sha }}" \
         --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-        --cluster-name "${{ secrets.AZURE_COSMOS_CLUSTER }}" \
+        --name "${{ secrets.AZURE_DATABASE }}" \
         --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
         --output "none" \
         --yes
