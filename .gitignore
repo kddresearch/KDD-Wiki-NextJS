@@ -8,6 +8,7 @@
 
 # testing
 /coverage
+/postgres
 
 # next.js
 /.next/
