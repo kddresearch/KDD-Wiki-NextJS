@@ -101,10 +101,10 @@ jobs:
 
     - name: Whitelist Github Runner IP
       run: |
-        az cosmosdb postgres firewall-rule delete \
+        az postgres flexible-server firewall-rule delete \
+        --name "${{ secrets.AZURE_DATABASE }}" \
         --rule-name "Github_Action_Runner_${{ github.sha }}" \
         --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-        --name "${{ secrets.AZURE_DATABASE }}" \
         --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
         --output "none" \
         --yes
