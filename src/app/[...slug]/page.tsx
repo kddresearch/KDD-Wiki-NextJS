@@ -18,7 +18,9 @@ let title: string;
 
 export default async function Page({ 
   params 
-}: { params: { slug: string[] } }) {
+}: { 
+  params: { slug: string[] } 
+}) {
   const url = params.slug.join("/");
   const customUrl = await fetchByURL(url);
   if (customUrl == null) {
