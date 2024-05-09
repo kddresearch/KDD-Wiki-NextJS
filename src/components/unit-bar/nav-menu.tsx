@@ -160,11 +160,11 @@ const Navigation = () => {
 
         <div id="desktop-nav" className="md:flex flex-row hidden">
           {Dropdown(nav1)}
-          <div className="h-6 inline border-l-[1px] pr-5"></div>
+          <div className="h-6 inline border-l-[1px] border-white pr-5"></div>
           {Dropdown(nav2)}
-          <div className="h-6 inline border-l-[1px] pr-5"></div>
+          <div className="h-6 inline border-l-[1px] border-white pr-5"></div>
           {Dropdown(nav3)}
-          <div className="h-6 inline border-l-[1px] pr-5"></div>
+          <div className="h-6 inline border-l-[1px] border-white pr-5"></div>
           {Dropdown(nav4)}
         </div>
       </div>
