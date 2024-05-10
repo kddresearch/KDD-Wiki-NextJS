@@ -11,28 +11,28 @@ if (!account || !accountKey || !container) {
 
 const accountKeyCredential = new StorageSharedKeyCredential(account, accountKey);
 const WikiContainerServiceClient = new ContainerClient(`https://${account}.blob.core.windows.net/${container}`, accountKeyCredential);
-// const WikiBlobServiceClient = new BlobServiceClient(`https://${account}.blob.core.windows.net`, accountKeyCredential);
-
-export {
-    WikiContainerServiceClient
-}
 
 async function getFile(filepath: string): Promise<BlobDownloadResponseParsed> {
 
-    const containerClient = WikiContainerServiceClient;
-    const blobClient = containerClient.getBlobClient(filepath);
+    try {
 
-    const downloadResponse = await blobClient.download();
-    const stream = downloadResponse.readableStreamBody;
+        const containerClient = WikiContainerServiceClient;
+        const blobClient = containerClient.getBlobClient(filepath);
+    
+        const downloadResponse = await blobClient.download();
+        const stream = downloadResponse.readableStreamBody;
 
-    if (!stream) {
-        throw {
-            status: 404,
-            message: "Blob not found"
-        }
+        if (!stream) 
+            throw {status: 404, message: "File not found" }
+
+        return downloadResponse;
+
+    } catch (err: any) {
+        if (err.statusCode == 404)
+            throw { status: 404, message: "File not found" }
+
+        throw { status: err.statusCode, message: `Error fetching file ${filepath}`}
     }
-
-    return downloadResponse;
 }
 
 export {

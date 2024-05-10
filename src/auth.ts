@@ -109,10 +109,7 @@ export async function checkAuthAPI(access_level: AccessLevel): Promise<KddUser |
   let user;
   let ret_user;
 
-  console.log("Session: ", session);
-
   if (!session) {
-    console.log("No session");
     throw { status: 401, message: "Unauthorized" };
   }
 
