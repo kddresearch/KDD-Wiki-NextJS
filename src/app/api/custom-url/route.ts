@@ -16,11 +16,12 @@ import { bodyParser, handleAPIError } from "@/app/lib/utils/api";
 export async function GET (
     req: NextRequest
 ) {
-    const authUser = await checkAuthAPI(AccessLevel.Admin);
     const url = req.nextUrl.searchParams.get("url");
     let custom_url;
 
     try {
+        const authUser = await checkAuthAPI(AccessLevel.Admin);
+
         if (!url) 
             return NextResponse.json(await fetchAll());
 
@@ -40,11 +41,12 @@ export async function GET (
 export async function POST (
     req: NextRequest
 ) {
-    const authUser = await checkAuthAPI(AccessLevel.Admin);
     let custom_url;
     let existingCustomUrl
 
     try {
+        const authUser = await checkAuthAPI(AccessLevel.Admin);
+
         custom_url = await bodyParser(req, CustomUrl);
         existingCustomUrl = await fetchByURL(custom_url.url);
 
@@ -63,11 +65,12 @@ export async function POST (
 export async function DELETE (
     req: NextRequest
 ) {
-    const authUser = await checkAuthAPI(AccessLevel.Admin);
     const url = req.nextUrl.searchParams.get("url");
     let custom_url;
 
     try {
+        const authUser = await checkAuthAPI(AccessLevel.Admin);
+
         if (!url) 
             throw { status: 400, message: "URL not provided" };
 

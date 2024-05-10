@@ -1,27 +1,19 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import WikiUser from "../models/wikiuser";
 import KddUser from "../models/kdd_user";
 import rCategory from "../models/rcategory";
 import rCategoryMember from "../models/rcategory_member";
-// import { JSONException } from 'next/server';
 
 /**
  * Sanitizes errors for API responses
  */
-function handleAPIError(err: any) {
+function handleAPIError(err: any): [ { error: string }, { status: number } ] {
     console.error(err);
 
-    if (err.hasOwnProperty('status') && err.hasOwnProperty('message')) {
-        return [ 
-            { error: err["message"] }, 
-            { status: err["status"] } 
-        ];
-    }
+    if (err.hasOwnProperty('status') && err.hasOwnProperty('message'))
+        return [ { error: err["message"] }, { status: err["status"] } ];
 
-    return [ 
-        { error: "An error occurred"}, 
-        { status: "500" } 
-    ];
+    return [ { error: "An error occurred"}, { status: 500 } ];
 }
 
 async function bodyParser<T extends new (...args: any[]) => any>(

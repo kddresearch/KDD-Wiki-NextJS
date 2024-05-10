@@ -9,10 +9,11 @@ import { bodyParser, handleAPIError } from "@/app/lib/utils/api";
 export async function GET(
     req: NextRequest
 ) {
-    const authUser = checkAuthAPI(AccessLevel.Admin);
     let pages;
 
     try {
+        const authUser = checkAuthAPI(AccessLevel.Admin);
+
         pages = await fetchAll();
         pages.sort((a, b) => a.id - b.id);
 
@@ -27,11 +28,12 @@ export async function GET(
 export async function POST(
     req: NextRequest
 ) {
-    const authUser = checkAuthAPI(AccessLevel.Admin);
     let page;
     let existingPage;
 
     try {
+        const authUser = checkAuthAPI(AccessLevel.Admin);
+
         page = await bodyParser(req, Page);
         existingPage = await fetchByName(page.name);
 

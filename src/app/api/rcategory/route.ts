@@ -13,10 +13,11 @@ import rCategory from "@/app/lib/models/rcategory";
 import { bodyParser, handleAPIError } from "@/app/lib/utils/api";
 
 export async function GET(req: NextRequest) {
-    const authUser = await checkAuthAPI(AccessLevel.Admin);
     let rcategories;
 
     try {
+        const authUser = await checkAuthAPI(AccessLevel.Admin);
+
         rcategories = await fetchAll();
 
         return NextResponse.json(rcategories);
@@ -28,11 +29,12 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-    const authUser = await checkAuthAPI(AccessLevel.Admin);
     let rcategory;
     let existingRCategory;
 
     try {
+        const authUser = await checkAuthAPI(AccessLevel.Admin);
+
         rcategory = await bodyParser(req, rCategory);
 
         existingRCategory = await fetchByName(rcategory.name);

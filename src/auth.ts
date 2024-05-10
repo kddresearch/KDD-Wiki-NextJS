@@ -93,7 +93,7 @@ export async function getCurrentUser(): Promise<KddUser> {
   return KddUser.guestFactory();
 }
 
-import { AccessLevel } from "./app/lib/models/wikiuser";
+import WikiUser, { AccessLevel } from "./app/lib/models/wikiuser";
 import { ActivityType } from "./app/lib/models/user_activity";
 import { fetchByUsername } from "./app/lib/db/wiki_user";
 
@@ -103,14 +103,15 @@ import { fetchByUsername } from "./app/lib/db/wiki_user";
  * @param member - check if the user is a member
  * Sends a 401 error if the user is not authenticated
  */
-export async function checkAuthAPI(access_level: AccessLevel): Promise<any> /* TODO: FIX ANY TYPE */ {
+export async function checkAuthAPI(access_level: AccessLevel): Promise<KddUser | WikiUser> /* TODO: FIX ANY TYPE */ {
   const session = await auth();
 
   let user;
   let ret_user;
 
-  if (!session)
-    return NextResponse.json({ error: "Unauthorized", status: 401 });
+  if (!session) {
+    throw { status: 401, message: "Unauthorized" };
+  }
 
   try {
     user = new KddUser(session?.user);
@@ -118,25 +119,19 @@ export async function checkAuthAPI(access_level: AccessLevel): Promise<any> /* T
     ret_user = await fetchByUsername(user.username);
     if (ret_user === null) {
       ret_user = user;
-      // return NextResponse.json(
-      //   { error: "User not found" },
-      //   { status: 404 },
-      // );
+      // throw { status: 404, error: "User not found" };
     }
   } catch (err) {
     console.error("Error occurred during fetchByUsername:", err);
-    return NextResponse.json(
-      { error: "Failed to fetch user" },
-      { status: 500 },
-    );
+    throw { status: 500, message: "Failed to fetch user" };
   }
 
 
   if (access_level == AccessLevel.Admin && !user.admin)
-    return NextResponse.json({ error: "Unauthorized", status: 403 });
+    throw { status: 403, message: "Unauthorized" };
 
   if (access_level == AccessLevel.Member && !user.member)
-    return NextResponse.json({ error: "Unauthorized", status: 403 });
+    throw { status: 403, message: "Unauthorized" };
 
   return ret_user;
 }
