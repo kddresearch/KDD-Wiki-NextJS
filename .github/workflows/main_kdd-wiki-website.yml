@@ -61,6 +61,9 @@ jobs:
         echo $'DB_PASSWORD="${{ secrets.DB_PASSWORD }}"\n' >> .env.local
         echo $'LOADED=true\n' >> .env.local
         echo $'GITHUB_ACTIONS=true\n' >> .env.local
+        echo $'BLOB_STORAGE_ACCOUNT_NAME="${{ secrets.BLOB_STORAGE_ACCOUNT_NAME }}"\n' >> .env.local
+        echo $'BLOB_STORAGE_ACCOUNT_KEY="${{ secrets.BLOB_STORAGE_ACCOUNT_KEY }}"\n' >> .env.local
+        echo $'BLOB_STORAGE_CONTAINER_NAME="${{ secrets.BLOB_STORAGE_CONTAINER_NAME }}"\n' >> .env.local
 
     # give permissions to the .env.local file
     - name: Give permissions to .env.local
