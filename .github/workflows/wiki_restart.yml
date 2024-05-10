@@ -1,0 +1,21 @@
+name: Restart wiki on Azure
+
+on:
+  schedule:
+    - cron: '0 19 * * *'
+
+jobs:
+  restart:
+    runs-on: ubuntu-latest
+
+
+    steps:
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Restart Azure Web App
+        run: |
+          az webapp restart --name ${{ secrets.AZURE_WEBAPP_WIKI }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
