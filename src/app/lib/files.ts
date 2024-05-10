@@ -1,4 +1,4 @@
-import { BlobSASPermissions, BlobServiceClient, ContainerClient, StorageSharedKeyCredential, generateBlobSASQueryParameters } from "@azure/storage-blob";
+import { BlobDownloadResponseParsed, BlobSASPermissions, BlobServiceClient, ContainerClient, StorageSharedKeyCredential, generateBlobSASQueryParameters } from "@azure/storage-blob";
 import configProxy from "@/config";
 
 const account = configProxy.blob_storage.account_name;
@@ -15,4 +15,26 @@ const WikiContainerServiceClient = new ContainerClient(`https://${account}.blob.
 
 export {
     WikiContainerServiceClient
+}
+
+async function getFile(filepath: string): Promise<BlobDownloadResponseParsed> {
+
+    const containerClient = WikiContainerServiceClient;
+    const blobClient = containerClient.getBlobClient(filepath);
+
+    const downloadResponse = await blobClient.download();
+    const stream = downloadResponse.readableStreamBody;
+
+    if (!stream) {
+        throw {
+            status: 404,
+            message: "Blob not found"
+        }
+    }
+
+    return downloadResponse;
+}
+
+export {
+    getFile
 }

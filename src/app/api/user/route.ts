@@ -19,10 +19,11 @@ import { bodyParser, handleAPIError } from "@/app/lib/utils/api";
 export async function GET(
     req: NextRequest
 ) {
-    const authUser = await checkAuthAPI(AccessLevel.Admin);
     let users;
 
     try {
+        const authUser = await checkAuthAPI(AccessLevel.Admin);
+
         users = await fetchAll();
 
         return NextResponse.json(users);
@@ -36,11 +37,12 @@ export async function GET(
 export async function POST(
     req: NextRequest
 ) {
-    const authUser = await checkAuthAPI(AccessLevel.Admin);
     let user;
     let existingUser;
 
     try {
+        const authUser = await checkAuthAPI(AccessLevel.Admin);
+
         user = await bodyParser(req, WikiUser);
 
         existingUser = await fetchByUsername(user.username);

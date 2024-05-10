@@ -54,7 +54,7 @@ type ConfigType = typeof config;
 const configProxy = new Proxy(config, {
     get(target, prop, receiver) {
         if (prop in target) {
-            console.log(`Accessing ${String(prop)} configuration`);
+            // console.log(`Accessing ${String(prop)} configuration`);
             const value = Reflect.get(target, prop, receiver);
             if (value && typeof value === 'object') {
                 return new Proxy(value, this);

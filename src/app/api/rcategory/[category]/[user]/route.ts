@@ -16,12 +16,13 @@ export async function GET(
     req: NextRequest,
     { params }: { params: { category: string, user: string } },
 ) {
-    const authUser = await checkAuthAPI(AccessLevel.Admin);
     let rcategory;
     let rcategoryMember;
     let user;
 
     try {
+        const authUser = await checkAuthAPI(AccessLevel.Admin);
+
         rcategory = await categoryUtils.fetchrCategory(params.category)
         user = await userUtils.fetchUser(params.user, authUser);
 
@@ -50,7 +51,6 @@ export async function POST(
     req: NextRequest,
     { params }: { params: { category: string, user: string } },
 ) {
-    const authUser = await checkAuthAPI(AccessLevel.Admin);
     let rcategoryMember;
     let rcategory;
     let user;
@@ -58,6 +58,8 @@ export async function POST(
     let return_rcategoryMember;
 
     try {
+        const authUser = await checkAuthAPI(AccessLevel.Admin);
+
         rcategory = await categoryUtils.fetchrCategory(params.category)
         user = await userUtils.fetchUser(params.user, authUser);
 
@@ -90,13 +92,14 @@ export async function DELETE(
     req: NextRequest,
     { params }: { params: { category: string, user: string } },
 ) {
-    const authUser = await checkAuthAPI(AccessLevel.Admin);
 
     let rcategory;
     let user;
     let rcategoryMember;
 
     try {
+        const authUser = await checkAuthAPI(AccessLevel.Admin);
+
         rcategory = await categoryUtils.fetchrCategory(params.category)
         user = await userUtils.fetchUser(params.user, authUser);
 

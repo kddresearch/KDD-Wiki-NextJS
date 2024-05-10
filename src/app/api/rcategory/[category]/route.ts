@@ -17,10 +17,11 @@ export async function GET(
     req: NextRequest,
     { params }: { params: { category: string } },
 ) {
-    const authUser = await checkAuthAPI(AccessLevel.Admin);
     let rcategory;
 
     try {
+        const authUser = await checkAuthAPI(AccessLevel.Admin);
+
         rcategory = await utils.fetchrCategory(params.category)
 
         if (rcategory === null)
@@ -38,10 +39,11 @@ export async function PUT(
     req: NextRequest,
     { params }: { params: { category: string } },
 ) {
-    const authUser = await checkAuthAPI(AccessLevel.Admin);
     let rcategory;
 
     try {
+        const authUser = await checkAuthAPI(AccessLevel.Admin);
+
         rcategory = await utils.fetchrCategory(params.category)
 
         if (rcategory === null)
