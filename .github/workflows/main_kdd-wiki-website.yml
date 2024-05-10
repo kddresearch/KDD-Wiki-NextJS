@@ -99,6 +99,7 @@ jobs:
         network: host
 
     - name: Whitelist Github Runner IP
+      if: ${{ always() }}
       run: |
         az postgres flexible-server firewall-rule delete \
         --name "${{ secrets.AZURE_DATABASE }}" \
