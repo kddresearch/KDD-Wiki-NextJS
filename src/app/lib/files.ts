@@ -12,7 +12,7 @@ if (!account || !accountKey || !container) {
 const accountKeyCredential = new StorageSharedKeyCredential(account, accountKey);
 const WikiContainerServiceClient = new ContainerClient(`https://${account}.blob.core.windows.net/${container}`, accountKeyCredential);
 
-// console.log(WikiContainerServiceClient);
+console.log(WikiContainerServiceClient);
 
 async function getFile(filepath: string): Promise<BlobDownloadResponseParsed> {
 
