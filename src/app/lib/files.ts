@@ -1,4 +1,4 @@
-import { BlobDownloadResponseParsed, BlobSASPermissions, BlobServiceClient, ContainerClient, StorageSharedKeyCredential, generateBlobSASQueryParameters } from "@azure/storage-blob";
+import { BlobDownloadResponseParsed, BlobSASPermissions, BlobServiceClient, BlobUploadCommonResponse, ContainerClient, StorageSharedKeyCredential, generateBlobSASQueryParameters } from "@azure/storage-blob";
 import configProxy from "@/config";
 
 const account = configProxy.blob_storage.account_name;
@@ -28,22 +28,96 @@ async function getFile(filepath: string): Promise<BlobDownloadResponseParsed> {
 
         if (!stream) {
             console.error(`Downloaded file: ${filepath} does not exist!`);
-            throw {status: 404, message: "File not found" }
+            throw new FileNotFoundError(filepath)
         }
 
         return downloadResponse;
 
     } catch (err: any) {
-
-        console.error(`Error fetching file ${filepath}: ${err.message}`);
-
         if (err.statusCode == 404)
-            throw { status: 404, message: "File not found" }
+            throw new FileNotFoundError(filepath);
+        else
+            throw err;
+    }
+}
 
-        throw { status: err.statusCode, message: `Error fetching file ${filepath}`}
+async function uploadFile(filepath: string, file: File): Promise<BlobUploadCommonResponse> {
+    // TODO: Redesign the error handling for these functions
+    try {
+        const containerClient = WikiContainerServiceClient;
+        const blobClient = containerClient.getBlockBlobClient(filepath);
+        const exists = await blobClient.exists();
+        if (exists) 
+            throw new FileAlreadyExistsError(filepath);
+
+        const buffer = await file.arrayBuffer();
+        const respone = await blobClient.uploadData(buffer);
+
+        return respone;
+    } catch (err: any) {
+        if (err.statusCode == 409)
+            throw new FileAlreadyExistsError(filepath)
+        else
+            throw err;
+    }
+}
+
+function getFilesFromFormData(formData: FormData): File[] {
+    const entries = Array.from(formData.entries());
+    let files = [];
+
+    for (const [key, value] of entries) {
+
+        if (!(value instanceof File))
+            throw new InvalidFileUploadError(`Invalid file upload: ${key}`);
+
+        files.push(value as File);
+    }
+
+    return files;
+}
+
+export {
+    getFile,
+    uploadFile,
+
+    // Utility functions
+    getFilesFromFormData
+}
+
+// Error classes for Blob Storage
+
+class BlobStorageError extends Error {
+    statusCode: number;
+
+    constructor(message: string, statusCode: number) {
+        super(message);
+        this.statusCode = statusCode;
+        this.name = 'BlobStorageError';
+    }
+}
+
+class FileNotFoundError extends BlobStorageError {
+    constructor(filepath: string) {
+        super(`File not found: ${filepath}`, 404);
+    }
+}
+
+class FileAlreadyExistsError extends BlobStorageError {
+    constructor(filepath: string) {
+        super(`File already exists: ${filepath}`, 409);
+    }
+}
+
+class InvalidFileUploadError extends BlobStorageError {
+    constructor(message: string) {
+        super(message, 400);
     }
 }
 
 export {
-    getFile
-}
+    BlobStorageError,
+    FileNotFoundError,
+    FileAlreadyExistsError,
+    InvalidFileUploadError
+};

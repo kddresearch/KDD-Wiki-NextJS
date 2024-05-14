@@ -3,12 +3,18 @@ import WikiUser from "../models/wikiuser";
 import KddUser from "../models/kdd_user";
 import rCategory from "../models/rcategory";
 import rCategoryMember from "../models/rcategory_member";
+import { BlobStorageError } from "../files";
 
 /**
  * Sanitizes errors for API responses
  */
 function handleAPIError(err: any): [ { error: string }, { status: number } ] {
+
     console.error(err);
+
+    if (err instanceof BlobStorageError) {
+        return [ { error: err.message }, { status: err.statusCode } ];
+    }
 
     if (err.hasOwnProperty('status') && err.hasOwnProperty('message'))
         return [ { error: err["message"] }, { status: err["status"] } ];
