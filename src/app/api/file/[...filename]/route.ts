@@ -46,7 +46,6 @@ export async function GET(
 
         return response;
     } catch (err) { 
-        console.error("Error occurred during GET File route:", err);
         const [{ error }, { status }] = handleAPIError(err);
         return NextResponse.json({ error }, { status });
     }
@@ -94,7 +93,6 @@ export async function POST(
 
         return NextResponse.json({ success: true, files: fileResponse});
     } catch (err) {
-        console.error("Error occurred during POST File route:", err);
         const [{ error }, { status }] = handleAPIError(err);
         return NextResponse.json({ error }, { status });
     }
