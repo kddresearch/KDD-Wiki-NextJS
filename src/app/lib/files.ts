@@ -1,4 +1,4 @@
-import { BlobDownloadResponseParsed, BlobSASPermissions, BlobServiceClient, ContainerClient, StorageSharedKeyCredential, generateBlobSASQueryParameters } from "@azure/storage-blob";
+import { BlobDownloadResponseParsed, BlobSASPermissions, BlobServiceClient, BlobUploadCommonResponse, ContainerClient, StorageSharedKeyCredential, generateBlobSASQueryParameters } from "@azure/storage-blob";
 import configProxy from "@/config";
 
 const account = configProxy.blob_storage.account_name;
@@ -44,6 +44,51 @@ async function getFile(filepath: string): Promise<BlobDownloadResponseParsed> {
     }
 }
 
+async function uploadFile(filepath: string, file: File): Promise<BlobUploadCommonResponse> {
+    // TODO: Redesign the error handling for these functions
+    try {
+
+
+        const containerClient = WikiContainerServiceClient;
+        const blobClient = containerClient.getBlockBlobClient(filepath);
+        const exists = await blobClient.exists();
+        if (exists) 
+            throw { statusCode: 409, message: "File already exists" }
+
+        const buffer = await file.arrayBuffer();
+        const respone = await blobClient.uploadData(buffer);
+
+        return respone;
+    } catch (err: any) {
+        console.error(`Error uploading file ${filepath}: ${err.message}`);
+
+        if (err.statusCode == 409)
+            throw { status: 409, message: "File already exists" }
+
+        throw { status: err.statusCode, message: `Error uploading file ${filepath}`}
+    }
+}
+
+function getFilesFromFormData(formData: FormData): File[] {
+    const entries = Array.from(formData.entries());
+    let files = [];
+
+    for (const [key, value] of entries) {
+
+        if (!(value instanceof File)) {
+            throw { status: 400, message: `Invalid file uploaded: ${key}`}
+        }
+
+        files.push(value as File);
+    }
+
+    return files;
+}
+
 export {
-    getFile
+    getFile,
+    uploadFile,
+
+    // Utility functions
+    getFilesFromFormData
 }
