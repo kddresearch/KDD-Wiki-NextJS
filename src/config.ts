@@ -51,8 +51,6 @@ const config = {
     },
 }
 
-console.log(config);
-
 type ConfigType = typeof config;
 
 const configProxy = new Proxy(config, {
