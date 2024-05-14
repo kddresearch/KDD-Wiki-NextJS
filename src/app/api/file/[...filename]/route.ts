@@ -103,6 +103,8 @@ export async function PUT(
     { params }: { params: { filename: string[] } }
 ) {
     const filepath = params.filename.join("/");
+
+    return NextResponse.json({ error: "Not implemented" }, { status: 501 });
 }
 
 export async function DELETE(
@@ -110,4 +112,6 @@ export async function DELETE(
     { params }: { params: { filename: string[] } }
 ) {
     const filepath = params.filename.join("/");
+
+    return NextResponse.json({ error: "Not implemented" }, { status: 501 });
 }
