@@ -12,7 +12,6 @@ on:
 jobs:
   build:
     runs-on: 'ubuntu-latest'
-    # runs-on: self-hosted
 
     steps:
     - uses: actions/checkout@v2
@@ -62,6 +61,9 @@ jobs:
         echo $'DB_PASSWORD="${{ secrets.DB_PASSWORD }}"\n' >> .env.local
         echo $'LOADED=true\n' >> .env.local
         echo $'GITHUB_ACTIONS=true\n' >> .env.local
+        echo $'BLOB_STORAGE_ACCOUNT_NAME="${{ secrets.BLOB_STORAGE_ACCOUNT_NAME }}"\n' >> .env.local
+        echo $'BLOB_STORAGE_ACCOUNT_KEY="${{ secrets.BLOB_STORAGE_ACCOUNT_KEY }}"\n' >> .env.local
+        echo $'BLOB_STORAGE_CONTAINER_NAME="${{ secrets.BLOB_STORAGE_CONTAINER_NAME }}"\n' >> .env.local
 
     # give permissions to the .env.local file
     - name: Give permissions to .env.local
@@ -80,10 +82,10 @@ jobs:
     - name: Whitelist Github Runner IP
       run: |
         echo "RUNNER_IP=$RUNNER_IP" >> $GITHUB_ENV
-        az cosmosdb postgres firewall-rule create \
-          --name "Github_Action_Runner_${{ github.sha }}" \
+        az postgres flexible-server firewall-rule create \
+          --rule-name "Github_Action_Runner_${{ github.sha }}" \
           --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-          --cluster-name "${{ secrets.AZURE_COSMOS_CLUSTER }}" \
+          --name "${{ secrets.AZURE_DATABASE }}" \
           --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
           --start-ip-address ${{ env.RUNNER_IP }} \
           --end-ip-address ${{ env.RUNNER_IP }} \
@@ -100,11 +102,12 @@ jobs:
         network: host
 
     - name: Whitelist Github Runner IP
+      if: ${{ always() }}
       run: |
-        az cosmosdb postgres firewall-rule delete \
-        --name "Github_Action_Runner_${{ github.sha }}" \
+        az postgres flexible-server firewall-rule delete \
+        --name "${{ secrets.AZURE_DATABASE }}" \
+        --rule-name "Github_Action_Runner_${{ github.sha }}" \
         --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-        --cluster-name "${{ secrets.AZURE_COSMOS_CLUSTER }}" \
         --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
         --output "none" \
         --yes

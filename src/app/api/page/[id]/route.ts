@@ -21,10 +21,11 @@ export async function GET(
     req: NextRequest,
     { params }: { params: { id: string } },
 ) {
-    const authUser = checkAuthAPI(AccessLevel.Admin);
     let page;
 
     try {
+        const authUser = checkAuthAPI(AccessLevel.Admin);
+
         page = await fetchPage(params.id);
 
         if (page === null)
@@ -43,10 +44,11 @@ export async function PATCH(
     req: NextRequest,
     { params }: { params: { id: string } },
 ) {
-    const authUser = await checkAuthAPI(AccessLevel.Admin);
     let page;
 
     try {
+        const authUser = await checkAuthAPI(AccessLevel.Admin);
+
         page = await fetchPage(params.id);
 
         if (page === null)
@@ -67,10 +69,11 @@ export async function DELETE(
     req: NextRequest,
     { params }: { params: { id: string } },
 ) {
-    const authUser = await checkAuthAPI(AccessLevel.Admin);
     let page;
 
     try {
+        const authUser = await checkAuthAPI(AccessLevel.Admin);
+
         page = await fetchPage(params.id);
 
         if (page === null)
