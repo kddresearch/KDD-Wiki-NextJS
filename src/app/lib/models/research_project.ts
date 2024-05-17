@@ -1,75 +1,3 @@
-// Example Project Data
-
-const researchProject = {
-    id: 1,
-    title: "Topical Knowledge Mapping",
-    researchCategory: {
-        name: "Natural Language Processing",
-        leadResearher: "Dr. William Hsu",
-    },
-    description: "This project aims to create a knowledge graph of research topics in the field of Natural Language Processing.",
-    tags: ["Natural Language Processing", "Knowledge Graph", "Topic Modeling"], // also works as keywords
-    methodology: "We will use topic modeling techniques to extract topics from research papers in the ACL Anthology.",
-    personnel: [
-        {
-            name: "Dr. William Hsu",
-            role: "Principal Investigator",
-            email: "johnd@k-state.edu",
-            affiliation: "Kansas State University"
-        },
-        {
-            name: "Jane Smith",
-            role: "Research Assistant",
-            email: "JaneS@k-state.edu",
-            affiliation: "Kansas State University"
-        },
-        {
-            name: "Jane Doe",
-            role: "Affiliated Researcher",
-            email: "JaneS@cmu.edu",
-            affiliation: "Carnegie Mellon University"
-        },
-        {
-            name: "John Smith",
-            role: "Alumni",
-            email: "JaneS@k-state.edu",
-            affiliation: "Kansas State University"
-        },
-    ],
-    publications: [
-        {
-            title: "Topical Knowledge Mapping: A Survey",
-            authors: ["John Doe", "Jane Smith"],
-            publicationDate: "2021-09-01",
-            publicationVenue: "ACL"
-        },
-    ],
-    datasets: [
-        {
-            name: "ACL Anthology",
-            description: "A collection of research papers in the field of Natural Language Processing.",
-            source: "https://aclanthology.org/dataset/52",
-            isPrivate: false,
-        },
-        {
-            name: "Unpublished Dataset",
-            description: "A dataset of research papers that have not been published yet",
-            source: "https://unpublished.aclanthology.org/dataset/23",
-            isPrivate: true,
-        },
-    ],
-    sourceCode: {
-        url: "github.com/kddresearch/topical-knowledge-mapping",
-        isPrivate: false,
-    },
-    funding: {
-        source: "National Science Foundation",
-        awardNumber: "NSF-123456",
-        awardAmount: 50_000,
-        dateAwarded: "2021-01-01",
-    }
-};
-
 import Joi from "joi";
 
 // Joi schema for the ResearchProject validation
@@ -136,4 +64,4 @@ class ResearchProject {
     }
 }
 
-export default researchProject;
+export default ResearchProject;
