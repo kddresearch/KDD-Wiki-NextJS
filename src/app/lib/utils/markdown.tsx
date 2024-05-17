@@ -1,35 +1,37 @@
 import fs from 'fs';
-import React from 'react'
-import {createRoot} from 'react-dom/client'
-import Markdown from 'react-markdown'
-import classNames from "classnames";
+import React from 'react';
+import classNames from 'classnames';
+import { MDXRemote } from 'next-mdx-remote/rsc';
+import Card from '@/components/layout/card';
+import Link from 'next/link';
 
-function RenderMarkdownString({
+const components = { Card, Link };
+
+async function RenderMarkdownString({ 
   markdown, 
   ...props 
-} : { markdown: string } & React.HTMLAttributes<HTMLDivElement>) {
+}: { 
+  markdown: string } & 
+  React.HTMLAttributes<HTMLDivElement>
+) {
+  const proseClasses = classNames('prose', 'max-w-none', 'prose-h1:text-purple', 'prose-a:text-purple', 'prose-a:underline', props.className);
 
-  const proseClasses = classNames(
-    'prose',
-    'max-w-none',
-    'prose-h1:text-purple',
-    'prose-a:text-purple',
-    'prose-a:underline',
-    props.className
+  return (
+    <div className={proseClasses} {...props}>
+      <MDXRemote source={markdown} components={components} />
+    </div>
   );
-
-  return (<Markdown className={proseClasses}>{markdown}</Markdown>);
 }
 
-function RenderMarkdownFile({
+function RenderMarkdownFile({ 
   filePath, 
   ...props 
-} : { filePath: string } & React.HTMLAttributes<HTMLDivElement>) {
+}: { 
+  filePath: string } & 
+  React.HTMLAttributes<HTMLDivElement>
+) {
   const fileContent = fs.readFileSync(filePath, 'utf8');
-  return (<RenderMarkdownString markdown={fileContent} {...props}/>);
+  return <RenderMarkdownString markdown={fileContent} {...props} />;
 }
 
-export {
-  RenderMarkdownFile,
-  RenderMarkdownString
-}
+export { RenderMarkdownFile, RenderMarkdownString };

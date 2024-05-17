@@ -31,7 +31,7 @@ class Page {
     date_modified: Date;
     category_id: number;
     author_id: number;
-    name: string; // ???
+    name: string;
     has_publication: boolean;
     is_kdd_only: boolean;
     last_updated: string;
