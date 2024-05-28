@@ -62,8 +62,6 @@ jobs:
         push: true
         tags: ${{ secrets.CONTAINERREGISTRY }}/${{ secrets.CONTAINERREGISTRYUSERNAME }}/kdd-wiki:latest
         file: ./Dockerfile
-        builder: mybuilder
-        network: host
 
   deploy:
     runs-on: ubuntu-latest
