@@ -21,10 +21,9 @@ const config = {
     db: {
         name: process.env.DB_NAME,
         host: process.env.DB_HOST,
-        port: 5432,
+        port: process.env.DB_PORT,
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD,
-        azure_connection_string: process.env.DB_AZURE_CONNECTION_STRING,
     },
     dev_user: {
         username: "wnbaldwin",
@@ -46,8 +45,7 @@ const config = {
         account_name: process.env.BLOB_STORAGE_ACCOUNT_NAME!,
         account_key: process.env.BLOB_STORAGE_ACCOUNT_KEY!,
         container_name: process.env.BLOB_STORAGE_CONTAINER_NAME!,
-        // blob_name: process.env.BLOB_STORAGE_BLOB_NAME,
-        // sas_url: process.env.BLOB_STORAGE_SAS_URL,
+        development_url: process.env.BLOB_STORAGE_DEVELOPMENT_URL!, // Local development URL, if needed
     },
 }
 

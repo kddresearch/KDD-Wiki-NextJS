@@ -9,6 +9,8 @@
 # testing
 /coverage
 /postgres
+/secret
+setup.js
 
 # next.js
 /.next/

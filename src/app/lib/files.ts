@@ -1,5 +1,16 @@
-import { BlobDownloadResponseParsed, BlobSASPermissions, BlobServiceClient, BlobUploadCommonResponse, ContainerClient, StorageSharedKeyCredential, generateBlobSASQueryParameters } from "@azure/storage-blob";
+import { 
+    BlobDownloadResponseParsed,
+    BlobUploadCommonResponse,
+    ContainerClient,
+    HttpOperationResponse,
+    StoragePipelineOptions,
+    StorageSharedKeyCredential,
+} from "@azure/storage-blob";
 import configProxy from "@/config";
+import {  
+    DefaultHttpClient,
+    WebResourceLike,
+} from '@azure/core-http';
 
 const account = configProxy.blob_storage.account_name;
 const accountKey = configProxy.blob_storage.account_key;
@@ -9,10 +20,43 @@ if (!account || !accountKey || !container) {
     throw new Error("Blob Storage configuration missing");
 }
 
-const accountKeyCredential = new StorageSharedKeyCredential(account, accountKey);
-const WikiContainerServiceClient = new ContainerClient(`https://${account}.blob.core.windows.net/${container}`, accountKeyCredential);
+class HostDefaultHttpClient extends DefaultHttpClient {
+    private host: string;
 
-// console.log(WikiContainerServiceClient);
+    constructor(host: string) {
+        super();
+        this.host = host;
+    }
+
+    sendRequest(httpRequest: WebResourceLike): Promise<HttpOperationResponse> {
+        httpRequest.headers.set('Host', this.host);
+        return super.sendRequest(httpRequest);
+    }
+}
+
+const accountKeyCredential = new StorageSharedKeyCredential(account, accountKey);
+
+let WikiContainerServiceClient: ContainerClient;
+
+if (configProxy.isdevelopment) {
+    const host = `${account}.blob.core.windows.net`;
+    // const hostPolicy = new HostRequestPolicyFactory(host);
+    const pipelineOptions: StoragePipelineOptions = {
+        httpClient: new HostDefaultHttpClient(host),
+    };
+
+    WikiContainerServiceClient = new ContainerClient(
+        `https://host.docker.internal:8443/${container}`,
+        accountKeyCredential,
+        pipelineOptions
+    );
+
+} else {
+    WikiContainerServiceClient = new ContainerClient(
+        `https://${account}.blob.core.windows.net/${container}`,
+        accountKeyCredential
+    );
+}
 
 async function getFile(filepath: string): Promise<BlobDownloadResponseParsed> {
 

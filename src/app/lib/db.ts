@@ -1,13 +1,19 @@
 import { Pool, QueryResult } from "pg";
 import env_config from "@/config";
+const fs = require('fs');
+
+let ssl: any = true;
+if (env_config.isdevelopment) {
+    ssl = false;
+}
 
 const poolconfig = {
     user: env_config.db.username,
     host: env_config.db.host,
     database: env_config.db.name,
     password: env_config.db.password,
-    port: env_config.db.port,
-    ssl: true,
+    port: parseInt(env_config.db.port?.toString() || "5432"), // Default port is 5432, if not specified
+    ssl: ssl
 }
 
 // console.log("poolconfig: ", poolconfig);
