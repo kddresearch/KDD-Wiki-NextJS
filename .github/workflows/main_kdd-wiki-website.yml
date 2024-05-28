@@ -17,26 +17,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Set up Docker Buildx
-      run: |
-        docker buildx create --use --driver-opt network=host --name mybuilder
-        docker buildx inspect --bootstrap
-
-    # - name: Setup Google DNS
-    #   run: |
-    #      echo "nameserver 8.8.8.8" |  sudo tee  /etc/resolv.conf.DNSoverride
-    #      sudo ln -sf /etc/resolv.conf.DNSoverride /etc/resolv.conf
-    #      cat /etc/resolv.conf
-    
-    # # - name: Lookup Registry IP
-    # #   id: lookup_ip
-    # #   run: |
-    # #     REGISTRY_IP=$(nslookup ${{ secrets.CONTAINERREGISTRY }} | grep Address | tail -n 1 | awk '{print $2}')
-    # #     echo "REGISTRY_IP=$REGISTRY_IP" >> $GITHUB_ENV
-    
-    # # - name: Modify /etc/hosts
-    # #   run: |
-    # #     echo "${{ env.REGISTRY_IP }} ${{ secrets.CONTAINERREGISTRY }}" | sudo tee -a /etc/hosts
-    # #     cat /etc/hosts
+      uses: docker/setup-buildx-action@v3
 
     - name: Restart Docker
       run: sudo systemctl restart docker
@@ -74,23 +55,6 @@ jobs:
       with:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
 
-    - name: Get Runner IP
-      run: |
-        RUNNER_IP=$(curl -s https://api.ipify.org/)
-        echo "RUNNER_IP=$RUNNER_IP" >> $GITHUB_ENV
-
-    - name: Whitelist Github Runner IP
-      run: |
-        echo "RUNNER_IP=$RUNNER_IP" >> $GITHUB_ENV
-        az postgres flexible-server firewall-rule create \
-          --rule-name "Github_Action_Runner_${{ github.sha }}" \
-          --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-          --name "${{ secrets.AZURE_DATABASE }}" \
-          --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
-          --start-ip-address ${{ env.RUNNER_IP }} \
-          --end-ip-address ${{ env.RUNNER_IP }} \
-          --output "none"
-
     - name: Build and push container image to registry
       uses: docker/build-push-action@v5
       with:
@@ -100,17 +64,6 @@ jobs:
         file: ./Dockerfile
         builder: mybuilder
         network: host
-
-    - name: Whitelist Github Runner IP
-      if: ${{ always() }}
-      run: |
-        az postgres flexible-server firewall-rule delete \
-        --name "${{ secrets.AZURE_DATABASE }}" \
-        --rule-name "Github_Action_Runner_${{ github.sha }}" \
-        --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
-        --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
-        --output "none" \
-        --yes
 
   deploy:
     runs-on: ubuntu-latest
