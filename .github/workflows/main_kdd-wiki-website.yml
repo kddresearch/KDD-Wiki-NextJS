@@ -11,7 +11,8 @@ on:
 
 jobs:
   build:
-    runs-on: 'ubuntu-latest'
+    # runs-on: 'ubuntu-latest'
+    runs-on: 'self-hosted'
 
     steps:
     - uses: actions/checkout@v2
@@ -54,6 +55,9 @@ jobs:
       uses: azure/login@v1
       with:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
+
+    # - name: Connect to Azure VNet
+    #   run: az ssh 
 
     - name: Build and push container image to registry
       uses: docker/build-push-action@v5
