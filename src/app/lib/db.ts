@@ -1,4 +1,15 @@
-import { Pool, QueryResult } from "pg";
+import { 
+    Pool,
+    QueryResult,
+    Client
+} from "pg";
+import { 
+    pgTable,
+    serial,
+    text,
+    varchar
+} from "drizzle-orm/pg-core";
+import { drizzle } from "drizzle-orm/node-postgres";
 import env_config from "@/config";
 const fs = require('fs');
 
@@ -22,7 +33,21 @@ const pool = new Pool(poolconfig);
 
 var connected = false;
 
+async function connectDrizzle() {
+    try {
+        const client = new Client(poolconfig);
+        await client.connect();
+        const db = drizzle(client);
+        console.log("Connected to PostgreSQL with Drizzle ORM");
+    } catch (err: any) {
+        console.error("Database connection error", err.stack);
+    }
+}
+
 function connect(): void {
+
+    connectDrizzle();
+
     pool.connect((err: Error | undefined, client: any, done: any) => {
         if (err) {
             console.error("Database connection error", err.stack);
