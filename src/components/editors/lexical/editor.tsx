@@ -45,6 +45,9 @@ function prePopulate() {
   const root = $getRoot();
   if (root.getFirstChild() === null) {
     const heading = $createHeadingNode("h1");
+
+    root.append(heading);
+
     heading.append($createTextNode("Hello world!"));
     root.append(heading);
 

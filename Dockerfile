@@ -12,11 +12,12 @@ ENV NEXT_WEBPACK_USEPOLLING=true
 # Install Dependencies
 WORKDIR /app
 COPY . .
-RUN yarn install --verbose
+RUN npm install pnpm -g
+RUN pnpm install --verbose
 
 # Start Server
 EXPOSE 3000
-CMD yarn run dev
+CMD pnpm run dev
 
 # PRODUCTION
 FROM base AS prod
@@ -29,10 +30,13 @@ ENV NEXTAUTH_URL=https://kdd-wiki-website.azurewebsites.net/
 
 # Install Dependencies
 COPY . .
-RUN yarn install --verbose
-RUN yarn run build
-RUN yarn run ci-test
+RUN npm install pnpm -g
+RUN pnpm install --verbose
+
+# Build and Test
+RUN pnpm run build
+RUN pnpm run ci-test
 
 # Start Server
 EXPOSE 3000
-CMD yarn run start
+CMD pnpm run start

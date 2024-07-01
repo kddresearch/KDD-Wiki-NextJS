@@ -52,7 +52,7 @@ export default async function Header() {
         </div>
       </div>
       <UnitBar
-        title="Laboratory for Knowledge Discovery in Databases (KSU KDD Lab)"
+        title="Laboratory for Knowledge Discovery in Databases"
         kdduser={WikiUser.guestFactory().toJSON()}
       />
       <Navigation />

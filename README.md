@@ -7,11 +7,16 @@ To access the website, you must be signed into the global protect vpn
 
 ## Getting Started
 
-First, fill out all the required secrets:
+Install the proper tools:
+- NodeJS
+- Docker
+- Azure CLI (Optional)
 
+Next, fill out all the required secrets:
+
+### /.env.local
 ```env
-# .env.local
-
+# Auth Secrets
 AUTH_SECRET=
 AUTH_GOOGLE_CLIENT_ID=
 AUTH_GOOGLE_CLIENT_SECRET=
@@ -24,9 +29,15 @@ DB_NAME=
 DB_HOST=
 DB_USERNAME=
 DB_PASSWORD=
+
+# Azure Blob Storage
+BLOB_STORAGE_ACCOUNT_NAME=
+BLOB_STORAGE_ACCOUNT_KEY=
+BLOB_STORAGE_CONTAINER_NAME=
+BLOB_STORAGE_DEVELOPMENT_URL=
 ```
 
-## Docker
+## Run With Docker (Preferred)
 
 Install [Docker Desktop](https://docs.docker.com/desktop/install/windows-install/) and restart your PC
 
@@ -37,22 +48,12 @@ Open the directory in the cli
 docker-compose up --build kdd-wiki-dev
 ```
 
+if 
+
 ### Production
 ```bash
 docker-compose up --build kdd-wiki-prod
 ```
 
-# Test/Builds
-
-To build
-```bash
-npm run build
-```
-
-To run tests
-```bash
-npm run tests
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [your browser](http://localhost:3000) to see the result.
 
