@@ -12,16 +12,16 @@ import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { $createTextNode, $getRoot, $getSelection } from "lexical";
 import { useEffect, useState } from "react";
-import {
-  $convertFromMarkdownString,
-  $convertToMarkdownString,
-  TRANSFORMERS,
-} from '@lexical/markdown';
+// import {
+//   $convertFromMarkdownString,
+//   $convertToMarkdownString,
+//   TRANSFORMERS,
+// } from '@lexical/markdown';
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 // Nodes
-import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
-import editorNodes from "./nodes";
+// import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
+// import editorNodes from "./nodes";
 
 
 // custom plugins
@@ -44,16 +44,16 @@ function Placeholder() {
 function prePopulate() {
   const root = $getRoot();
   if (root.getFirstChild() === null) {
-    const heading = $createHeadingNode("h1");
+    // const heading = $createHeadingNode("h1");
 
-    root.append(heading);
+    // root.append(heading);
 
-    heading.append($createTextNode("Hello world!"));
-    root.append(heading);
+    // heading.append($createTextNode("Hello world!"));
+    // root.append(heading);
 
-    const quote = $createQuoteNode();
-    quote.append($createTextNode("This is a quote for everyone talking about how good lexical is as a framework."));
-    root.append(quote);
+    // const quote = $createQuoteNode();
+    // quote.append($createTextNode("This is a quote for everyone talking about how good lexical is as a framework."));
+    // root.append(quote);
   }
   const selection = $getSelection();
 
@@ -73,9 +73,9 @@ const TextEditor = ({
   }, []);
 
   const initialConfig = {
-    editorState: markdown ? () => $convertFromMarkdownString(markdown) : prePopulate,
+    // editorState: markdown ? () => $convertFromMarkdownString(markdown) : prePopulate,
     namespace: "editor",
-    nodes: [...editorNodes],
+    // nodes: [...editorNodes],
     onError: onError,
     theme: theme,
   };
@@ -120,7 +120,7 @@ const Editor = ({
 
   useEffect(() => {
     return editor.registerUpdateListener(({ editorState }) => {
-      onContentChange(editorState.read(() => $convertToMarkdownString()));
+      // onContentChange(editorState.read(() => $convertToMarkdownString()));
     });
   }, [editor, onContentChange]);
 
