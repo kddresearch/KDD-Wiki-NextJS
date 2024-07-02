@@ -232,90 +232,131 @@ import { SecretClient } from '@azure/keyvault-secrets';
 
 // export default config;
 
-let client: SecretClient;
+import ConfigLoader from './config/loader';
+import ConfigStructure from './config/interface';
 
-if (typeof window === 'undefined') {
-    const vaultName = process.env.AZURE_KEY_VAULT_NAME;
-    const KVUri = `https://${vaultName}.vault.azure.net`;
-    client = new SecretClient(KVUri, new DefaultAzureCredential());
-}
+let loaded;
 
-async function getSecretOrEnvVar(secretName: string): Promise<string> {
-    if (client) {
-        try {
-            const secret = await client.getSecret(secretName);
-            if (!secret.value) {
-                console.error(`Secret not found in Key Vault: ${secretName}`);
-                return '';
-            }
-            return secret.value;
-        } catch (error) {
-            console.error(`Failed to get secret from Key Vault: ${error}`);
-        }
+class ConfigSingleton {
+    private static instance: ConfigSingleton;
+    private loader: ConfigLoader | null = null;
+    public config: ConfigStructure;
+
+    private constructor() {
+        // this.init();
+
+        let configHolder: ConfigStructure;
+
+        this.loader = new ConfigLoader(process.env.AZURE_KEY_VAULT_NAME);
+        this.loader!.loadConfig().then((config) => {
+            configHolder = config;
+        });
+
+        this.config = configHolder;
     }
 
-    const property = process.env[secretName];
-
-    if (!property) {
-        console.error(`Environment variable not found: ${secretName}`);
-        return '';
+    static getInstance(): ConfigSingleton {
+        if (!ConfigSingleton.instance) {
+            ConfigSingleton.instance = new ConfigSingleton();
+        }
+        return ConfigSingleton.instance;
     }
 
-    return property;
+    async init(keyVaultName: string) {
+        
+    }
 }
 
-const config = {
-    port: process.env.PORT || 3000,
-    isdevelopment: process.env.NODE_ENV !== 'production',
-    keystore_active: process.env.KEYSTORE_ACTIVE === 'true',
-    auth: {
-        secret: process.env.AUTH_SECRET,
-        google: {
-            client_id: process.env.AUTH_GOOGLE_CLIENT_ID,
-            project_id: "canvascaboose",
-            auth_uri: "https://accounts.google.com/o/oauth2/auth",
-            token_uri: "https://oauth2.googleapis.com/token",
-            auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
-            client_secret: process.env.AUTH_GOOGLE_CLIENT_SECRET,
-        },
-        ksu: {
-            client_id: getSecretOrEnvVar("AUTH_KSU_CLIENT_ID"),
-            client_secret: getSecretOrEnvVar("AUTH_KSU_CLIENT_SECRET"),
-            issuer: "https://signin.k-state.edu/WebISO/oidc",
-            well_known: "https://signin.k-state.edu/WebISO/oidc/.well-known"
-        }
-    },
-    db: {
-        name: getSecretOrEnvVar('DB_NAME'),
-        host: getSecretOrEnvVar('DB_HOST'),
-        port: getSecretOrEnvVar('DB_PORT'),
-        username: getSecretOrEnvVar('DB_USERNAME'),
-        password: getSecretOrEnvVar('DB_PASSWORD'),
-    },
-    dev_user: {
-        username: "wnbaldwin",
-        id: 109,
-        member: true,
-        admin: true,
-        readonly: false,
-        date_created: "2016-04-20T15:00:00.000Z",
-        date_modified: "2016-04-20T15:00:00.000Z",
-        is_kdd_only: false
-    },
-    github_actions: process.env.GITHUB_ACTIONS === 'true',
-    github: {
-        owner: "kddresearch",
-        repo: "KDD-Wiki-NextJS",
-        maintainers: [
-            "Legonois"
-        ],
-    },
-    blob_storage: {
-        account_name: process.env.BLOB_STORAGE_ACCOUNT_NAME!,
-        account_key: process.env.BLOB_STORAGE_ACCOUNT_KEY!,
-        container_name: process.env.BLOB_STORAGE_CONTAINER_NAME!,
-        development_url: process.env.BLOB_STORAGE_DEVELOPMENT_URL!, // Local development URL, if needed
-    },
-}
+const config = ConfigSingleton.getInstance().config;
+
+loaded = true;
 
 export default config;
+
+// let client: SecretClient;
+
+// if (typeof window === 'undefined') {
+//     const vaultName = process.env.AZURE_KEY_VAULT_NAME;
+//     const KVUri = `https://${vaultName}.vault.azure.net`;
+//     client = new SecretClient(KVUri, new DefaultAzureCredential());
+// }
+
+// async function getSecretOrEnvVar(secretName: string): Promise<string> {
+//     if (client) {
+//         try {
+//             const secret = await client.getSecret(secretName);
+//             if (!secret.value) {
+//                 console.error(`Secret not found in Key Vault: ${secretName}`);
+//                 return '';
+//             }
+//             return secret.value;
+//         } catch (error) {
+//             console.error(`Failed to get secret from Key Vault: ${error}`);
+//         }
+//     }
+
+//     const property = process.env[secretName];
+
+//     if (!property) {
+//         console.error(`Environment variable not found: ${secretName}`);
+//         return '';
+//     }
+
+//     return property;
+// }
+
+// const config = {
+//     port: process.env.PORT || 3000,
+//     isdevelopment: process.env.NODE_ENV !== 'production',
+//     keystore_active: process.env.KEYSTORE_ACTIVE === 'true',
+//     auth: {
+//         secret: process.env.AUTH_SECRET,
+//         google: {
+//             client_id: process.env.AUTH_GOOGLE_CLIENT_ID,
+//             project_id: "canvascaboose",
+//             auth_uri: "https://accounts.google.com/o/oauth2/auth",
+//             token_uri: "https://oauth2.googleapis.com/token",
+//             auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+//             client_secret: process.env.AUTH_GOOGLE_CLIENT_SECRET,
+//         },
+//         ksu: {
+//             client_id: getSecretOrEnvVar("AUTH_KSU_CLIENT_ID"),
+//             client_secret: getSecretOrEnvVar("AUTH_KSU_CLIENT_SECRET"),
+//             issuer: "https://signin.k-state.edu/WebISO/oidc",
+//             well_known: "https://signin.k-state.edu/WebISO/oidc/.well-known"
+//         }
+//     },
+//     db: {
+//         name: getSecretOrEnvVar('DB_NAME'),
+//         host: getSecretOrEnvVar('DB_HOST'),
+//         port: getSecretOrEnvVar('DB_PORT'),
+//         username: getSecretOrEnvVar('DB_USERNAME'),
+//         password: getSecretOrEnvVar('DB_PASSWORD'),
+//     },
+//     dev_user: {
+//         username: "wnbaldwin",
+//         id: 109,
+//         member: true,
+//         admin: true,
+//         readonly: false,
+//         date_created: "2016-04-20T15:00:00.000Z",
+//         date_modified: "2016-04-20T15:00:00.000Z",
+//         is_kdd_only: false
+//     },
+//     github_actions: process.env.GITHUB_ACTIONS === 'true',
+//     github: {
+//         owner: "kddresearch",
+//         repo: "KDD-Wiki-NextJS",
+//         maintainers: [
+//             "Legonois"
+//         ],
+//     },
+//     blob_storage: {
+//         account_name: process.env.BLOB_STORAGE_ACCOUNT_NAME!,
+//         account_key: process.env.BLOB_STORAGE_ACCOUNT_KEY!,
+//         container_name: process.env.BLOB_STORAGE_CONTAINER_NAME!,
+//         development_url: process.env.BLOB_STORAGE_DEVELOPMENT_URL!, // Local development URL, if needed
+//     },
+// }
+
+// export default config;
