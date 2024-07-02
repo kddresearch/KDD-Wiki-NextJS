@@ -2,9 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import Breadcrumb from "./breadcrumb";
 import { Github, Opencollective } from "react-bootstrap-icons";
-import config from "@/config";
+import getConfig from "@/config";
 
-export default function Footer() {
+export default async function Footer() {
+
+  const config = await getConfig();
 
   const GITHUB_URL = `https://github.com/${config!.github!.owner}/${config!.github!.repo}`;
 

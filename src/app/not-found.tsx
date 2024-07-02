@@ -8,11 +8,10 @@ import { BoxArrowUpRight } from "react-bootstrap-icons";
 import StripeBackDrop from "@/components/layout/backdrop";
 import Card from "@/components/layout/card";
 import { URL } from 'whatwg-url';
-import loadConfig from "@/config";
+import getConfig from "@/config";
+const config = await getConfig();
 
-export default async function NotFound() {
-
-  const config = await loadConfig();
+export default function NotFound() {
 
   const pathname = usePathname();
 

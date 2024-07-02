@@ -1,8 +1,8 @@
 import { expect, test, vi } from "vitest";
 import WikiUser, { AccessLevel } from "@/app/lib/models/wikiuser"
 import { testConnection } from '@/app/lib/db';
-import config from "@/config";
-// const config = getConfig();
+import getConfig from "@/config";
+const config = await getConfig();
 import { getRandomValues } from "crypto";
 
 // Disables a package that checks that code is only executed on the server side.

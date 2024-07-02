@@ -9,16 +9,20 @@ import {
   ChevronRight,
   HouseFill,
 } from "react-bootstrap-icons";
-import config from "@/config";
 import { URL } from 'whatwg-url';
+
+// import getConfig from "@/config";
+// const config = await getConfig();
+
+import { configAfterInit } from "@/config";
 
 const Breadcrumb = () => {
   const pathname = usePathname();
 
   const paths = pathname?.split("/").filter((path) => path !== "");
 
-  const baseGithubUrl = new URL(`https://github.com/${config!.github!.owner}/${config!.github!.repo}/issues/new`);
-  baseGithubUrl.searchParams.append("assignees", `${config!.github!.maintainers.join(",")}`);
+  const baseGithubUrl = new URL(`https://github.com/${configAfterInit!.github!.owner}/${configAfterInit!.github!.repo}/issues/new`);
+  baseGithubUrl.searchParams.append("assignees", `${configAfterInit!.github!.maintainers.join(",")}`);
   // baseGithubUrl.searchParams.append("labels", "missing+content");
   baseGithubUrl.searchParams.append("template", "report-page.md");
   baseGithubUrl.searchParams.append("title", `Report Page at ${pathname}`);

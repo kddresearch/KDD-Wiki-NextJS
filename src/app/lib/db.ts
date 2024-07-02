@@ -1,7 +1,8 @@
 import { 
     Pool,
     QueryResult,
-    Client
+    Client,
+    PoolConfig
 } from "pg";
 import { 
     pgTable,
@@ -10,11 +11,12 @@ import {
     varchar
 } from "drizzle-orm/pg-core";
 import { drizzle } from "drizzle-orm/node-postgres";
-import env_config from "@/config";
-// const config = getConfig().config;
-const fs = require('fs');
+import getConfig from "@/config";
+const env_config = await getConfig();
 
-const poolconfig = {
+let poolConfig: PoolConfig;
+
+poolConfig = {
     user: env_config!.db!.username,
     host: env_config!.db!.host,
     database: env_config!.db!.name,
@@ -23,15 +25,32 @@ const poolconfig = {
     ssl: true
 }
 
+async function loadPoolConfig() {
+
+    // const env_config = await getConfig();
+
+    // poolConfig = {
+    //     user: env_config!.db!.username,
+    //     host: env_config!.db!.host,
+    //     database: env_config!.db!.name,
+    //     password: env_config!.db!.password,
+    //     port: parseInt(env_config!.db!.port?.toString() || "5432"), // Default port is 5432, if not specified
+    //     ssl: true
+    // }
+}
+
 // console.log("poolconfig: ", poolconfig);
 
-const pool = new Pool(poolconfig);
+const pool = new Pool(poolConfig);
 
 var connected = false;
 
 async function connectDrizzle() {
+
+    await loadPoolConfig();
+
     try {
-        const client = new Client(poolconfig);
+        const client = new Client(poolConfig);
         await client.connect();
         const db = drizzle(client);
         console.log("Connected to PostgreSQL with Drizzle ORM");
@@ -40,9 +59,10 @@ async function connectDrizzle() {
     }
 }
 
-function connect(): void {
+async function connect() {
 
-    connectDrizzle();
+    await loadPoolConfig();
+    await connectDrizzle();
 
     pool.connect((err: Error | undefined, client: any, done: any) => {
         if (err) {

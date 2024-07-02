@@ -4,7 +4,8 @@ import { checkAuthAPI } from "@/auth";
 import { AccessLevel } from "@/app/lib/models/wikiuser";
 import { handleAPIError } from "@/app/lib/utils/api";
 // import { WikiContainerServiceClient } from "@/app/lib/files";
-import configProxy from "@/config";
+import getConfig from "@/config";
+const config = await getConfig();
 import { getFile, getFilesFromFormData, uploadFile } from "@/app/lib/files";
 
 export async function GET(

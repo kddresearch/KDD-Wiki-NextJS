@@ -36,18 +36,19 @@ class ConfigSingleton {
 
 // const getConfig = ConfigSingleton.getInstance
 
-let config;
+let configAfterInit;
 
 const getConfig = (async () => {
     const configInstance = ConfigSingleton.getInstance();
     await configInstance.init();
-    console.log("Config loaded", configInstance.config);
 
-    config = configInstance.config;
+    configAfterInit = configInstance.config;
 
-    return config;
+    return configAfterInit;
 });
 
 // console.log("tell me why", config);
 
 export default getConfig;
+// configAfterInit = ConfigSingleton.getInstance().config;
+export { configAfterInit };

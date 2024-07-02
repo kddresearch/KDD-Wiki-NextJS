@@ -2,7 +2,8 @@ import NextAuth, { User } from "next-auth";
 import { NextAuthConfig } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
-import env_config from "@/config";
+import getConfig from "@/config";
+const env_config = await getConfig();
 
 import google from "next-auth/providers/google";
 import KddUser from "@/app/lib/models/kdd_user";
