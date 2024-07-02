@@ -12,7 +12,7 @@ export default function NotAuthorized() {
   const message = useSearchParams()?.get("message");
   const callback = useSearchParams()?.get("callback");
 
-  const baseGithubUrl = new URL(`https://github.com/${config.github.owner}/${config.github.repo}`);
+  const baseGithubUrl = new URL(`https://github.com/${config!.github!.owner}/${config!.github!.repo}`);
 
   // TODO: Implement a way to report unauthorized access
   const ReportRedirect = () => {

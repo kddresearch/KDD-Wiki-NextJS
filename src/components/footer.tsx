@@ -6,7 +6,7 @@ import config from "@/config";
 
 export default function Footer() {
 
-  const GITHUB_URL = `https://github.com/${config.github.owner}/${config.github.repo}`;
+  const GITHUB_URL = `https://github.com/${config!.github!.owner}/${config!.github!.repo}`;
 
   return (
     <>

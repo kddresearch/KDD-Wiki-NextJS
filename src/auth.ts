@@ -18,9 +18,9 @@ export const config = {
       id: "ksu",
       name: "K-State",
       type: "oidc",
-      issuer: env_config.auth.ksu.issuer,
-      clientId: env_config.auth.ksu.client_id,
-      clientSecret: env_config.auth.ksu.client_secret,
+      issuer: env_config!.auth!.ksu.issuer,
+      clientId: env_config!.auth!.ksu.client_id,
+      clientSecret: env_config!.auth!.ksu.client_secret,
       profile(profile) {
         console.log(profile);
         return {
@@ -33,11 +33,11 @@ export const config = {
           scope: "email openid profile",
         },
       },
-      wellKnown: env_config.auth.ksu.well_known,
+      wellKnown: env_config!.auth!.ksu.well_known,
     },
     google({
-      clientId: env_config.auth.google.client_id,
-      clientSecret: env_config.auth.google.client_secret,
+      clientId: env_config!.auth!.google.client_id,
+      clientSecret: env_config!.auth!.google.client_secret,
     }),
   ],
   basePath: "/auth",
@@ -67,7 +67,7 @@ export const config = {
       return true;
     },
     jwt({ token, trigger, session }) {
-      const devUserData = env_config.dev_user;
+      const devUserData = env_config!.dev_user;
 
       token!.kdd_user = new KddUser(devUserData).toJSON();
 
@@ -75,7 +75,7 @@ export const config = {
       return token;
     },
   },
-  secret: env_config.auth.secret,
+  secret: env_config!.auth!.secret,
 } satisfies NextAuthConfig;
 
 export const { handlers, auth, signIn, signOut } = NextAuth(config);

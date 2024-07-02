@@ -17,8 +17,8 @@ const Breadcrumb = () => {
 
   const paths = pathname?.split("/").filter((path) => path !== "");
 
-  const baseGithubUrl = new URL(`https://github.com/${config.github.owner}/${config.github.repo}/issues/new`);
-  baseGithubUrl.searchParams.append("assignees", `${config.github.maintainers.join(",")}`);
+  const baseGithubUrl = new URL(`https://github.com/${config!.github!.owner}/${config!.github!.repo}/issues/new`);
+  baseGithubUrl.searchParams.append("assignees", `${config!.github!.maintainers.join(",")}`);
   // baseGithubUrl.searchParams.append("labels", "missing+content");
   baseGithubUrl.searchParams.append("template", "report-page.md");
   baseGithubUrl.searchParams.append("title", `Report Page at ${pathname}`);

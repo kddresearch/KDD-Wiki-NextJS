@@ -57,6 +57,7 @@ class ConfigLoader {
     }
 
     private async loadFromEnv() {
+
         this.config = {
             port: Number(process.env.PORT) || 3000,
             isdevelopment: process.env.NODE_ENV !== 'production',

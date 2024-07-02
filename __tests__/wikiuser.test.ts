@@ -2,6 +2,7 @@ import { expect, test, vi } from "vitest";
 import WikiUser, { AccessLevel } from "@/app/lib/models/wikiuser"
 import { testConnection } from '@/app/lib/db';
 import config from "@/config";
+// const config = getConfig();
 import { getRandomValues } from "crypto";
 
 // Disables a package that checks that code is only executed on the server side.
@@ -105,7 +106,7 @@ test('WikiUser Guest', () => {
 });
 
 // only continue if the database connection is successful
-const isGitHubActions = config.github_actions;
+const isGitHubActions = config!.github_actions;
 test('DB Connection', async () => {
     const connected = await testConnection();
     expect(connected).toBe(true);
