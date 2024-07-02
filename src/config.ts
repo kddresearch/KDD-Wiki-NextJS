@@ -1,3 +1,41 @@
+import { DefaultAzureCredential, ManagedIdentityCredential } from '@azure/identity';
+import { SecretClient } from '@azure/keyvault-secrets';
+// import jwt_decode from "jwt-decode";
+
+let client: SecretClient;
+
+async function initClient() {
+    const vaultName = process.env.AZURE_KEY_VAULT_NAME;
+    const KVUri = `https://${vaultName}.vault.azure.net`;
+
+    const credential = new DefaultAzureCredential();
+    client = new SecretClient(KVUri, credential);
+}
+
+async function getSecret(secretName: string) {
+    try {
+        const secret = await client.getSecret(secretName);
+        return secret.value;
+    } catch (error) {
+        // console.error(error);
+        return null;
+    }
+}
+
+async function checkAccess() {
+    try {
+        const secret = await client.getSecret("vault-enabled");
+        if (secret.value === "true") {
+            return true;
+        } else {
+            return false;
+        }
+    } catch (error) {
+        // console.error("Access to configuration denied (Did you login? run `az login`)");
+        return false;
+    }
+}
+
 const config = {
     port: process.env.PORT || 3000,
     isdevelopment: process.env.NODE_ENV !== 'production',
@@ -60,9 +98,21 @@ const configProxy = new Proxy(config, {
                 return new Proxy(value, this);
             }
             return value;
+        } else {
+            // Should never run on the client side
+            initClient();
+            (async () => {
+                const result = await checkAccess();
+                if (result === false) {
+                    console.error("Access to configuration denied (Did you login? run `az login`)");
+                }
+            })();
+            // Fallback to Azure Key Vault
+            console.log(`Accessing ${String(prop)} configuration from Azure Key Vault`);
+            const secret = getSecret(String(prop));
+            return secret;
         }
         throw new Error(`Configuration property ${String(prop)} not found`);
-        // return undefined; // Optio/nally, you can handle non-existent properties differently
     }
 }) as ConfigType;
 
