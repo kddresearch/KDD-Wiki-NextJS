@@ -10,24 +10,32 @@ import {
   HouseFill,
 } from "react-bootstrap-icons";
 import { URL } from 'whatwg-url';
+import dynamic from 'next/dynamic';
+import React from 'react';
 
 // import getConfig from "@/config";
 // const config = await getConfig();
 
 import { configAfterInit } from "@/config";
+// import IssueReportButton from "./buttons/report";
+
+// const IssueReportButton = dynamic(() => import('./buttons/report'), {
+//   ssr: true, // This option ensures the component is only rendered on the client side
+// });
+
+import IssueReportButton from "./buttons/report";
 
 const Breadcrumb = () => {
   const pathname = usePathname();
-
   const paths = pathname?.split("/").filter((path) => path !== "");
 
-  const baseGithubUrl = new URL(`https://github.com/${configAfterInit!.github!.owner}/${configAfterInit!.github!.repo}/issues/new`);
-  baseGithubUrl.searchParams.append("assignees", `${configAfterInit!.github!.maintainers.join(",")}`);
-  // baseGithubUrl.searchParams.append("labels", "missing+content");
-  baseGithubUrl.searchParams.append("template", "report-page.md");
-  baseGithubUrl.searchParams.append("title", `Report Page at ${pathname}`);
-
-  const githubIssueUrl = baseGithubUrl.toString();
+  // const getGithubIssueUrl = () => {
+  //   const baseGithubUrl = new URL(`https://github.com/${configAfterInit!.github.owner}/${configAfterInit!.github.repo}/issues/new`);
+  //   baseGithubUrl.searchParams.append("assignees", configAfterInit!.github.maintainers.join(","));
+  //   baseGithubUrl.searchParams.append("template", "report-page.md");
+  //   baseGithubUrl.searchParams.append("title", `Report Page at ${pathname}`);
+  //   return baseGithubUrl.toString();
+  // };
 
   return (
     <nav className="bg-white text-purple h-14 font-light">
@@ -56,12 +64,13 @@ const Breadcrumb = () => {
         })}
         <li className="grow" />
         <li className="justify-end">
-          <Link href={githubIssueUrl} className="">
+          {/* <Link href={getGithubIssueUrl()} className="">
             Report page
             <span className="ml-2">
               <BoxArrowUpRight className="inline" />
             </span>
-          </Link>
+          </Link> */}
+          <IssueReportButton pathname={pathname} type="general" />
         </li>
       </ol>
     </nav>

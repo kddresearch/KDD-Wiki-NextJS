@@ -103,12 +103,14 @@ class ConfigLoader {
                 development_url: process.env.BLOB_STORAGE_DEVELOPMENT_URL,
             },
             github_actions: process.env.GITHUB_ACTIONS === 'true',
-            github: {
-                owner: 'kddresearch',
-                repo: 'KDD-Wiki-NextJS',
-                maintainers: [
-                    'Legonois',
-                ],
+            public: {
+                github: {
+                    owner: 'kddresearch',
+                    repo: 'KDD-Wiki-NextJS',
+                    maintainers: [
+                        'Legonois',
+                    ],
+                },
             },
         }
     }

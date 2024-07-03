@@ -1,3 +1,4 @@
+import 'server-only'
 import ConfigLoader from './config/loader';
 import ConfigStructure from './config/interface';
 
@@ -30,12 +31,6 @@ class ConfigSingleton {
     }
 }
 
-// await ConfigSingleton.getInstance().init();
-
-// console.log(ConfigSingleton.getInstance().config);
-
-// const getConfig = ConfigSingleton.getInstance
-
 let configAfterInit;
 
 const getConfig = (async () => {
@@ -47,8 +42,12 @@ const getConfig = (async () => {
     return configAfterInit;
 });
 
-// console.log("tell me why", config);
+// async function getPublicConfig() {
+//     'use server';
+
+//     const config = await getConfig();
+//     return config!.public;
+// }
 
 export default getConfig;
-// configAfterInit = ConfigSingleton.getInstance().config;
 export { configAfterInit };

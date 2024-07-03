@@ -36,18 +36,20 @@ interface ConfigStructure {
         date_modified: string;
         is_kdd_only: boolean;
     };
-    github_actions?: boolean;
-    github?: {
-        owner: string;
-        repo: string;
-        maintainers: string[];
-    };
     blob_storage?: {
         account_name: string | undefined;
         account_key: string | undefined;
         container_name: string | undefined;
         development_url: string | undefined;
     };
+    github_actions?: boolean;
+    public?: {
+        github?: {
+            owner: string;
+            repo: string;
+            maintainers: string[];
+        };
+    }
 }
 
 export default ConfigStructure;
