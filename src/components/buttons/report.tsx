@@ -1,12 +1,5 @@
-// "use client";
-
-// import 'server-only'
 import Link from "next/link";
 import { BoxArrowUpRight } from "react-bootstrap-icons";
-
-// import getConfig from "@/config";
-// const config = await getConfig();
-
 import { useEffect, useState } from "react";
 import getPublicConfig from "@/actions/config";
 
@@ -16,21 +9,17 @@ function IssueReportButton({
   pathname: string;
   type: "general" | "missing";
 }) {
-  // let config;
-
-  // getPublicConfig().then((c) => {
-  //   config = c;
-  // });
-
   const [githubIssueUrl, setGithubIssueUrl] = useState("");
 
   useEffect(() => {
 
-    const fetchConfig = async () => {
-      const c = await getPublicConfig();
-      const config = c;
+    const handleError = (error: Error) => {
+      console.error(error);
+      setGithubIssueUrl("/report");
+    }
 
-      console.log("does this fetch?");
+    const fetchPublicConfig = async () => {
+      const config = await getPublicConfig();
 
       const baseGithubUrl = new URL(`https://github.com/${config!.github!.owner}/${config!.github!.repo}/issues/new`);
 
@@ -47,21 +36,9 @@ function IssueReportButton({
       return baseGithubUrl;
     }
 
-    const baseGithubUrl = fetchConfig()
-      .catch(console.error);
+    fetchPublicConfig()
+      .catch(handleError);
   })
-
-  // useEffect(() => {
-  //   getPublicConfig().then((c) => {
-  //     config = c;
-  //   });
-  // }, []);
-
-  // getPublicConfig().then((c) => {
-  //   config = c;
-  // });
-
-
 
   return (
     <Link href={githubIssueUrl}>

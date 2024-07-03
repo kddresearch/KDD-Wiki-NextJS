@@ -5,21 +5,9 @@ import { Github, Opencollective } from "react-bootstrap-icons";
 import getConfig from "@/config";
 const config = await getConfig();
 
-import getPublicConfig from "@/actions/config";
-
 export default async function Footer() {
 
-  // const config = await getConfig();
-
-  // let config;
-  // getPublicConfig().then((c) => {
-  //   config = c;
-  // });
-
-  // console.log("public config", config)
-
   const GITHUB_URL = `https://github.com/${config!.public!.github!.owner}/${config!.public!.github!.repo}`;
-  // const GITHUB_URL = '';
 
   return (
     <>

@@ -2,8 +2,6 @@ import 'server-only'
 import ConfigLoader from './config/loader';
 import ConfigStructure from './config/interface';
 
-let loaded;
-
 class ConfigSingleton {
     private static instance: ConfigSingleton;
     private loader: ConfigLoader | null = null;
@@ -31,23 +29,11 @@ class ConfigSingleton {
     }
 }
 
-let configAfterInit;
-
 const getConfig = (async () => {
     const configInstance = ConfigSingleton.getInstance();
     await configInstance.init();
 
-    configAfterInit = configInstance.config;
-
-    return configAfterInit;
+    return configInstance.config;
 });
 
-// async function getPublicConfig() {
-//     'use server';
-
-//     const config = await getConfig();
-//     return config!.public;
-// }
-
 export default getConfig;
-export { configAfterInit };

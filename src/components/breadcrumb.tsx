@@ -12,17 +12,6 @@ import {
 import { URL } from 'whatwg-url';
 import dynamic from 'next/dynamic';
 import React from 'react';
-
-// import getConfig from "@/config";
-// const config = await getConfig();
-
-import { configAfterInit } from "@/config";
-// import IssueReportButton from "./buttons/report";
-
-// const IssueReportButton = dynamic(() => import('./buttons/report'), {
-//   ssr: true, // This option ensures the component is only rendered on the client side
-// });
-
 import IssueReportButton from "./buttons/report";
 
 const Breadcrumb = () => {
