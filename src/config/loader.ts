@@ -1,3 +1,5 @@
+import 'server-only'
+
 import { DefaultAzureCredential } from '@azure/identity';
 import { SecretClient } from '@azure/keyvault-secrets';
 import ConfigStructure from './interface';
@@ -12,10 +14,6 @@ class ConfigLoader {
             return;
         }
 
-        if (typeof window === 'undefined') {
-            return;
-        }
-
         const credential = new DefaultAzureCredential();
         const url = `https://${keyVaultName}.vault.azure.net`;
         this.secretClient = new SecretClient(url, credential);
@@ -23,8 +21,14 @@ class ConfigLoader {
 
     async loadConfig(): Promise<Partial<ConfigStructure>> {
         await this.loadFromEnv();
+
+        // console.log(this);
+
         if (this.secretClient) {
-            if (await this.checkAccess()!) {
+
+            // console.log("access check:", await this.checkAccess())
+
+            if (await this.checkAccess() === false) {
                 console.error("Access to configuration denied (Did you login? run `az login`)");
                 return this.config;
             }
@@ -39,13 +43,16 @@ class ConfigLoader {
         for await (const secretProperties of this.secretClient!.listPropertiesOfSecrets()) {
             const secretName = secretProperties.name!;
             const secret = await this.secretClient!.getSecret(secretName);
-            this.setConfigValue(secretName.toLocaleLowerCase(), secret.value! as string)
+            console.log("Secret Name:", secretName);
+            // this.setConfigValue(secretName.toLocaleLowerCase(), secret.value! as string)
+            this.setConfigValue(secretName, secret.value! as string)
         }
+        console.log(this);
     }
 
     private setConfigValue(key: string, value: string) {
         // Set the config value, handling nested properties
-        const parts = key.split('_'); // the _ acts as the . in the namespace
+        const parts = key.split('-'); // the _ acts as the . in the namespace
         let current: any = this.config;
         for (let i = 0; i < parts.length - 1; i++) {
             if (!(parts[i] in current)) {
@@ -57,6 +64,8 @@ class ConfigLoader {
     }
 
     private async loadFromEnv() {
+
+        console.log('Loading from environment variables')
 
         this.config = {
             port: Number(process.env.PORT) || 3000,
@@ -96,6 +105,12 @@ class ConfigLoader {
                 date_modified: '2016-04-20T15:00:00.000Z',
                 is_kdd_only: false,
             },
+            BlobStorage: {
+                AccountName: process.env.BLOB_STORAGE_ACCOUNT_NAME,
+                AccountKey: process.env.BLOB_STORAGE_ACCOUNT_KEY,
+                ContainerName: process.env.BLOB_STORAGE_CONTAINER_NAME,
+                DevelopmentUrl: process.env.BLOB_STORAGE_DEVELOPMENT_URL,
+            },
             blob_storage: {
                 account_name: process.env.BLOB_STORAGE_ACCOUNT_NAME,
                 account_key: process.env.BLOB_STORAGE_ACCOUNT_KEY,
@@ -120,11 +135,10 @@ class ConfigLoader {
             const secret = await this.secretClient!.getSecret("vault-enabled");
             if (secret.value === "true") {
                 return true;
-            } else {
-                return false;
             }
+            return false;
         } catch (error) {
-            // console.error("Access to configuration denied (Did you login? run `az login`)");
+            console.error("Unexpected Error Occurred with Access to Configuration (Did you login? run `az login`)", error);
             return false;
         }
     }

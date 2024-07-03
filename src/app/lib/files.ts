@@ -14,9 +14,13 @@ import {
 import getConfig from "@/config";
 const config = await getConfig();
 
-const account = config!.blob_storage!.account_name;
-const accountKey = config!.blob_storage!.account_key;
-const container = config!.blob_storage!.container_name;
+// const account = config!.blob_storage!.account_name;
+// const accountKey = config!.blob_storage!.account_key;
+// const container = config!.blob_storage!.container_name;
+
+const account = config!.BlobStorage!.AccountName;
+const accountKey = config!.BlobStorage!.AccountKey;
+const container = config!.BlobStorage!.ContainerName;
 
 if (!account || !accountKey || !container) {
     throw new Error("Blob Storage configuration missing");

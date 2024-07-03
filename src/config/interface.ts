@@ -1,6 +1,9 @@
 interface ConfigStructure {
     port?: number;
     isdevelopment?: boolean;
+    keystore?: {
+        active: boolean;
+    }
     keystore_active?: boolean;
     auth?: {
         secret: string | undefined;
@@ -35,6 +38,12 @@ interface ConfigStructure {
         date_created: string;
         date_modified: string;
         is_kdd_only: boolean;
+    };
+    BlobStorage?: {
+        AccountName: string | undefined;
+        AccountKey: string | undefined;
+        ContainerName: string | undefined;
+        DevelopmentUrl: string | undefined;
     };
     blob_storage?: {
         account_name: string | undefined;

@@ -7,7 +7,7 @@ function IssueReportButton({
   ...props
 }: {
   pathname: string;
-  type: "general" | "missing";
+  type: "general" | "missing" | "not-authorized" | "error";
 }) {
   const [githubIssueUrl, setGithubIssueUrl] = useState("");
 
@@ -30,6 +30,10 @@ function IssueReportButton({
         baseGithubUrl.searchParams.append("labels", "missing content");
         baseGithubUrl.searchParams.append("template", "report-page-missing.md");
         baseGithubUrl.searchParams.append("title", `Missing Page at ${props.pathname}`);
+      } else if (props.type === "not-authorized") { // Not authorized to view page
+        baseGithubUrl.searchParams.append("labels", "not authorized");
+        baseGithubUrl.searchParams.append("template", "report-page-not-authorized.md");
+        baseGithubUrl.searchParams.append("title", `Not Authorized at ${props.pathname}`);
       }
 
       setGithubIssueUrl(baseGithubUrl.toString());
