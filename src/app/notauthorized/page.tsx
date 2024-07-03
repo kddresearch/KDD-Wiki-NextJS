@@ -5,9 +5,7 @@ import Card from "@/components/layout/card"
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { BoxArrowUpRight, Github } from "react-bootstrap-icons";
-import getConfig from "@/config";
 import IssueReportButton from "@/components/buttons/report";
-const config = await getConfig();
 
 export default function NotAuthorized() {
   const pathname = usePathname();

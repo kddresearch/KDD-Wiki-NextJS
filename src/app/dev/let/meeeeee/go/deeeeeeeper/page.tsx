@@ -11,7 +11,7 @@ const Dev = () => (
       <Link href="/">Go back to home</Link>
 
       <p>
-      config: {config?.keystore_active}
+      config: {config?.Keystore?.Active}
       </p>
 
       <Breadcrumb />

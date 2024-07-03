@@ -17,11 +17,11 @@ const env_config = await getConfig();
 let poolConfig: PoolConfig;
 
 poolConfig = {
-    user: env_config!.db!.username,
-    host: env_config!.db!.host,
-    database: env_config!.db!.name,
-    password: env_config!.db!.password,
-    port: parseInt(env_config!.db!.port?.toString() || "5432"), // Default port is 5432, if not specified
+    user: env_config!.Db!.Username,
+    host: env_config!.Db!.Host,
+    database: env_config!.Db!.Name,
+    password: env_config!.Db!.Password,
+    port: parseInt(env_config!.Db!.Port?.toString() || "5432"), // Default port is 5432, if not specified
     ssl: true
 }
 

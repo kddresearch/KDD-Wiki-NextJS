@@ -47,7 +47,7 @@ class ConfigLoader {
             // this.setConfigValue(secretName.toLocaleLowerCase(), secret.value! as string)
             this.setConfigValue(secretName, secret.value! as string)
         }
-        console.log(this);
+        console.log(this.config);
     }
 
     private setConfigValue(key: string, value: string) {
@@ -70,30 +70,29 @@ class ConfigLoader {
         this.config = {
             port: Number(process.env.PORT) || 3000,
             isdevelopment: process.env.NODE_ENV !== 'production',
-            keystore_active: process.env.KEYSTORE_ACTIVE === 'true',
-            auth: {
-                secret: process.env.AUTH_SECRET,
-                google: {
-                    client_id: process.env.AUTH_GOOGLE_CLIENT_ID,
-                    project_id: 'canvascaboose',
-                    auth_uri: 'https://accounts.google.com/o/oauth2/auth',
-                    token_uri: 'https://oauth2.googleapis.com/token',
-                    auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
-                    client_secret: process.env.AUTH_GOOGLE_CLIENT_SECRET,
+            Auth: {
+                Secret: process.env.AUTH_SECRET,
+                Google: {
+                    ClientId: process.env.AUTH_GOOGLE_CLIENT_ID,
+                    ProjectId: 'canvascaboose',
+                    AuthUri: 'https://accounts.google.com/o/oauth2/auth',
+                    TokenUri: 'https://oauth2.googleapis.com/token',
+                    AuthProviderX509CertUrl: 'https://www.googleapis.com/oauth2/v1/certs',
+                    ClientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET,
                 },
-                ksu: {
-                    client_id: process.env.AUTH_KSU_CLIENT_ID,
-                    client_secret: process.env.AUTH_KSU_CLIENT_SECRET,
-                    issuer: 'https://signin.k-state.edu/WebISO/oidc',
-                    well_known: 'https://signin.k-state.edu/WebISO/oidc/.well-known',
+                Ksu: {
+                    ClientId: process.env.AUTH_KSU_CLIENT_ID,
+                    ClientSecret: process.env.AUTH_KSU_CLIENT_SECRET,
+                    Issuer: 'https://signin.k-state.edu/WebISO/oidc',
+                    WellKnown: 'https://signin.k-state.edu/WebISO/oidc/.well-known',
                 },
             },
-            db: {
-                name: process.env.DB_NAME,
-                host: process.env.DB_HOST,
-                port: process.env.DB_PORT,
-                username: process.env.DB_USERNAME,
-                password: process.env.DB_PASSWORD,
+            Db: {
+                Name: process.env.DB_NAME,
+                Host: process.env.DB_HOST,
+                Port: process.env.DB_PORT,
+                Username: process.env.DB_USERNAME,
+                Password: process.env.DB_PASSWORD,
             },
             dev_user: {
                 username: 'wnbaldwin',
@@ -110,12 +109,6 @@ class ConfigLoader {
                 AccountKey: process.env.BLOB_STORAGE_ACCOUNT_KEY,
                 ContainerName: process.env.BLOB_STORAGE_CONTAINER_NAME,
                 DevelopmentUrl: process.env.BLOB_STORAGE_DEVELOPMENT_URL,
-            },
-            blob_storage: {
-                account_name: process.env.BLOB_STORAGE_ACCOUNT_NAME,
-                account_key: process.env.BLOB_STORAGE_ACCOUNT_KEY,
-                container_name: process.env.BLOB_STORAGE_CONTAINER_NAME,
-                development_url: process.env.BLOB_STORAGE_DEVELOPMENT_URL,
             },
             github_actions: process.env.GITHUB_ACTIONS === 'true',
             public: {

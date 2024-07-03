@@ -19,9 +19,9 @@ export const config = {
       id: "ksu",
       name: "K-State",
       type: "oidc",
-      issuer: env_config!.auth!.ksu.issuer,
-      clientId: env_config!.auth!.ksu.client_id,
-      clientSecret: env_config!.auth!.ksu.client_secret,
+      issuer: env_config!.Auth!.Ksu.Issuer,
+      clientId: env_config!.Auth!.Ksu.ClientId,
+      clientSecret: env_config!.Auth!.Ksu.ClientSecret,
       profile(profile) {
         console.log(profile);
         return {
@@ -34,11 +34,11 @@ export const config = {
           scope: "email openid profile",
         },
       },
-      wellKnown: env_config!.auth!.ksu.well_known,
+      wellKnown: env_config!.Auth!.Ksu.WellKnown,
     },
     google({
-      clientId: env_config!.auth!.google.client_id,
-      clientSecret: env_config!.auth!.google.client_secret,
+      clientId: env_config!.Auth!.Google.ClientId,
+      clientSecret: env_config!.Auth!.Google.ClientSecret,
     }),
   ],
   basePath: "/auth",
@@ -76,7 +76,7 @@ export const config = {
       return token;
     },
   },
-  secret: env_config!.auth!.secret,
+  secret: env_config!.Auth!.Secret,
 } satisfies NextAuthConfig;
 
 export const { handlers, auth, signIn, signOut } = NextAuth(config);
