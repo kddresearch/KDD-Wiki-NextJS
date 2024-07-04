@@ -35,6 +35,7 @@ jobs:
         echo $'LOADED=true\n' >> .env.local
         echo $'GITHUB_ACTIONS=true\n' >> .env.local
 
+        echo $'AZURE_KEY_VAULT_NAME="${{ secrets.AZURE_KEY_VAULT_NAME }}"\n' >> .env.local
         echo $'AZURE_CLIENT_ID="${{ secrets.AZURE_CLIENT_ID }}"\n' >> .env.local
         echo $'AZURE_CLIENT_SECRET="${{ secrets.AZURE_CLIENT_SECRET }}"\n' >> .env.local
         echo $'AZURE_TENANT_ID="${{ secrets.AZURE_TENANT_ID }}"\n' >> .env.local
