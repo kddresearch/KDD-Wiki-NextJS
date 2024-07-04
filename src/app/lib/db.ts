@@ -25,35 +25,16 @@ poolConfig = {
     ssl: true
 }
 
-async function loadPoolConfig() {
-
-    // const env_config = await getConfig();
-
-    // poolConfig = {
-    //     user: env_config!.db!.username,
-    //     host: env_config!.db!.host,
-    //     database: env_config!.db!.name,
-    //     password: env_config!.db!.password,
-    //     port: parseInt(env_config!.db!.port?.toString() || "5432"), // Default port is 5432, if not specified
-    //     ssl: true
-    // }
-}
-
-// console.log("poolconfig: ", poolconfig);
-
 const pool = new Pool(poolConfig);
 
 var connected = false;
 
 async function connectDrizzle() {
 
-    await loadPoolConfig();
-
     try {
         const client = new Client(poolConfig);
         await client.connect();
         const db = drizzle(client);
-        console.log("Connected to PostgreSQL with Drizzle ORM");
     } catch (err: any) {
         console.error("Database connection error", err.stack);
     }
@@ -61,14 +42,12 @@ async function connectDrizzle() {
 
 async function connect() {
 
-    await loadPoolConfig();
     await connectDrizzle();
 
     pool.connect((err: Error | undefined, client: any, done: any) => {
         if (err) {
             console.error("Database connection error", err.stack);
         } else {
-            console.log("Connected to PostgreSQL");
             client.release();
         }
     });
@@ -77,26 +56,17 @@ async function connect() {
 }
 
 /**
- * Executes a query on the PostgreSQL database | ***use specific query functions instead***
+ * ### ***DO NOT USE*** OUTSIDE SPECIFIC QUERY FUNCTIONS
+ * 
+ * Executes a query on the PostgreSQL database
  */
 async function query(text: string, params?: any[]): Promise<QueryResult> {
     if (!connected) {
         connect();
     }
 
-    // time the query
-    // const start = Date.now();
-
     try {
-        // console Debug
-        // console.log('Executing query:', text + "\n" + params);
         const result = await pool.query(text, params);
-
-        // time the query
-        // const duration = Date.now() - start;
-        // console.log("table : ", text);
-        // console.log("Query duration: ", duration);
-
         return result;
     } catch (err) {
         console.error("Error occurred during query execution:", err);
@@ -106,7 +76,6 @@ async function query(text: string, params?: any[]): Promise<QueryResult> {
     }
 }
 
-// can connect
 async function testConnection(): Promise<boolean> {
     try {
         connect();

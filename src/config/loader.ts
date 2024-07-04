@@ -22,32 +22,55 @@ class ConfigLoader {
     async loadConfig(): Promise<Partial<ConfigStructure>> {
         await this.loadFromEnv();
 
-        // console.log(this);
-
-        if (this.secretClient) {
-
-            // console.log("access check:", await this.checkAccess())
-
-            if (await this.checkAccess() === false) {
-                console.error("Access to configuration denied (Did you login? run `az login`)");
-                return this.config;
-            }
-            await this.loadFromKeyVault();
+        if (!this.secretClient) {
+            return this.config;
         }
 
+        if (await this.checkAccess() === false) {
+            console.error("Access to configuration denied (Did you login? run `az login`)");
+            return this.config;
+        }
+
+        if (this.config.Keystore?.Active) {
+            return this.config;
+            console.log("Keystore is active, skipping keyvault load")
+        }
+
+        await this.loadFromKeyVault();
         return this.config;
     }
 
     private async loadFromKeyVault() {
-        // only runs if secretClient is not null!
-        for await (const secretProperties of this.secretClient!.listPropertiesOfSecrets()) {
+
+        const start = Date.now();
+
+        const secretPromises = [];
+        const secretTimes: any[] = [];
+
+        for await (const secretProperties of this.secretClient!.listPropertiesOfSecrets()) {            
             const secretName = secretProperties.name!;
-            const secret = await this.secretClient!.getSecret(secretName);
-            console.log("Secret Name:", secretName);
-            // this.setConfigValue(secretName.toLocaleLowerCase(), secret.value! as string)
-            this.setConfigValue(secretName, secret.value! as string)
+            const secretStart = Date.now();
+
+            secretPromises.push(this.secretClient!.getSecret(secretName).then(secret => {
+
+                const secretEnd = Date.now();
+                const timeTaken = secretEnd - secretStart;
+
+                secretTimes.push({ secretName, timeTaken });
+
+                // console.log("Secret Name:", secretName);
+                this.setConfigValue(secretName, secret.value! as string);
+            }));
         }
-        console.log(this.config);
+
+        await Promise.all(secretPromises);
+
+        // secretTimes.forEach(({ secretName, timeTaken }) => {
+        //     console.log(`${timeTaken} ms, ${secretName}`);
+        // });
+
+        console.log("Required reload of secrets");
+        console.log("Time to load secrets:", Date.now() - start, "ms");
     }
 
     private setConfigValue(key: string, value: string) {
@@ -65,7 +88,7 @@ class ConfigLoader {
 
     private async loadFromEnv() {
 
-        console.log('Loading from environment variables')
+        // console.log('Loading from environment variables')
 
         this.config = {
             port: Number(process.env.PORT) || 3000,
