@@ -25,7 +25,7 @@
 
 // // custom plugins
 // import ToolbarPlugin from "./plugins/toolbar-plugin";
-import theme from "./theme";
+// import theme from "./theme";
 // import DraggableBlockPlugin from "./plugins/draggable-node-plugin";
 // import MarkdownPlugin from "./plugins/markdown-plugin";
 // import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
@@ -153,6 +153,7 @@ import theme from "./theme";
 
 import { $createTextNode, $getRoot, $getSelection, EditorState } from 'lexical';
 import {useEffect} from 'react';
+import theme from "./theme";
 
 import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
 import {LexicalComposer} from '@lexical/react/LexicalComposer';
@@ -162,6 +163,7 @@ import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
 import {LexicalErrorBoundary} from '@lexical/react/LexicalErrorBoundary';
 import ToolbarPlugin from './plugins/toolbar-plugin';
 import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 function onError(error: Error) {
   console.error(error);
@@ -189,9 +191,9 @@ function prePopulate() {
   }
 }
 
-function Editor() {
+function TextEditor() {
   const initialConfig = {
-    EditorState: prePopulate,
+    // EditorState: prePopulate,
     namespace: 'MyEditor',
     theme,
     onError,
@@ -199,20 +201,58 @@ function Editor() {
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <ToolbarPlugin />
+      {/* <ToolbarPlugin />
       <RichTextPlugin
         contentEditable={<ContentEditable placeholder="Enter some rich text..."/>}
         placeholder={null}
         ErrorBoundary={LexicalErrorBoundary}
       />
       <HistoryPlugin />
-      <AutoFocusPlugin />
+      <AutoFocusPlugin /> */}
+      <Editor/>
     </LexicalComposer>
   );
 }
 
-function textEditor() {
-  return <div>Loading editor... (enable javascript)</div>;
-}
+const Editor = ({ 
+  // onContentChange,
+  // onRef,
+  // foatingAnchorElm,
+}: { 
+  // onContentChange: (newContent: string) => void; 
+  // onRef: (elem: HTMLDivElement) => void;
+  // foatingAnchorElm: HTMLDivElement | null;
+}) => {
+  // const [editor] = useLexicalComposerContext();
 
-export default Editor;
+  // useEffect(() => {
+  //   return editor.registerUpdateListener(({ editorState }) => {
+  //     // onContentChange(editorState.read(() => $convertToMarkdownString()));
+  //   });
+  // }, [editor, onContentChange]);
+
+  return (
+    <div id="hello" className="my-5 text-black relative leading-5 font-normal text-left rounded-t-lg border-gray border rounded-b-lg">
+      <ToolbarPlugin />
+      <div id="world" className="bg-white relative prose max-w-none prose-h1:text-purple prose-a:text-purple prose-a:underline">
+        <RichTextPlugin
+          contentEditable={                
+            <ContentEditable 
+              className="min-h-[150px] resize-none text-[15px] caret-[#444)] relative tab-[1] outline-none p-[15px_10px] caret-[#444] pl-7"
+              placeholder="Enter some rich text..."
+            />
+          }
+          placeholder={null}
+          ErrorBoundary={LexicalErrorBoundary}
+        />
+        <HistoryPlugin />
+        {/* <MarkdownPlugin /> */}
+        {/* <MarkdownShortcutPlugin /> */}
+        {/* <AutoFocusPlugin /> */}
+        {/* {foatingAnchorElm ? <DraggableBlockPlugin anchorElem={foatingAnchorElm} /> : null} */}
+      </div>
+    </div>
+  );
+};
+
+export default TextEditor;
