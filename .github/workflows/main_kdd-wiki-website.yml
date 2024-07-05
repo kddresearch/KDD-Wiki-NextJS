@@ -11,8 +11,8 @@ on:
 
 jobs:
   build:
-    # runs-on: 'ubuntu-latest'
-    runs-on: 'self-hosted'
+    runs-on: 'ubuntu-latest'
+    # runs-on: 'self-hosted'
 
     steps:
     - uses: actions/checkout@v2
@@ -32,20 +32,13 @@ jobs:
 
     - name: Create .env.local with secrets
       run: |
-        echo $'AUTH_SECRET="${{ secrets.AUTH_SECRET }}"\n' >> .env.local
-        echo $'AUTH_GOOGLE_CLIENT_ID="${{ secrets.AUTH_GOOGLE_CLIENT_ID }}"\n' >> .env.local
-        echo $'AUTH_GOOGLE_CLIENT_SECRET="${{ secrets.AUTH_GOOGLE_CLIENT_SECRET }}"\n' >> .env.local
-        echo $'AUTH_KSU_CLIENT_ID="${{ secrets.AUTH_KSU_CLIENT_ID }}"\n' >> .env.local
-        echo $'AUTH_KSU_CLIENT_SECRET="${{ secrets.AUTH_KSU_CLIENT_SECRET }}"\n' >> .env.local
-        echo $'DB_NAME="${{ secrets.DB_NAME }}"\n' >> .env.local
-        echo $'DB_HOST="${{ secrets.DB_HOST }}"\n' >> .env.local
-        echo $'DB_USERNAME="${{ secrets.DB_USERNAME }}"\n' >> .env.local
-        echo $'DB_PASSWORD="${{ secrets.DB_PASSWORD }}"\n' >> .env.local
         echo $'LOADED=true\n' >> .env.local
         echo $'GITHUB_ACTIONS=true\n' >> .env.local
-        echo $'BLOB_STORAGE_ACCOUNT_NAME="${{ secrets.BLOB_STORAGE_ACCOUNT_NAME }}"\n' >> .env.local
-        echo $'BLOB_STORAGE_ACCOUNT_KEY="${{ secrets.BLOB_STORAGE_ACCOUNT_KEY }}"\n' >> .env.local
-        echo $'BLOB_STORAGE_CONTAINER_NAME="${{ secrets.BLOB_STORAGE_CONTAINER_NAME }}"\n' >> .env.local
+
+        echo $'AZURE_KEY_VAULT_NAME="${{ secrets.AZURE_KEY_VAULT_NAME }}"\n' >> .env.local
+        echo $'AZURE_CLIENT_ID="${{ secrets.AZURE_CLIENT_ID }}"\n' >> .env.local
+        echo $'AZURE_CLIENT_SECRET="${{ secrets.AZURE_CLIENT_SECRET }}"\n' >> .env.local
+        echo $'AZURE_TENANT_ID="${{ secrets.AZURE_TENANT_ID }}"\n' >> .env.local
 
     # give permissions to the .env.local file
     - name: Give permissions to .env.local

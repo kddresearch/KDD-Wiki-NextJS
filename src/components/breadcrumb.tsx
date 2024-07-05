@@ -9,21 +9,14 @@ import {
   ChevronRight,
   HouseFill,
 } from "react-bootstrap-icons";
-import config from "@/config";
 import { URL } from 'whatwg-url';
+import dynamic from 'next/dynamic';
+import React from 'react';
+import IssueReportButton from "./buttons/report";
 
 const Breadcrumb = () => {
   const pathname = usePathname();
-
   const paths = pathname?.split("/").filter((path) => path !== "");
-
-  const baseGithubUrl = new URL(`https://github.com/${config.github.owner}/${config.github.repo}/issues/new`);
-  baseGithubUrl.searchParams.append("assignees", `${config.github.maintainers.join(",")}`);
-  // baseGithubUrl.searchParams.append("labels", "missing+content");
-  baseGithubUrl.searchParams.append("template", "report-page.md");
-  baseGithubUrl.searchParams.append("title", `Report Page at ${pathname}`);
-
-  const githubIssueUrl = baseGithubUrl.toString();
 
   return (
     <nav className="bg-white text-purple h-14 font-light">
@@ -52,12 +45,13 @@ const Breadcrumb = () => {
         })}
         <li className="grow" />
         <li className="justify-end">
-          <Link href={githubIssueUrl} className="">
+          {/* <Link href={getGithubIssueUrl()} className="">
             Report page
             <span className="ml-2">
               <BoxArrowUpRight className="inline" />
             </span>
-          </Link>
+          </Link> */}
+          <IssueReportButton pathname={pathname} type="general" />
         </li>
       </ol>
     </nav>

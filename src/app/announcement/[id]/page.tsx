@@ -4,14 +4,12 @@ import { Announcement, fetchById } from "@/app/lib/models/announcement";
 import sanitizeHtml from "sanitize-html";
 import StripeBackDrop from "@/components/layout/backdrop";
 import Card from "@/components/layout/card";
+import { notFound } from "next/navigation";
 
 const AnnouncementPage = async ({ params }: { params: { id: string } }) => {
   // if id is not a number, return 404
   if (isNaN(parseInt(params.id))) {
-    return {
-      status: 404,
-      message: "Invalid announcement id",
-    };
+    return notFound();
   }
 
   const announcement = await fetchById(parseInt(params.id));

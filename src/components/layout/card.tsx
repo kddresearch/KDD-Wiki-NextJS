@@ -27,6 +27,7 @@ function Card({
     hasBackgroundColor ? '' : 'bg-white',
     'text-lg',
     'my-8',
+    'shadow-md',
     props.className
   );
 

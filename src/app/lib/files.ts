@@ -6,15 +6,21 @@ import {
     StoragePipelineOptions,
     StorageSharedKeyCredential,
 } from "@azure/storage-blob";
-import configProxy from "@/config";
 import {  
     DefaultHttpClient,
     WebResourceLike,
 } from '@azure/core-http';
 
-const account = configProxy.blob_storage.account_name;
-const accountKey = configProxy.blob_storage.account_key;
-const container = configProxy.blob_storage.container_name;
+import getConfig from "@/config";
+const config = await getConfig();
+
+const account = config!.BlobStorage!.AccountName;
+const accountKey = config!.BlobStorage!.AccountKey;
+const container = config!.BlobStorage!.ContainerName;
+
+if (!config!.Keystore!.Active) {
+    throw new Error("Keystore is not active");
+}
 
 if (!account || !accountKey || !container) {
     throw new Error("Blob Storage configuration missing");
@@ -38,7 +44,7 @@ const accountKeyCredential = new StorageSharedKeyCredential(account, accountKey)
 
 let WikiContainerServiceClient: ContainerClient;
 
-if (configProxy.isdevelopment) {
+if (config!.isdevelopment) {
     const host = `${account}.blob.core.windows.net`;
     // const hostPolicy = new HostRequestPolicyFactory(host);
     const pipelineOptions: StoragePipelineOptions = {

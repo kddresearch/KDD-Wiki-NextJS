@@ -5,17 +5,19 @@ EXPOSE 3000
 # DEVELOPMENT
 FROM base AS dev
 
+ENV NEXT_TELEMETRY_DISABLED 1
 ENV CHOKIDAR_USEPOLLING=true
 ENV NEXT_WEBPACK_USEPOLLING=true
 
+# Install Dependencies
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
-# COPY --from=deps /app/node_modules ./node_modules
-
 COPY . .
+RUN npm install pnpm -g
+RUN pnpm install --verbose
+
+# Start Server
 EXPOSE 3000
-CMD npm run dev
+CMD pnpm run dev
 
 # PRODUCTION
 FROM base AS prod
@@ -26,12 +28,15 @@ ENV CI=true
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NEXTAUTH_URL=https://kdd-wiki-website.azurewebsites.net/
 
-COPY package*.json ./
-RUN npm install
+# Install Dependencies
 COPY . .
-RUN npm run build
-RUN npm run ci-test
+RUN npm install pnpm -g
+RUN pnpm install --verbose
 
+# Build and Test
+RUN pnpm run build
+RUN pnpm run ci-test
+
+# Start Server
 EXPOSE 3000
-
-CMD ["npm", "run", "start"]
+CMD pnpm run start

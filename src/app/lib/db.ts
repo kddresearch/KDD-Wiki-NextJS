@@ -1,33 +1,53 @@
-import { Pool, QueryResult } from "pg";
-import env_config from "@/config";
-const fs = require('fs');
+import { 
+    Pool,
+    QueryResult,
+    Client,
+    PoolConfig
+} from "pg";
+import { 
+    pgTable,
+    serial,
+    text,
+    varchar
+} from "drizzle-orm/pg-core";
+import { drizzle } from "drizzle-orm/node-postgres";
+import getConfig from "@/config";
+const env_config = await getConfig();
 
-let ssl: any = true;
-if (env_config.isdevelopment) {
-    ssl = false;
+let poolConfig: PoolConfig;
+
+poolConfig = {
+    user: env_config!.Db!.Username,
+    host: env_config!.Db!.Host,
+    database: env_config!.Db!.Name,
+    password: env_config!.Db!.Password,
+    port: parseInt(env_config!.Db!.Port?.toString() || "5432"), // Default port is 5432, if not specified
+    ssl: true
 }
 
-const poolconfig = {
-    user: env_config.db.username,
-    host: env_config.db.host,
-    database: env_config.db.name,
-    password: env_config.db.password,
-    port: parseInt(env_config.db.port?.toString() || "5432"), // Default port is 5432, if not specified
-    ssl: ssl
-}
-
-// console.log("poolconfig: ", poolconfig);
-
-const pool = new Pool(poolconfig);
+const pool = new Pool(poolConfig);
 
 var connected = false;
 
-function connect(): void {
+async function connectDrizzle() {
+
+    try {
+        const client = new Client(poolConfig);
+        await client.connect();
+        const db = drizzle(client);
+    } catch (err: any) {
+        console.error("Database connection error", err.stack);
+    }
+}
+
+async function connect() {
+
+    await connectDrizzle();
+
     pool.connect((err: Error | undefined, client: any, done: any) => {
         if (err) {
             console.error("Database connection error", err.stack);
         } else {
-            console.log("Connected to PostgreSQL");
             client.release();
         }
     });
@@ -36,26 +56,17 @@ function connect(): void {
 }
 
 /**
- * Executes a query on the PostgreSQL database | ***use specific query functions instead***
+ * ### ***DO NOT USE*** OUTSIDE SPECIFIC QUERY FUNCTIONS
+ * 
+ * Executes a query on the PostgreSQL database
  */
 async function query(text: string, params?: any[]): Promise<QueryResult> {
     if (!connected) {
         connect();
     }
 
-    // time the query
-    // const start = Date.now();
-
     try {
-        // console Debug
-        // console.log('Executing query:', text + "\n" + params);
         const result = await pool.query(text, params);
-
-        // time the query
-        // const duration = Date.now() - start;
-        // console.log("table : ", text);
-        // console.log("Query duration: ", duration);
-
         return result;
     } catch (err) {
         console.error("Error occurred during query execution:", err);
@@ -65,7 +76,6 @@ async function query(text: string, params?: any[]): Promise<QueryResult> {
     }
 }
 
-// can connect
 async function testConnection(): Promise<boolean> {
     try {
         connect();

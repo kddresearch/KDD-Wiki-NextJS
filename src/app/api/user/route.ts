@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-
 import {
   fetchAll,
   fetchById,
@@ -8,7 +7,6 @@ import {
   update,
   remove,
 } from "@/app/lib/db/wiki_user";
-
 import { checkAuthAPI } from "@/auth";
 import KddUser from "@/app/lib/models/kdd_user";
 import { AccessLevel } from "@/app/lib/models/wikiuser";
@@ -58,4 +56,3 @@ export async function POST(
     }
 }
 
-export const maxDuration = 5;

@@ -1,5 +1,14 @@
 # Security Policy
 
+We are committed to continuous improvement of our security practices.
+Feedback and reports from our community are essential to this process,
+and we encourage open communication while respecting confidentiality.
+
+## Contributions
+
+When committing to this repository, you are solely responsible for
+removing all identifiable 
+
 ## Reporting a Vulnerability
 
 We take the security of our repository very seriously. If you discover a
