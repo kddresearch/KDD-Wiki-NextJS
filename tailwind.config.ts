@@ -9,6 +9,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        "ksu-fonts": ['Myriad Pro', 'Open Sans', 'Helvetica', 'Arial', 'sans-serif'],
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
@@ -24,6 +27,7 @@ const config: Config = {
       typography: (theme: any) => ({
         DEFAULT: {
           css: {
+            fontFamily: theme('fontFamily.ksu-fonts').join(', '),
             color: theme('colors.black'),
           },
         },

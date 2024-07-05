@@ -31,9 +31,9 @@ const theme = {
     text: {
         bold: 'font-bold',
         code: 'bg-[rgb(240,242,245)] px-1 py-0.5 font-mono text-[94%]',
-        hashtag: '/* No direct Tailwind equivalent for this class */',
+        // hashtag: '/* No direct Tailwind equivalent for this class */',
         italic: 'italic',
-        overflowed: '/* No direct Tailwind equivalent for this class */',
+        // overflowed: '/* No direct Tailwind equivalent for this class */',
         strikethrough: 'line-through',
         underline: 'underline',
         underlineStrikethrough: 'underline-strikethrough',

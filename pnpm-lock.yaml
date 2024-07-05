@@ -168,8 +168,8 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.4)
       tailwindcss-underline-strikethrough:
-        specifier: ^0.0.2
-        version: 0.0.2
+        specifier: ^1.0.1
+        version: 1.0.1
       unified:
         specifier: ^11.0.5
         version: 11.0.5
@@ -4398,8 +4398,8 @@ packages:
     peerDependencies:
       tailwindcss: '>=3.0.0 || insiders'
 
-  tailwindcss-underline-strikethrough@0.0.2:
-    resolution: {integrity: sha512-GaU6Db0HN2j/EAlmw2qElhClxHZiHKZ/jD5r9Vxbi2SpH18xT43+zHy2Rms3DRWh2TKxH60y6QVkLvKgHdu9sw==}
+  tailwindcss-underline-strikethrough@1.0.1:
+    resolution: {integrity: sha512-7uyHtXZmRvAIb0tp9nDtraIbpooGtQORoSZ5yhJFg6qEjbyuyT+BvS0nlp8kvcvrQ62rKGVSLdgqvoi3hohqSg==}
 
   tailwindcss@3.4.4:
     resolution: {integrity: sha512-ZoyXOdJjISB7/BcLTR6SEsLgKtDStYyYZVLsUtWChO4Ps20CBad7lfJKVDiejocV4ME1hLmyY0WJE3hSDcmQ2A==}
@@ -9603,7 +9603,7 @@ snapshots:
     dependencies:
       tailwindcss: 3.4.4
 
-  tailwindcss-underline-strikethrough@0.0.2:
+  tailwindcss-underline-strikethrough@1.0.1:
     dependencies:
       tailwindcss: 3.4.4
     transitivePeerDependencies:
