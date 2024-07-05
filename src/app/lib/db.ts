@@ -29,16 +29,19 @@ const pool = new Pool(poolConfig);
 
 var connected = false;
 
+let db : ReturnType<typeof drizzle> |null = null
 async function connectDrizzle() {
 
     try {
         const client = new Client(poolConfig);
         await client.connect();
-        const db = drizzle(client);
+         db = drizzle(client);
     } catch (err: any) {
         console.error("Database connection error", err.stack);
     }
 }
+export {db}
+
 
 async function connect() {
 

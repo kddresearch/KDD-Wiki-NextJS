@@ -1,5 +1,7 @@
 import Joi from "joi";
 import KddUser from "./kdd_user";
+import { pgTable, integer, varchar, text, date, serial, jsonb } from 'drizzle-orm/pg-core';
+
 
 enum AccessLevel {
     Guest = "guest",
@@ -29,29 +31,50 @@ enum AdminTeam {
 }
 
 // Joi schema for validating the KddUser object
-const wikiUserSchema = Joi.object({
-    id: Joi.number().required(),
-    username: Joi.string().required(),
-    access_level: Joi.string()
-        .valid(...Object.values(AccessLevel))
-        .required(),
-    settings: Joi.object().required(),
-    first_name: Joi.string().required(),
-    last_name: Joi.string().required(),
-    bio: Joi.string().required(),
-    email: Joi.string().email({ tlds: false }).required(),
-    profile_picture: Joi.string().required(),
-    phone_number: Joi.string().required(),
-    social_media: Joi.object()
-        .pattern(
-            Joi.string().valid(...Object.values(SocialMedia)),
-            Joi.string().uri().allow(""),
-        )
-        .required(),
-    admin_teams: Joi.array().items(Joi.string().valid(...Object.values(AdminTeam))).default([]),
-    date_created: Joi.date().required(),
-    date_modified: Joi.date().required(),
-    last_login: Joi.date().required(),
+// const wikiUserSchema = Joi.object({
+//     id: Joi.number().required(),
+//     username: Joi.string().required(),
+//     access_level: Joi.string()
+//         .valid(...Object.values(AccessLevel))
+//         .required(),
+//     settings: Joi.object().required(),
+//     first_name: Joi.string().required(),
+//     last_name: Joi.string().required(),
+//     bio: Joi.string().required(),
+//     email: Joi.string().email({ tlds: false }).required(),
+//     profile_picture: Joi.string().required(),
+//     phone_number: Joi.string().required(),
+//     social_media: Joi.object()
+//         .pattern(
+//             Joi.string().valid(...Object.values(SocialMedia)),
+//             Joi.string().uri().allow(""),
+//         )
+//         .required(),
+//     admin_teams: Joi.array().items(Joi.string().valid(...Object.values(AdminTeam))).default([]),
+//     date_created: Joi.date().required(),
+//     date_modified: Joi.date().required(),
+//     last_login: Joi.date().required(),
+// });
+
+export const wikiUserSchema = pgTable('wiki_users', {
+  id: serial('id').primaryKey(), 
+  username: varchar('username').notNull(), 
+  //check
+  access_level: varchar('access_level').notNull(),
+  settings: jsonb('settings').notNull(), 
+  first_name: varchar('first_name').notNull(), 
+  last_name: varchar('last_name').notNull(), 
+  bio: text('bio').notNull(), 
+  email: varchar('email').notNull(),
+  profile_picture: varchar('profile_picture').notNull(),
+  phone_number: varchar('phone_number').notNull(), 
+  //checks
+  social_media: jsonb('social_media').notNull(), 
+  //checks
+  admin_teams: text('admin_teams').default('[]'), 
+  date_created: date('date_created').notNull(), 
+  date_modified: date('date_modified').notNull(), 
+  last_login: date('last_login').notNull() 
 });
 
 class WikiUser {

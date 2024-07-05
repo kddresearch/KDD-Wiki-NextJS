@@ -1,4 +1,6 @@
 import Joi, { link } from "joi";
+import { pgTable, integer, text, varchar, boolean, date, serial } from 'drizzle-orm/pg-core';
+
 
 enum DatasetType {
   Image = "image",
@@ -12,16 +14,32 @@ enum DatasetType {
   Other = "other",
 }
 
-const datasetSchema = Joi.object({
-    id: Joi.number().required(),
-    name: Joi.string().required(),
-    description: Joi.string().required(),
-    is_confidential: Joi.boolean().required(),
-    link: Joi.string().required(),
-    accessed: Joi.date().required(),
-    type: Joi.string().valid(...Object.values(DatasetType)).required(),
-    date_created: Joi.date().required(),
-    date_modified: Joi.date().required(),
+// const datasetSchema = Joi.object({
+//     id: Joi.number().required(),
+//     name: Joi.string().required(),
+//     description: Joi.string().required(),
+//     is_confidential: Joi.boolean().required(),
+//     link: Joi.string().required(),
+//     accessed: Joi.date().required(),
+//     type: Joi.string().valid(...Object.values(DatasetType)).required(),
+//     date_created: Joi.date().required(),
+//     date_modified: Joi.date().required(),
+// });
+
+
+
+export const datasetSchema = pgTable('datasets', {
+  id: serial('id').primaryKey(), 
+  name: varchar('name').notNull(), 
+  description: text('description').notNull(), 
+  is_confidential: boolean('is_confidential').notNull(), 
+  link: text('link').notNull(), 
+  accessed: date('accessed').notNull(), 
+  //add checking
+  type: text('type').notNull(),
+  //check(`type IN (${Object.values(DatasetType).map(type => `'${type}'`).join(', ')})`), // check constraint for type
+  date_created: date('date_created').notNull(), 
+  date_modified: date('date_modified').notNull(), 
 });
 
 class Dataset {

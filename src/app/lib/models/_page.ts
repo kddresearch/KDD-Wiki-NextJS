@@ -1,4 +1,5 @@
 import joi from "joi";
+import { char,varchar,integer, text, boolean, date, pgTable } from 'drizzle-orm/pg-core';
 
 // Joi schema for page validation
 const pageSchema = joi.object({
@@ -19,6 +20,37 @@ const pageSchema = joi.object({
     is_home: joi.boolean().required().allow(null),
     is_template: joi.boolean().required().allow(null),
 });
+
+const PageTable = pgTable('page', {
+    //at least 0
+    id: integer('id').notNull(),
+    title: varchar('title',{length:50}).notNull(),
+    //min 0
+    priority: integer('priority').default(1000).notNull(),
+    //min 0
+    content: text('content'),
+    discussion: text('discussion'),
+    is_private: boolean('is_private').notNull(),
+    date_created: date('date_created').notNull(),
+    date_modified: date('date_modified').notNull(),
+    //to be required
+    category_id: integer('category_id'),
+    //min 0
+    author_id: integer('author_id').notNull(),
+    //to be required
+    name: varchar('name',{length:50}),
+    has_publication: boolean('has_publication').notNull(),
+    is_kdd_only: boolean('is_kdd_only').notNull(),
+    //to be required
+    last_updated: text('last_updated'),
+    //to be required
+    is_home: boolean('is_home'),
+    //to be required
+    is_template: boolean('is_template'),
+});
+
+export {pageSchema}
+
 
 class Page {
     id: number;
@@ -143,6 +175,6 @@ class Page {
         };
     }
 }
-
 export default Page;
+export {PageTable};
 

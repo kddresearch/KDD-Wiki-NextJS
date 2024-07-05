@@ -1,18 +1,38 @@
 import joi from "joi";
+import { pgTable, integer, text, varchar, boolean, date, serial } from 'drizzle-orm/pg-core';
+
 
 // Joi schema for kdd user validation
-const kdd_userSchema = joi.object({
-  id: joi.number().integer(),
-  username: joi.string().required().max(50), // TODO: Find EID max length
-  member: joi.boolean().required().allow(null),
-  admin: joi.boolean().required().allow(null),
-  readonly: joi.boolean().required().allow(null),
-  date_created: joi.date().required(),
-  date_modified: joi.date().required(),
-  kdd_group_id: joi.number().integer().min(0).allow(null), // Allow null or integer >= 0
-  directory_group_id: joi.number().integer().min(0).allow(null), // Allow null or integer >= 0
-  is_kdd_only: joi.boolean().required(),
+// const kdd_userSchema = joi.object({
+//   id: joi.number().integer(),
+//   username: joi.string().required().max(50), // TODO: Find EID max length
+//   member: joi.boolean().required().allow(null),
+//   admin: joi.boolean().required().allow(null),
+//   readonly: joi.boolean().required().allow(null),
+//   date_created: joi.date().required(),
+//   date_modified: joi.date().required(),
+//   kdd_group_id: joi.number().integer().min(0).allow(null), // Allow null or integer >= 0
+//   directory_group_id: joi.number().integer().min(0).allow(null), // Allow null or integer >= 0
+//   is_kdd_only: joi.boolean().required(),
+// });
+
+
+export const kddUserTable = pgTable('kdd_users', {
+  id: serial('id').primaryKey(),
+  username: varchar('username', { length: 50 }).notNull(), 
+  //to be required
+  member: boolean('member').notNull().default(false),
+  //to be required
+  admin: boolean('admin').notNull().default(false),
+  //to be requried
+  readonly: boolean('readonly').notNull().default(false),
+  date_created: date('date_created'),
+  date_modified: date('date_modified').notNull(), 
+  kdd_group_id: integer('kdd_group_id'),
+  directory_group_id: integer('directory_group_id'),
+  is_kdd_only: boolean('is_kdd_only').notNull() // boolean for is_kdd_only
 });
+
 
 // TODO: What should the name of the user class be? User, or KddUser?
 class KddUser {

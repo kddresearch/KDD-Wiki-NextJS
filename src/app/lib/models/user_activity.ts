@@ -1,4 +1,6 @@
 import joi from "joi";
+import { pgTable, integer, varchar, text, date, serial } from 'drizzle-orm/pg-core';
+
 
 enum ActivityType {
   Login = "login",
@@ -25,19 +27,34 @@ enum ActivityType {
   AdminAction = "adminAction",
 }
 
-// Joi schema for validating the UserActivity object
-const userActivitySchema = joi.object({
-  id: joi.number().required(),
-  userId: joi.number().required(),
-  activityType: joi
-    .string()
-    .valid(...Object.values(ActivityType))
-    .required(),
-  endpoint: joi.string().required(),
-  detected_ip: joi.string().required(),
-  status: joi.number().required(),
-  activityDetails: joi.string().required(),
-  timestamp: joi.date().default(new Date()),
+// // Joi schema for validating the UserActivity object
+// const userActivitySchema = joi.object({
+//   id: joi.number().required(),
+//   userId: joi.number().required(),
+//   activityType: joi
+//     .string()
+//     .valid(...Object.values(ActivityType))
+//     .required(),
+//   endpoint: joi.string().required(),
+//   detected_ip: joi.string().required(),
+//   status: joi.number().required(),
+//   activityDetails: joi.string().required(),
+//   timestamp: joi.date().default(new Date()),
+// });
+
+
+
+
+export const userActivitySchema = pgTable('user_activities', {
+  id: serial('id').primaryKey(), 
+  userId: integer('user_id').notNull(), 
+  //check
+  activityType: varchar('activity_type').notNull(),
+  endpoint: varchar('endpoint').notNull(), 
+  detected_ip: varchar('detected_ip').notNull(), 
+  status: integer('status').notNull(), 
+  activityDetails: text('activity_details').notNull(), 
+  timestamp: date('timestamp').notNull().defaultNow()
 });
 
 class UserActivity {

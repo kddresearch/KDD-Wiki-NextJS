@@ -1,11 +1,25 @@
 import Joi from "joi";
+import { pgTable, integer, text, date, serial } from 'drizzle-orm/pg-core';
 
-const rPageVersionSchema = Joi.object({
-    id: Joi.number().integer().min(0).required(),
-    page_id: Joi.number().integer().min(0).required(),
-    content: Joi.string().min(0).required(),
-    author: Joi.number().integer().min(0).required(),
-    date_created: Joi.date().required(),
+
+// const rPageVersionSchema = Joi.object({
+//     id: Joi.number().integer().min(0).required(),
+//     page_id: Joi.number().integer().min(0).required(),
+//     content: Joi.string().min(0).required(),
+//     author: Joi.number().integer().min(0).required(),
+//     date_created: Joi.date().required(),
+// });
+
+
+
+export const rPageVersionTable = pgTable('r_page_versions', {
+  id: serial('id').primaryKey(),
+    //check min:0
+  page_id: integer('page_id').notNull(), 
+  //min lengths not necessary
+  content: text('content').notNull(), 
+  author: integer('author').notNull(), 
+  date_created: date('date_created').notNull() 
 });
 
 class rPageVersion {

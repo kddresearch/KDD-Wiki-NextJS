@@ -1,23 +1,29 @@
 import { query } from "../db";
-import Page from "../models/_page";
+import Page,{pageSchema} from "../models/_page";
+import {db} from "../db"
+import {eq} from 'drizzle-orm'
+
 
 async function fetchById(id: number): Promise<Page | null> {
     // Construct the query
-    const query_st: string = `
-          SELECT * FROM page
-          WHERE id = $1
-      `;
+    // const query_st: string = `
+    //       SELECT * FROM page
+    //       WHERE id = $1
+    //   `;
   
     try {
       // Execute the query
-      const result = await query(query_st, [id]);
+      // const result = await query(query_st, [id]);
+      
+      //assuming the error was not thrown//table 
+      const result = await db!.select().from(pageSchema).where(eq(pageSchema.id,id))
   
-      if (result.rows.length === 0) {
+      if (result.length === 0) {
         return null;
       }
   
       // Create a new Page object from the first row of the result
-      return new Page(result.rows[0]);
+      return new Page(result[0]);
     } catch (err) {
       console.error("Error occurred during query execution:", err);
       throw err;
@@ -26,27 +32,27 @@ async function fetchById(id: number): Promise<Page | null> {
   
   async function fetchByName(name: string): Promise<Page | null> {
     // Construct the query
-    const query_st: string = `
-          SELECT * FROM page
-          WHERE name = $1
-      `;
+    // const query_st: string = `
+    //       SELECT * FROM page
+    //       WHERE name = $1
+    //   `;
   
     try {
       // Execute the query
-      const result = await query(query_st, [name]);
-  
-      if (result.rows.length === 0) {
+      //const result = await query(query_st, [name]);
+        const result = await db!.select().from(pageSchema).where(eq(pageSchema.name,name))
+      if (result.length === 0) {
         return null;
       }
   
-      if (result.rows.length > 1) {
+      if (result.length > 1) {
         console.warn(
           `Multiple pages with name ${name} found. Returning first result.`,
         );
       }
   
       // Create a new Page object from the first row of the result
-      return new Page(result.rows[0]);
+      return new Page(result[0]);
     } catch (err) {
       console.error("Error occurred during query execution:", err);
       throw err;

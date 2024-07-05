@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { pgTable, integer, varchar, text, date, serial } from 'drizzle-orm/pg-core';
 
 enum CategoryType {
     research = "research",
@@ -6,14 +7,29 @@ enum CategoryType {
     // ...
 }
 
-const rCategorySchema = Joi.object({
-    id: Joi.number().required(),
-    role: Joi.string().valid(...Object.values(CategoryType)).required(),
-    name: Joi.string().max(50).lowercase().required(),
-    description: Joi.string().required(),
-    date_created: Joi.date().required(),
-    date_modified: Joi.date().required(),
+// const rCategorySchema = Joi.object({
+//     id: Joi.number().required(),
+//     role: Joi.string().valid(...Object.values(CategoryType)).required(),
+//     name: Joi.string().max(50).lowercase().required(),
+//     description: Joi.string().required(),
+//     date_created: Joi.date().required(),
+//     date_modified: Joi.date().required(),
+// });
+
+
+
+
+
+export const rCategoryTable = pgTable('r_categories', {
+  id: serial('id').primaryKey(), 
+  role: varchar('role').notNull(),
+  //check constraint for role
+  name: varchar('name', { length: 50 }).notNull(), 
+  description: text('description').notNull(), 
+  date_created: date('date_created').notNull(), 
+  date_modified: date('date_modified').notNull()
 });
+
 
 class rCategory {
     id: number;
