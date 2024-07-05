@@ -25,6 +25,7 @@ function Divider() {
 export default function ToolbarPlugin() {
   const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef(null);
+
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
   const [isBold, setIsBold] = useState(false);
@@ -87,17 +88,32 @@ export default function ToolbarPlugin() {
     "align-middle",
     "text-darkergray",
     "mr-0.5",
-    "hover:bg-lightgray",
-    "disabled:opacity-20",
+    "hover:bg-[#EAE0F5]",
+  );
+
+  const buttonActive = classNames(
+    "bg-[#F5F0FA]",
+    "text-[#263238]",
   );
   
   const boldButtonClasses = classNames(buttonClasses, {
-    "bg-[#dfe8fa4d] text-black": isBold
+    [buttonActive]: isBold,
+    "text-darkergray": !isBold,
   });
-  
-  // Specific classes for the Italics button
+
   const italicButtonClasses = classNames(buttonClasses, {
-    "bg-[#dfe8fa4d] text-black": isItalic
+    [buttonActive]: isItalic,
+    "text-darkergray": !isItalic,
+  });
+
+  const underlineButtonClasses = classNames(buttonClasses, {
+    [buttonActive]: isUnderline,
+    "text-darkergray": !isUnderline
+  });
+
+  const strikethroughButtonClasses = classNames(buttonClasses, {
+    [buttonActive]: isStrikethrough,
+    "text-darkergray": !isStrikethrough
   });
 
   return (
@@ -105,6 +121,8 @@ export default function ToolbarPlugin() {
       className="flex bg-white mx-1 py-1 rounded-t-lg align-middle text-darkgray border-b border-gray"
       ref={toolbarRef}
     >
+
+      {/* Undo Button */}
       <button
         disabled={!canUndo}
         onClick={() => {
@@ -115,6 +133,8 @@ export default function ToolbarPlugin() {
       >
         <ArrowCounterclockwise />
       </button>
+
+      {/* Redo Button */}
       <button
         disabled={!canRedo}
         onClick={() => {
@@ -149,15 +169,12 @@ export default function ToolbarPlugin() {
         <TypeItalic />
       </button>
 
-      {/* Italics Button */}
+      {/* Underline Button */}
       <button
         onClick={() => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
         }}
-        className={
-          "flex border-0  rounded-md p-1 spaced cursor-pointer align-middle mr-0.5 hover:bg-lightgray " +
-          (isUnderline ? "bg-[#dfe8fa4d] text-black" : "")
-        }
+        className={underlineButtonClasses}
         aria-label="Format Underline"
       >
         <TypeUnderline />
@@ -168,10 +185,7 @@ export default function ToolbarPlugin() {
         onClick={() => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
         }}
-        className={
-          "flex border-0 rounded-md p-1 spaced cursor-pointer align-middle mr-0.5 hover:bg-lightgray " +
-          (isStrikethrough ? "bg-[#dfe8fa4d] text-black" : "")
-        }
+        className={strikethroughButtonClasses}
         aria-label="Format Strikethrough"
       >
         <TypeStrikethrough />
