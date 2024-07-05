@@ -19,7 +19,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as React from "react";
 import { ArrowClockwise, ArrowCounterclockwise, Justify, Link, TextCenter, TextLeft, TextRight, TypeBold, TypeItalic, TypeStrikethrough, TypeUnderline } from "react-bootstrap-icons";
-import { sanitizeURL } from "../utils";
+import { getSelectedNode, sanitizeURL } from "../utils";
 
 // No clue what this is for
 const LowPriority = 1;
@@ -51,10 +51,22 @@ export default function ToolbarPlugin() {
       setIsItalic(selection.hasFormat("italic"));
       setIsUnderline(selection.hasFormat("underline"));
       setIsStrikethrough(selection.hasFormat("strikethrough"));
+
+      const node = getSelectedNode(selection);
+      const parent = node.getParent();
+
+      if ($isLinkNode(parent) || $isLinkNode(node)) {
+        setIsLink(true);
+      } else {
+        setIsLink(false);
+      }
     }
   }, []);
 
   const insertLink = useCallback(() => {
+
+    console.log("Inserting link");
+
     if (!isLink) {
       setIsLinkEditMode(true);
       editor.dispatchCommand(

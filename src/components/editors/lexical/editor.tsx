@@ -10,7 +10,6 @@
 // import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 // import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 // import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
-// import { $createTextNode, $getRoot, $getSelection } from "lexical";
 // import { useEffect, useState } from "react";
 // // import {
 // //   $convertFromMarkdownString,
@@ -20,7 +19,7 @@
 // import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 
 // // Nodes
-// // import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
+// import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
 // // import editorNodes from "./nodes";
 
 
@@ -152,7 +151,7 @@ import theme from "./theme";
 // export default TextEditor;
 
 
-import {$getRoot, $getSelection} from 'lexical';
+import { $createTextNode, $getRoot, $getSelection, EditorState } from 'lexical';
 import {useEffect} from 'react';
 
 import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
@@ -162,6 +161,7 @@ import {ContentEditable} from '@lexical/react/LexicalContentEditable';
 import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
 import {LexicalErrorBoundary} from '@lexical/react/LexicalErrorBoundary';
 import ToolbarPlugin from './plugins/toolbar-plugin';
+import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
 
 function onError(error: Error) {
   console.error(error);
@@ -173,8 +173,25 @@ function Placeholder() {
   </div>;
 }
 
+function prePopulate() {
+  const root = $getRoot();
+  if (root.getFirstChild() === null) {
+    const heading = $createHeadingNode("h1");
+
+    root.append(heading);
+
+    heading.append($createTextNode("Hello world!"));
+    root.append(heading);
+
+    // const quote = $createQuoteNode();
+    // quote.append($createTextNode("This is a quote for everyone talking about how good lexical is as a framework."));
+    // root.append(quote);
+  }
+}
+
 function Editor() {
   const initialConfig = {
+    EditorState: prePopulate,
     namespace: 'MyEditor',
     theme,
     onError,
@@ -184,8 +201,8 @@ function Editor() {
     <LexicalComposer initialConfig={initialConfig}>
       <ToolbarPlugin />
       <RichTextPlugin
-        contentEditable={<ContentEditable />}
-        placeholder={<Placeholder/>}
+        contentEditable={<ContentEditable placeholder="Enter some rich text..."/>}
+        placeholder={null}
         ErrorBoundary={LexicalErrorBoundary}
       />
       <HistoryPlugin />
