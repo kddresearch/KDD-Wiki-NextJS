@@ -37,3 +37,28 @@ export function calculateZoomLevel(element: Element | null): number {
   }
   return zoom;
 }
+
+export function sanitizeURL(url: string): string {
+
+  try {
+    // Only allow supported protocols
+    const supportedProtocols = [
+      'http:',
+      'https:',
+      'mailto:',
+      'sms:',
+      'tel:'
+    ];
+
+    const parsedURL = new URL(url);
+
+    if (!supportedProtocols.includes(parsedURL.protocol)) {
+      return 'about:blank';
+    }
+
+    return parsedURL.toString().trim();
+  } catch (e) {
+    console.error('Error parsing URL', e);
+    return url;
+  }
+}

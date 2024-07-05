@@ -12,10 +12,16 @@ import {
   SELECTION_CHANGE_COMMAND,
   UNDO_COMMAND,
 } from "lexical";
+import {
+  $isLinkNode,
+  TOGGLE_LINK_COMMAND
+} from "@lexical/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as React from "react";
-import { ArrowClockwise, ArrowCounterclockwise, Justify, TextCenter, TextLeft, TextRight, TypeBold, TypeItalic, TypeStrikethrough, TypeUnderline } from "react-bootstrap-icons";
+import { ArrowClockwise, ArrowCounterclockwise, Justify, Link, TextCenter, TextLeft, TextRight, TypeBold, TypeItalic, TypeStrikethrough, TypeUnderline } from "react-bootstrap-icons";
+import { sanitizeURL } from "../utils";
 
+// No clue what this is for
 const LowPriority = 1;
 
 function Divider() {
@@ -33,6 +39,10 @@ export default function ToolbarPlugin() {
   const [isUnderline, setIsUnderline] = useState(false);
   const [isStrikethrough, setIsStrikethrough] = useState(false);
 
+  // Blocks
+  const [isLink, setIsLink] = useState(false);
+  const [isLinkEditMode, setIsLinkEditMode] = useState(false);
+
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
     if ($isRangeSelection(selection)) {
@@ -43,6 +53,21 @@ export default function ToolbarPlugin() {
       setIsStrikethrough(selection.hasFormat("strikethrough"));
     }
   }, []);
+
+  const insertLink = useCallback(() => {
+    if (!isLink) {
+      setIsLinkEditMode(true);
+      editor.dispatchCommand(
+        TOGGLE_LINK_COMMAND,
+        sanitizeURL("https://www.k-state.edu"),
+      )
+    } else {
+      setIsLinkEditMode(false);
+      editor.dispatchCommand(
+        TOGGLE_LINK_COMMAND, 
+        null
+      );
+    }}, [editor, isLink]);
 
   useEffect(() => {
     return mergeRegister(
@@ -81,14 +106,15 @@ export default function ToolbarPlugin() {
   const buttonClasses = classNames(
     "flex",
     "border-0",
-    "rounded-md",
-    "p-1",
+    "rounded-lg",
+    "p-2",
     "spaced",
     "cursor-pointer",
     "align-middle",
     "text-darkergray",
     "mr-0.5",
     "hover:bg-[#EAE0F5]",
+    "disabled:opacity-20",
   );
 
   const buttonActive = classNames(
@@ -189,6 +215,15 @@ export default function ToolbarPlugin() {
         aria-label="Format Strikethrough"
       >
         <TypeStrikethrough />
+      </button>
+
+      {/* Insert Link Button */}
+      <button
+        onClick={insertLink}
+        className={buttonClasses}
+        aria-label="Insert Link"
+      >
+        <Link />
       </button>
     </div>
   );
