@@ -23,7 +23,7 @@
     "@lexical/utils": "^0.16.1",
     "@mdx-js/loader": "^3.0.1",
     "@mdx-js/react": "^3.0.1",
-    "@mui/material": "^5.15.21",
+    "@mui/material": "^5.16.0",
     "@next/bundle-analyzer": "^14.2.4",
     "@next/env": "^14.2.4",
     "@next/mdx": "^14.2.4",
@@ -63,6 +63,7 @@
     "server-only": "^0.0.1",
     "sharp": "^0.33.4",
     "tailwindcss-animate": "^1.0.7",
+    "tailwindcss-underline-strikethrough": "^0.0.2",
     "unified": "^11.0.5",
     "unified-stream": "^3.0.0",
     "whatwg-url": "^14.0.0"

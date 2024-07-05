@@ -58,8 +58,7 @@ const config: Config = {
   },
   plugins: [
     require("@tailwindcss/typography"),
-    require("./tw-css-plugin")
+    require("tailwindcss-underline-strikethrough")
   ],
 };
 export default config;
-
