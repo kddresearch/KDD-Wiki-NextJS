@@ -1,4 +1,4 @@
-// "use client";
+"use client";
 
 // // lexical
 // import { HashtagPlugin } from "@lexical/react/LexicalHashtagPlugin";
@@ -26,7 +26,7 @@
 
 // // custom plugins
 // import ToolbarPlugin from "./plugins/toolbar-plugin";
-// import theme from "./theme";
+import theme from "./theme";
 // import DraggableBlockPlugin from "./plugins/draggable-node-plugin";
 // import MarkdownPlugin from "./plugins/markdown-plugin";
 // import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
@@ -165,11 +165,6 @@ import ToolbarPlugin from './plugins/toolbar-plugin';
 
 function onError(error: Error) {
   console.error(error);
-}
-
-const theme = {
-  // Theme styling goes here
-  //...
 }
 
 function Placeholder() {
