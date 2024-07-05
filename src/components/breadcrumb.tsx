@@ -18,14 +18,6 @@ const Breadcrumb = () => {
   const pathname = usePathname();
   const paths = pathname?.split("/").filter((path) => path !== "");
 
-  // const getGithubIssueUrl = () => {
-  //   const baseGithubUrl = new URL(`https://github.com/${configAfterInit!.github.owner}/${configAfterInit!.github.repo}/issues/new`);
-  //   baseGithubUrl.searchParams.append("assignees", configAfterInit!.github.maintainers.join(","));
-  //   baseGithubUrl.searchParams.append("template", "report-page.md");
-  //   baseGithubUrl.searchParams.append("title", `Report Page at ${pathname}`);
-  //   return baseGithubUrl.toString();
-  // };
-
   return (
     <nav className="bg-white text-purple h-14 font-light">
       <ol className="flex items-center space-x-2 h-14 py-3 container">
