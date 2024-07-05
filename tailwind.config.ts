@@ -56,7 +56,10 @@ const config: Config = {
       yellow: "#f0ad00",
     },
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [
+    require("@tailwindcss/typography"),
+    require("./tw-css-plugin")
+  ],
 };
 export default config;
 

@@ -36,7 +36,7 @@ const theme = {
         overflowed: '/* No direct Tailwind equivalent for this class */',
         strikethrough: 'line-through',
         underline: 'underline',
-        underlineStrikethrough: 'underline line-through',
+        underlineStrikethrough: 'underline-strikethrough',
     },
     tokenAnsi: {
         comment: 'text-slate-500',
