@@ -127,6 +127,8 @@ export default function ToolbarPlugin() {
     "mr-0.5",
     "hover:bg-[#EAE0F5]",
     "disabled:opacity-20",
+    "disabled:hover:bg-white",
+    "disabled:cursor-default"
   );
 
   const buttonActive = classNames(
