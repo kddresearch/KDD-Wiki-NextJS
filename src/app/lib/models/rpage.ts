@@ -1,7 +1,12 @@
 import Joi from "joi";
 import { AccessLevel } from "./wikiuser";
 import Page from "./_page";
+import {SQL,sql} from 'drizzle-orm'
 import rPageVersion from "./rpage_version";
+
+import { pgTable, integer, varchar, text, date, serial, AnyPgColumn,uniqueIndex } from 'drizzle-orm/pg-core';
+import { Index, IndexColumn } from "drizzle-orm/mysql-core";
+
 
 const rpageSchema = Joi.object({
     id: Joi.number().integer().min(0),
@@ -15,6 +20,23 @@ const rpageSchema = Joi.object({
     date_created: Joi.date().required(),
     date_modified: Joi.date().required(),
 });
+
+
+
+export const rPageTable = pgTable('r_pages', {
+  id: serial('id').primaryKey(), 
+  title: varchar('title', { length: 50 }).notNull(),
+  content: text('content'),
+  author_id: integer('author_id'),
+  category_id: integer('category_id').notNull(), 
+  views: integer('views').notNull().default(0),
+  access_level: varchar('access_level').notNull(),
+  date_created: date('date_created').notNull(), 
+  date_modified: date('date_modified').notNull(),
+      email: text('email').notNull(),
+
+    },);
+
 
 class rPage {
     id: number;

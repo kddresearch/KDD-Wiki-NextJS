@@ -1,7 +1,9 @@
 import joi from "joi";
 import { query } from "../db";
+import { pgTable, integer, text, varchar, boolean, date, serial } from 'drizzle-orm/pg-core';
 
-// Joi schema for announcement validation
+
+//Joi schema for announcement validation
 const announcementSchema = joi.object({
   id: joi.number().integer().min(0),
   title: joi.string().max(50).trim().required(),
@@ -11,6 +13,24 @@ const announcementSchema = joi.object({
   author_id: joi.number().integer().min(0).required(),
   is_old: joi.boolean().required(),
 });
+
+
+export const announcementTable = pgTable('announcements', {
+  //auto-increment key?
+  id: serial('id'),
+  title: varchar('title', { length: 50 }).notNull(), 
+  content: text('content').notNull(), 
+  date_created: date('date_created').notNull(), 
+  date_modified: date('date_modified').notNull(), 
+  //min 0
+  author_id: integer('author_id').notNull(),
+  is_old: boolean('is_old').notNull() 
+});
+
+
+
+
+
 
 class Announcement {
   id: number;

@@ -2,28 +2,28 @@ import Joi from "joi";
 import { pgTable, integer, varchar, text, date, serial } from 'drizzle-orm/pg-core';
 
 // Joi schema for the ResearchProject validation
-// const researchProjectSchema = Joi.object({
-//     id: Joi.number().required(),
-//     title: Joi.string().alphanum().max(50).min(4).required(),
-//     category_id: Joi.number().required(),
-//     description: Joi.string().max(2000).required(),
-//     methodology: Joi.string().max(5000).required(),
+const researchProjectSchema = Joi.object({
+    id: Joi.number().required(),
+    title: Joi.string().alphanum().max(50).min(4).required(),
+    category_id: Joi.number().required(),
+    description: Joi.string().max(2000).required(),
+    methodology: Joi.string().max(5000).required(),
 
-//     // Relationships
-//     tag_ids: Joi.array().items(Joi.number()).required(),
-//     dataset_ids: Joi.array().items(Joi.number()).required(),
-//     personnel_ids: Joi.array().items(Joi.number()).required(),
-//     publication_ids: Joi.array().items(Joi.number()).required(),
-//     funding_ids: Joi.array().items(Joi.number()).required(),
-//     source_code_id: Joi.number().required(),
+    // Relationships
+    tag_ids: Joi.array().items(Joi.number()).required(),
+    dataset_ids: Joi.array().items(Joi.number()).required(),
+    personnel_ids: Joi.array().items(Joi.number()).required(),
+    publication_ids: Joi.array().items(Joi.number()).required(),
+    funding_ids: Joi.array().items(Joi.number()).required(),
+    source_code_id: Joi.number().required(),
 
-//     // Metadata
-//     date_created: Joi.date().required(),
-//     date_modified: Joi.date().required(),
-// });
+    // Metadata
+    date_created: Joi.date().required(),
+    date_modified: Joi.date().required(),
+});
 
 
-export const researchProjectSchema = pgTable('research_projects', {
+export const researchProjectTable = pgTable('research_projects', {
   id: serial('id').primaryKey(), 
   title: varchar('title', { length: 50 }).notNull(), 
   category_id: integer('category_id').notNull(), 

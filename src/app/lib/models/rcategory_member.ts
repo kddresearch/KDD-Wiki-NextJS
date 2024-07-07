@@ -2,12 +2,12 @@ import Joi from "joi";
 
 import { pgTable, integer } from 'drizzle-orm/pg-core';
 
-// const rCategoryMemberSchema = Joi.object({
-//     category_id: Joi.number().required(),
-//     user_id: Joi.number().required(),
-// });
+const rCategoryMemberSchema = Joi.object({
+    category_id: Joi.number().required(),
+    user_id: Joi.number().required(),
+});
 
-export const rCategoryMemberSchema = pgTable('r_category_members', {
+export const rCategoryMemberTable = pgTable('r_category_members', {
   category_id: integer('category_id').notNull(), 
   user_id: integer('user_id').notNull()
 });

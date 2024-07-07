@@ -7,35 +7,31 @@ enum ActionType {
   redirect = "rd",
 }
 
-// // Joi schema for custom_url validation
-// const customUrlSchema = Joi.object({
-//   id: Joi.number().integer().min(0).optional(),
-//   url: Joi.string().max(50).required(),
-//   action: Joi.string().valid(...Object.values(ActionType)).required(),
-//   target: Joi
-//     .alternatives()
-//     .try(Joi.number().integer().min(0), Joi.string().uri())
-//     .required(),
-//   date_created: Joi.date().required(),
-//   date_modified: Joi.date().required(),
-//   author_id: Joi.number().integer().min(0).required(),
-// });
+// Joi schema for custom_url validation
+const customUrlSchema = Joi.object({
+  id: Joi.number().integer().min(0).optional(),
+  url: Joi.string().max(50).required(),
+  action: Joi.string().valid(...Object.values(ActionType)).required(),
+  target: Joi
+    .alternatives()
+    .try(Joi.number().integer().min(0), Joi.string().uri())
+    .required(),
+  date_created: Joi.date().required(),
+  date_modified: Joi.date().required(),
+  author_id: Joi.number().integer().min(0).required(),
+});
 
-export const customUrlSchema = pgTable('custom_urls', {
-  //primary key?
+export const customUrlTable = pgTable('custom_urls', {
   id: serial('id').primaryKey(), 
   url: varchar('url', { length: 50 }).notNull(), 
-  //add constraint for action type
   action: text('action').notNull(),
-  //.check(`action IN (${Object.values(ActionType).map(action => `'${action}'`).join(', ')})`), 
-  // target_integer: integer('target_integer'), 
-  // target_string: varchar('target_string'), 
-  //store as string and validate later
-  target:text('targtet').notNull(),
-  date_created: date('date_created').notNull(), 
-  date_modified: date('date_modified').notNull(), 
+  target:text('target').notNull(),
+  date_created: date('date_created').notNull().defaultNow(), 
+  date_modified: date('date_modified').notNull().defaultNow(), 
   author_id: integer('author_id').notNull(), 
 });
+
+
 
 class CustomUrl {
   id?: number;

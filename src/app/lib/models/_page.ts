@@ -21,8 +21,7 @@ const pageSchema = joi.object({
     is_template: joi.boolean().required().allow(null),
 });
 
-const PageTable = pgTable('page', {
-    //at least 0
+const pageTable = pgTable('page', {
     id: integer('id').notNull(),
     title: varchar('title',{length:50}).notNull(),
     //min 0
@@ -176,5 +175,5 @@ class Page {
     }
 }
 export default Page;
-export {PageTable};
+export {pageTable};
 

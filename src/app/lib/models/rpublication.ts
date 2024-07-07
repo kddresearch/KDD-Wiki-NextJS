@@ -1,4 +1,6 @@
 import Joi from "joi";
+import { pgTable, integer, text, date, serial, jsonb } from 'drizzle-orm/pg-core';
+
 
 enum PublicationPlatform {
     ARXIV = 'arxiv',
@@ -41,6 +43,18 @@ const rpublicationSchema = Joi.object({
     date_created: Joi.date().required(),
     date_modified: Joi.date().required(),
 });
+export const rpublicationTable = pgTable('r_publications', {
+  id: serial('id').primaryKey(), 
+  content: text('content').notNull(), 
+  platforms: jsonb('platforms').notNull(), 
+  date_published: date('date_published').notNull(),
+  project_id: integer('project_id').notNull(), 
+  author_ids: integer('author_ids').array().notNull(), 
+  category_ids: integer('category_ids').array().notNull(),
+  date_created: date('date_created').notNull(), 
+  date_modified: date('date_modified').notNull()
+});
+
 
 class rPublication {
     id: number;

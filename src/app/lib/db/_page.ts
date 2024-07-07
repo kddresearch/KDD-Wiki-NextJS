@@ -1,7 +1,7 @@
 import { query } from "../db";
-import Page,{pageSchema} from "../models/_page";
+import Page,{pageTable} from "../models/_page";
 import {db} from "../db"
-import {eq} from 'drizzle-orm'
+import {eq,inArray,isNull,or,asc,desc} from 'drizzle-orm'
 
 
 async function fetchById(id: number): Promise<Page | null> {
@@ -16,7 +16,7 @@ async function fetchById(id: number): Promise<Page | null> {
       // const result = await query(query_st, [id]);
       
       //assuming the error was not thrown//table 
-      const result = await db!.select().from(pageSchema).where(eq(pageSchema.id,id))
+      const result = await db!.select().from(pageTable).where(eq(pageTable.id,id))
   
       if (result.length === 0) {
         return null;
@@ -40,7 +40,7 @@ async function fetchById(id: number): Promise<Page | null> {
     try {
       // Execute the query
       //const result = await query(query_st, [name]);
-        const result = await db!.select().from(pageSchema).where(eq(pageSchema.name,name))
+        const result = await db!.select().from(pageTable).where(eq(pageTable.name,name))
       if (result.length === 0) {
         return null;
       }
@@ -61,15 +61,16 @@ async function fetchById(id: number): Promise<Page | null> {
   
   async function fetchsAll(): Promise<Page[]> {
     // Construct the query
-    const query_st: string = `
-          SELECT * FROM page
-      `;
+    // const query_st: string = `
+    //       SELECT * FROM page
+    //   `;
   
     try {
       // Execute the query
-      const result = await query(query_st);
-  
-      return result.rows.map((row: any) => new Page(row));
+      //const result = await query(query_st);
+      const result = await db!.select().from(pageTable)
+
+      return result.map((row: any) => new Page(row));
     } catch (err) {
       console.error("Error occurred during query execution:", err);
       throw err;
@@ -89,9 +90,19 @@ async function fetchById(id: number): Promise<Page | null> {
   
     try {
       // Execute the query
-      const result = await query(query_st, [category_ids]);
+      // const result = await query(query_st, [category_ids]);
+        const result = await db!.select().
+        from(pageTable)
+        .where(
+          or(
+            inArray(pageTable.category_id,category_ids),
+            (isNull(pageTable.category_id)
+          )
+        )).
+        orderBy(asc(pageTable.category_id));
+
   
-      return result.rows.map((row: any) => new Page(row));
+        return result.map((row: any) => new Page(row));
     } catch (err) {
       console.error("Error occurred during query execution:", err);
       throw err;
@@ -99,17 +110,19 @@ async function fetchById(id: number): Promise<Page | null> {
   }
   
   async function fetchAllOrderById(): Promise<Page[]> {
-    // Construct the query
-    const query_st: string = `
-          SELECT * FROM page 
-          ORDER BY id desc
-      `;
+    // // Construct the query
+    // const query_st: string = `
+    //       SELECT * FROM page 
+    //       ORDER BY id desc
+    //   `;
   
     try {
       // Execute the query
-      const result = await query(query_st);
+      // const result = await query(query_st);
+    const result = await db!.select().from(pageTable).orderBy(desc(pageTable.id))
+
   
-      return result.rows.map((row: any) => new Page(row));
+      return result.map((row: any) => new Page(row));
     } catch (err) {
       console.error("Error occurred during query execution:", err);
       throw err;
@@ -118,31 +131,50 @@ async function fetchById(id: number): Promise<Page | null> {
   
   async function insert(page: Page): Promise<Page> {
     // Construct the query
-    const query_st: string = `
-          INSERT INTO page (title, priority, content, discussion, is_private, is_kdd_only, date_created, date_modified, category_id, author_id, name, has_publication, last_updated, is_home, is_template)
-          VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW(), $7, $8, $9, $10, $11, $12, $13)
-          RETURNING *;
-      `;
+    // const query_st: string = `
+    //       INSERT INTO page (title, priority, content, discussion, is_private, is_kdd_only, date_created, date_modified, category_id, author_id, name, has_publication, last_updated, is_home, is_template)
+    //       VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW(), $7, $8, $9, $10, $11, $12, $13)
+    //       RETURNING *;
+    //   `;
   
     try {
       // Execute the query
-      const result = await query(query_st, [
-        page.title,
-        page.priority,
-        page.content,
-        page.discussion,
-        page.is_private,
-        page.is_kdd_only,
-        page.category_id,
-        page.author_id,
-        page.name,
-        page.has_publication,
-        page.last_updated,
-        page.is_home,
-        page.is_template,
-      ]);
+      // const result = await query(query_st, [
+      //   page.title,
+      //   page.priority,
+      //   page.content,
+      //   page.discussion,
+      //   page.is_private,
+      //   page.is_kdd_only,
+      //   page.category_id,
+      //   page.author_id,
+      //   page.name,
+      //   page.has_publication,
+      //   page.last_updated,
+      //   page.is_home,
+      //   page.is_template,
+      // ]);
+
+      const result= await  db!.insert(pageTable).values(:{
+        id:page.id,
+        title : page.title, 
+        priority : page.priority,
+        content : page.content,
+        discussion :page.discussion,
+        is_private : page.is_private,
+        is_kdd_only : page.is_kdd_only,
+        date_created : page.date_created, 
+        date_modified : page.date_modified,
+        category_id : page.category_id,
+        author_id : page.author_id,
+        name : page.name,
+        has_publication : page.has_publication,
+        last_updated : page.last_updated, 
+        is_home : page.is_home,
+        is_template : page.is_template
+      })
   
-      return new Page(result.rows[0]);
+      return new Page(result[0]);
     } catch (err) {
       console.error("Error occurred during query execution:", err);
       throw err;
@@ -185,14 +217,15 @@ async function fetchById(id: number): Promise<Page | null> {
   
   async function remove(page: Page): Promise<boolean> {
     // Construct the query
-    const query_st: string = `
-          DELETE FROM page
-          WHERE id = $1
-      `;
+    // const query_st: string = `
+    //       DELETE FROM page
+    //       WHERE id = $1
+    //   `;
   
     try {
       // Execute the query
-      await query(query_st, [page.id]);
+      // await query(query_st, [page.id]);
+      await db!.delete(pageTable).where(eq(pageTable.id,page.id))
       return true;
     } catch (err) {
       console.error("Error occurred during query execution:", err);

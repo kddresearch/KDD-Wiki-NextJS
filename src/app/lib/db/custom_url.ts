@@ -2,26 +2,31 @@
 
 import { query } from "../db";
 import CustomUrl from "../models/custom_url";
+import { customUrlTable } from "../models/custom_url";
+import {eq,inArray,isNull,or,asc,desc} from 'drizzle-orm'
+import {db} from '../db'
+
 
 // Get custom url by url
 async function fetchByURL(url: string): Promise<CustomUrl | null> {
   // Construct the query
-  const query_st: string = `
-        SELECT * FROM custom_url
-        WHERE url = $1;
-    `;
+  // const query_st: string = `
+  //       SELECT * FROM custom_url
+  //       WHERE url = $1;
+  //   `;
 
   try {
     // Execute the query
-    const result = await query(query_st, [url]);
+    // const result = await query(query_st, [url]);
+    const result = await db!.select().from(customUrlTable).where(eq(customUrlTable.url,url))
 
-    if (result.rows.length === 0) {
+    if (result.length === 0) {
       // throw new Error(`Custom URL with url ${url} not found`);
       return null;
     }
 
     // Create a new CustomUrl object with the first row of the result
-    return new CustomUrl(result.rows[0]);
+    return new CustomUrl(result[0]);
   } catch (err) {
     console.error("Error occurred during query execution:", err);
     throw err;
@@ -31,16 +36,17 @@ async function fetchByURL(url: string): Promise<CustomUrl | null> {
 // Get all custom urls
 async function fetchAll(): Promise<CustomUrl[]> {
   // Construct the query
-  const query_st: string = `
-        SELECT * FROM custom_url;
-    `;
+  // const query_st: string = `
+  //       SELECT * FROM custom_url;
+  //   `;
 
   try {
     // Execute the query
-    const result = await query(query_st);
+    //const result = await query(query_st);
+    const result = await db!.select().from(customUrlTable)
 
     // Create a new CustomUrl object for each row of the result
-    return result.rows.map((row: any) => new CustomUrl(row));
+    return result.map((row: any) => new CustomUrl(row));
   } catch (err) {
     console.error("Error occurred during query execution:", err);
     throw err;
@@ -61,20 +67,27 @@ async function insert(
   console.log("Inserting custom URL:", customUrl);
 
   // Construct the query
-  const query_st: string = `
-        INSERT INTO custom_url (url, action, target, date_created, date_modified, author_id)
-        VALUES ($1, $2, $3, NOW(), NOW(), $4)
-        RETURNING *;
-    `;
+  // const query_st: string = `
+  //       INSERT INTO custom_url (url, action, target, date_created, date_modified, author_id)
+  //       VALUES ($1, $2, $3, NOW(), NOW(), $4)
+  //       RETURNING *;
+  //   `;
 
   try {
     // Execute the query
-    const result = await query(query_st, [
-      customUrl.url,
-      customUrl.action,
-      customUrl.target,
-      customUrl.author_id,
-    ]);
+    // const result = await query(query_st, [
+    //   customUrl.url,
+    //   customUrl.action,
+    //   customUrl.target,
+    //   customUrl.author_id,
+    // ]);
+
+    const result = await db!.insert(customUrlTable).values({
+      url: customUrl.url,
+      action: customUrl.action,
+      target: customUrl.target,
+      author_id : customUrl.author_id,
+    })
 
     if (isFromClient) {
       return JSON.stringify(new CustomUrl(result.rows[0]));
@@ -99,14 +112,25 @@ async function update(customUrl: CustomUrl): Promise<CustomUrl> {
     `;
 
   try {
-    // Execute the query
-    const result = await query(query_st, [
-      customUrl.id,
-      customUrl.url,
-      customUrl.action,
-      customUrl.target,
-      customUrl.author_id,
-    ]);
+    // // Execute the query
+    // const result = await query(query_st, [
+    //   customUrl.id,
+    //   customUrl.url,
+    //   customUrl.action,
+    //   customUrl.target,
+    //   customUrl.author_id,
+    // ]);
+
+    const result = await db!.update(customUrlTable).
+    set({
+      url : customUrl.url,
+      action : customUrl.action,
+      target : <string>customUrl.target,
+      author_id:customUrl.author_id,
+     date_modified : new Date(),
+     //timestamp vs date
+
+    })
 
     // Create a new CustomUrl object with the first row of the result
     return new CustomUrl(result.rows[0]);
