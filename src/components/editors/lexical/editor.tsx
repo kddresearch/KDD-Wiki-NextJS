@@ -22,6 +22,7 @@ import {
 import editorNodes from './nodes';
 
 import { Placeholder, prePopulate } from './theme';
+import CodeHighlightPlugin from './plugins/code-highlighting-plugin';
 
 function onError(error: Error) {
   console.error(error);
@@ -46,6 +47,7 @@ function Editor() {
         <MarkdownPlugin />
         <AutoFocusPlugin />
         <MarkdownShortcutPlugin />
+        <CodeHighlightPlugin />
       </div>
     </div>
   );

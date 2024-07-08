@@ -37,20 +37,6 @@ const config: Config = {
           },
         },
       }),
-      typography: (theme) => ({
-        DEFAULT: {
-          css: {
-            color: theme('colors.black'),
-            a: {
-              color: theme('colors.purple'),
-              textDecoration: 'none',
-              '&:hover': {
-                textDecoration: 'underline',
-              },
-            },
-          },
-        }
-      })
     },
     container: {
       padding: {

@@ -59,7 +59,7 @@ function Placeholder() {
 
 import { $createTextNode, $getRoot, $getSelection, EditorState } from 'lexical';
 import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
-import { $createCodeNode } from '@lexical/code';
+import { $createCodeNode, $createCodeHighlightNode } from '@lexical/code';
 
 function prePopulate() {
   const root = $getRoot();
@@ -73,6 +73,7 @@ function prePopulate() {
     root.append(quote);
 
     const code = $createCodeNode();
+    code.append($createCodeHighlightNode("const x = 5;", "javascript"));
     code.append($createTextNode('const x = 5;'));
     root.append(code);
   }
