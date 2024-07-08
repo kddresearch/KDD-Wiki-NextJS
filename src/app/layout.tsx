@@ -9,7 +9,11 @@ export const metadata: Metadata = {
   title: "KSU KDD Wiki",
   description: "Wiki for the KSU KDD Research group",
   icons: ["/favicon.ico"],
-  robots: "noindex, nofollow",
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+  }
 };
 
 
