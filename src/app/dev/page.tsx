@@ -7,6 +7,9 @@ import StripeBackDrop from "@/components/layout/backdrop";
 import Card from "@/components/layout/card";
 import TextEditor from "@/components/editors/lexical/editor";
 import { useState, useEffect } from 'react';
+import dynamic from "next/dynamic";
+
+const LexicalEditor = dynamic(() => import('@/components/editors/lexical/editor'), { ssr: false });
 
 const Dev = () => {
 
@@ -16,9 +19,11 @@ const Dev = () => {
 
       <StripeBackDrop>
         <Card title="hello testing">
-          <TextEditor 
+          {/* <TextEditor 
             // onContentChange={() => {}}
-          />
+          /> */}
+
+          <LexicalEditor/>
         </Card>
         <Card>
           {/* <ClientOnlyTextEditor/> */}

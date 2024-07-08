@@ -77,10 +77,10 @@ function PageEditor({ inputPage }: { inputPage: object }) {
         />
       </div>
       {/* TODO: Fix editor on this page lol */}
-      {/* <TextEditor
+      <TextEditor
         markdown={content}
-        onContentChange={(newContent: string) => setContent(newContent)}
-      /> */}
+        // onContentChange={(newContent: string) => setContent(newContent)}
+      />
       <button
         className="bg-purple text-white p-2 rounded-md mt-2"
         onClick={submitPage}
