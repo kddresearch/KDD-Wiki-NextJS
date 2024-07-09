@@ -30,6 +30,8 @@ const pageTable = pgTable('page', {
     content: text('content'),
     discussion: text('discussion'),
     is_private: boolean('is_private').notNull(),
+        is_kdd_only: boolean('is_kdd_only').notNull(),
+
     date_created: date('date_created').notNull(),
     date_modified: date('date_modified').notNull(),
     //to be required
@@ -39,7 +41,6 @@ const pageTable = pgTable('page', {
     //to be required
     name: varchar('name',{length:50}),
     has_publication: boolean('has_publication').notNull(),
-    is_kdd_only: boolean('is_kdd_only').notNull(),
     //to be required
     last_updated: text('last_updated'),
     //to be required

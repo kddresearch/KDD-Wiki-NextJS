@@ -155,7 +155,7 @@ async function fetchById(id: number): Promise<Page | null> {
       //   page.is_template,
       // ]);
 
-      const result= await  db!.insert(pageTable).values(:{
+      const result= await  db!.insert(pageTable).values({
         id:page.id,
         title : page.title, 
         priority : page.priority,

@@ -150,7 +150,10 @@ async function remove(customUrl: CustomUrl): Promise<boolean> {
 
   try {
     // Execute the query
-    await query(query_st, [customUrl.id]);
+   // await query(query_st, [customUrl.id]);
+    // await db!.delete(customUrlTable).where(eq(customUrlTable.id,customUrl.id))
+
+    await db!.delete(customUrlTable).where(eq(customUrlTable.id, customUrl.id))
 
     return true;
   } catch (err) {
