@@ -1,90 +1,80 @@
-import { light } from "@mui/material/styles/createPalette";
-import type { Config } from "tailwindcss";
+import type { Config } from "tailwindcss"
 
-const config: Config = {
+const config = {
+  darkMode: ["class"],
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
+	],
+  prefix: "",
   theme: {
-    extend: {
-      fontFamily: {
-        "ksu-fonts": [
-          'Myriad Pro',
-          'Open Sans',
-          'Helvetica',
-          'Arial',
-          'sans-serif'
-        ],
-      },
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-      },
-      spacing: {
-        128: "32rem",
-        144: "36rem",
-      },
-      textDecorationThickness: {
-        3: "3px",
-      },
-      colors: {
-        'token-comment': 'slategray',
-        'token-punctuation': '#999999',
-        'token-property': '#905',
-        'token-selector': '#690',
-        'token-operator': '#9a6e3a',
-        'token-attr': '#07a',
-        'token-variable': '#e90',
-        'token-function': '#dd4a68',
-      },
-      typography: (theme: any) => ({
-        DEFAULT: {
-          css: {
-            fontFamily: theme('fontFamily.ksu-fonts').join(', '),
-            color: theme('colors.black'),
-            'code::before': {
-              content: 'none',
-            },
-            'code::after': {
-              content: 'none',
-            },
-          },
-        },
-        lg: {
-          css: {
-            lineHeight: '1.75rem', // Adjust the line height for prose-lg
-          },
-        },
-      }),
-    },
     container: {
-      padding: {
-        DEFAULT: '1rem',
-        sm: '2rem',
-        lg: '4rem',
-        xl: '5rem',
-        '2xl': '6rem',
-      },
       center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
     },
-    // https://www.k-state.edu/communications-marketing/documents/Brand-Guidelines.pdf
-    colors: {
-      purple: "#512888",
-      white: "#FFFFFF",
-      lightgray: "#eeeeee",
-      gray: "#D1D1D1",
-      darkgray: "#A7A7A7",
-      darkergray: "#6E6E6E",
-      black: "#000000",
-      yellow: "#f0ad00",
+    extend: {
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
     },
   },
-  plugins: [
-    require("@tailwindcss/typography"),
-    require("tailwindcss-underline-strikethrough")
-  ],
-};
-export default config;
+  plugins: [require("tailwindcss-animate")],
+} satisfies Config
+
+export default config
