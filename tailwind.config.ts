@@ -29,6 +29,12 @@ const config: Config = {
           css: {
             fontFamily: theme('fontFamily.ksu-fonts').join(', '),
             color: theme('colors.black'),
+            'code::before': {
+              content: 'none',
+            },
+            'code::after': {
+              content: 'none',
+            },
           },
         },
         lg: {

@@ -74,7 +74,7 @@ function prePopulate() {
 
     const code = $createCodeNode();
     code.append($createCodeHighlightNode("const x = 5;", "javascript"));
-    code.append($createTextNode('const x = 5;'));
+    // code.append($createTextNode('const x = 5;'));
     root.append(code);
   }
 }
