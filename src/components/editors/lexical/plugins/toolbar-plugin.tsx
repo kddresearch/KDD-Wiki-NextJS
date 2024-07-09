@@ -44,6 +44,7 @@ export default function ToolbarPlugin() {
   const [isLink, setIsLink] = useState(false);
   const [isLinkEditMode, setIsLinkEditMode] = useState(false);
   const [isCode, setIsCode] = useState(false);
+  const [codeLanguage, setCodeLanguage] = useState("plaintext");
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -57,6 +58,8 @@ export default function ToolbarPlugin() {
 
       const node = getSelectedNode(selection);
       const parent = node.getParent();
+      const parentExists = parent !== null;
+
 
       if ($isLinkNode(parent) || $isLinkNode(node)) {
         setIsLink(true);
@@ -64,10 +67,30 @@ export default function ToolbarPlugin() {
         setIsLink(false);
       }
 
-      if ($isCodeNode(parent) || $isCodeNode(node)) {
+      const isCodeNode = $isCodeNode(node);
+      const isCodeParent = $isCodeNode(parent) && parentExists;
+
+      if (isCodeNode) { // Code block is node
         setIsCode(true);
-      } else {
-        console.log("Not a code block");
+        const language = node.getLanguage();
+
+        if (language === null) {
+          setCodeLanguage("plaintext");
+        } else {
+          console.log("Language: ", language!);
+          setCodeLanguage(language!);
+        }
+
+      } else if (isCodeParent && parentExists) { // Code block is parent
+        setIsCode(true);
+        const language = parent.getLanguage();
+        if (language === null) {
+          setCodeLanguage("plaintext");
+          console.log("Parent Language: ", language!);
+        } else {
+          setCodeLanguage(language!);
+        }
+      } else { // No code block
         setIsCode(false);
       }
     }
@@ -267,6 +290,11 @@ export default function ToolbarPlugin() {
       >
         <Code />
       </button>
+      {isCode ? (
+        <div>
+          Lang: {codeLanguage}
+        </div>
+      ) : null}
     </div>
   );
 }

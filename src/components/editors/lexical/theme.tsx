@@ -104,13 +104,27 @@ function prePopulate() {
     quote.append($createTextNode('Wesley Baldwin is so tired of writing code for this project. He just wants to go to bed.'));
     root.append(quote);
 
-    const code = $createCodeNode();
-    code.append($createCodeHighlightNode("const x = 5;", "js"));
+    const codestr = 
+`// this is javascript
+
+const x = 5;
+console.log(x);`;
+
+    const code = $createCodeNode("javascript");
+    code.append($createCodeHighlightNode(codestr));
     root.append(code);
 
-    const pycode = $createCodeNode();
-    pycode.append($createCodeHighlightNode("# this is python\n\nhello = \"world\"", "python"));
-    root.append(pycode);
+    const pyCodeStr = 
+`# This is python
+
+def foo():
+    print("Hello, world!")
+    
+foo()`;
+
+    const pyCode = $createCodeNode("python");
+    pyCode.append($createCodeHighlightNode(pyCodeStr));
+    root.append(pyCode);
   }
 }
 
