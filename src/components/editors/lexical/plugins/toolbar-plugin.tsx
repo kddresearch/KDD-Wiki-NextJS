@@ -18,8 +18,9 @@ import {
 } from "@lexical/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as React from "react";
-import { ArrowClockwise, ArrowCounterclockwise, Justify, Link, TextCenter, TextLeft, TextRight, TypeBold, TypeItalic, TypeStrikethrough, TypeUnderline } from "react-bootstrap-icons";
+import { ArrowClockwise, ArrowCounterclockwise, Code, Justify, Link, TextCenter, TextLeft, TextRight, TypeBold, TypeItalic, TypeStrikethrough, TypeUnderline } from "react-bootstrap-icons";
 import { getSelectedNode, sanitizeURL } from "../utils";
+import {$isCodeNode} from '@lexical/code';
 
 // No clue what this is for
 const LowPriority = 1;
@@ -42,6 +43,7 @@ export default function ToolbarPlugin() {
   // Blocks
   const [isLink, setIsLink] = useState(false);
   const [isLinkEditMode, setIsLinkEditMode] = useState(false);
+  const [isCode, setIsCode] = useState(false);
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -51,6 +53,7 @@ export default function ToolbarPlugin() {
       setIsItalic(selection.hasFormat("italic"));
       setIsUnderline(selection.hasFormat("underline"));
       setIsStrikethrough(selection.hasFormat("strikethrough"));
+      // setIsCode(selection.hasFormat('code'));
 
       const node = getSelectedNode(selection);
       const parent = node.getParent();
@@ -59,6 +62,13 @@ export default function ToolbarPlugin() {
         setIsLink(true);
       } else {
         setIsLink(false);
+      }
+
+      if ($isCodeNode(parent) || $isCodeNode(node)) {
+        setIsCode(true);
+      } else {
+        console.log("Not a code block");
+        setIsCode(false);
       }
     }
   }, []);
@@ -156,6 +166,11 @@ export default function ToolbarPlugin() {
     "text-darkergray": !isStrikethrough
   });
 
+  const codeButtonClasses = classNames(buttonClasses, {
+    [buttonActive]: isCode,
+    "text-darkergray": !isCode
+  });
+
   return (
     <div
       className="flex bg-white mx-1 py-1 rounded-t-lg align-middle text-darkgray border-b border-gray"
@@ -238,6 +253,19 @@ export default function ToolbarPlugin() {
         aria-label="Insert Link"
       >
         <Link />
+      </button>
+
+      <Divider />
+
+      {/* Code Block Button */}
+      <button
+        onClick={() => {
+
+        }}
+        className={codeButtonClasses}
+        aria-label="Code Block"
+      >
+        <Code />
       </button>
     </div>
   );

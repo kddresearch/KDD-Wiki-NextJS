@@ -6,9 +6,10 @@
  *
  */
 
-import {registerCodeHighlighting} from '@lexical/code';
+import {CodeHighlightNode, PrismTokenizer, registerCodeHighlighting} from '@lexical/code';
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {useEffect} from 'react';
+import Prism from 'prismjs';
 
 export default function CodeHighlightPlugin(): JSX.Element | null {
   const [editor] = useLexicalComposerContext();
@@ -16,6 +17,18 @@ export default function CodeHighlightPlugin(): JSX.Element | null {
   useEffect(() => {
     return registerCodeHighlighting(editor);
   }, [editor]);
+
+  // useEffect(() => {
+  //   return editor.registerNodeTransform(CodeHighlightNode, (node) => {
+  //     const codeText = node.getTextContent();
+  //     const language = node.getHighlightType();
+
+  //     if (language && Prism.languages[language]) {
+  //       const highlightedCode = Prism.highlight(codeText, Prism.languages[language], language);
+  //       node.setTextContent(highlightedCode);
+  //     }
+  //   })
+  // })
 
   return null;
 }

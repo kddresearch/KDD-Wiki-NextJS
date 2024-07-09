@@ -10,7 +10,13 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        "ksu-fonts": ['Myriad Pro', 'Open Sans', 'Helvetica', 'Arial', 'sans-serif'],
+        "ksu-fonts": [
+          'Myriad Pro',
+          'Open Sans',
+          'Helvetica',
+          'Arial',
+          'sans-serif'
+        ],
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -23,6 +29,16 @@ const config: Config = {
       },
       textDecorationThickness: {
         3: "3px",
+      },
+      colors: {
+        'token-comment': 'slategray',
+        'token-punctuation': '#999999',
+        'token-property': '#905',
+        'token-selector': '#690',
+        'token-operator': '#9a6e3a',
+        'token-attr': '#07a',
+        'token-variable': '#e90',
+        'token-function': '#dd4a68',
       },
       typography: (theme: any) => ({
         DEFAULT: {

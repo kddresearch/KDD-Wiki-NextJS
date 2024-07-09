@@ -6,7 +6,39 @@
  */
 
 const theme = {
-  code: 'bg-[#f0f2f5] font-mono block px-4 py-4 leading-[1.53] text-[13px] mt-2 mb-2 tab-[2] overflow-x-auto relative',
+  code: 'bg-lightgray font-mono block px-4 py-4 leading-[1.53] text-sm mt-2 mb-2 tab-[2] overflow-x-auto relative',
+  codeHighlight: {
+    atrule: 'text-token-attr',
+    attr: 'text-token-attr',
+    boolean: 'text-token-property',
+    builtin: 'text-token-selector',
+    cdata: 'text-token-comment',
+    char: 'text-token-selector',
+    class: 'text-token-function',
+    'class-name': 'text-token-function',
+    comment: 'text-token-comment',
+    constant: 'text-token-property',
+    deleted: 'text-token-property',
+    doctype: 'text-token-comment',
+    entity: 'text-token-operator',
+    function: 'text-token-function',
+    important: 'text-token-variable',
+    inserted: 'text-token-selector',
+    keyword: 'text-token-attr',
+    namespace: 'text-token-variable',
+    number: 'text-token-property',
+    operator: 'text-token-operator',
+    prolog: 'text-token-comment',
+    property: 'text-token-property',
+    punctuation: 'text-token-punctuation',
+    regex: 'text-token-variable',
+    selector: 'text-token-selector',
+    string: 'text-token-selector',
+    symbol: 'text-token-property',
+    tag: 'text-token-property',
+    url: 'text-token-operator',
+    variable: 'text-token-variable',
+  },
   // heading: {
   //     h1: '',
   //     h2: '',
@@ -73,9 +105,12 @@ function prePopulate() {
     root.append(quote);
 
     const code = $createCodeNode();
-    code.append($createCodeHighlightNode("const x = 5;", "javascript"));
-    // code.append($createTextNode('const x = 5;'));
+    code.append($createCodeHighlightNode("const x = 5;", "js"));
     root.append(code);
+
+    const pycode = $createCodeNode();
+    pycode.append($createCodeHighlightNode("# this is python\n\nhello = \"world\"", "python"));
+    root.append(pycode);
   }
 }
 
