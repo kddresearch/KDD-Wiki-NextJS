@@ -69,8 +69,8 @@ export const wikiUserTable = pgTable('wiki_users', {
   phone_number: varchar('phone_number').notNull(), 
   social_media: jsonb('social_media').notNull(), 
   admin_teams: text('admin_teams').default('[]'), 
-  date_created: date('date_created').notNull(), 
-  date_modified: date('date_modified').notNull(), 
+  date_created: date('date_created').defaultNow(), 
+  date_modified: date('date_modified').defaultNow(), 
   last_login: date('last_login').notNull() 
 });
 

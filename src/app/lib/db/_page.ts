@@ -81,12 +81,12 @@ async function fetchById(id: number): Promise<Page | null> {
     category_ids: number[],
   ): Promise<Page[]> {
     // Construct the query
-    const query_st: string = `
-          SELECT * FROM page
-          WHERE category_id = ANY($1::int[])
-          OR category_id IS NULL
-          ORDER BY priority ASC;
-      `;
+    // const query_st: string = `
+    //       SELECT * FROM page
+    //       WHERE category_id = ANY($1::int[])
+    //       OR category_id IS NULL
+    //       ORDER BY priority ASC;
+    //   `;
   
     try {
       // Execute the query
@@ -156,15 +156,12 @@ async function fetchById(id: number): Promise<Page | null> {
       // ]);
 
       const result= await  db!.insert(pageTable).values({
-        id:page.id,
         title : page.title, 
         priority : page.priority,
         content : page.content,
         discussion :page.discussion,
         is_private : page.is_private,
         is_kdd_only : page.is_kdd_only,
-        date_created : page.date_created, 
-        date_modified : page.date_modified,
         category_id : page.category_id,
         author_id : page.author_id,
         name : page.name,
@@ -174,7 +171,7 @@ async function fetchById(id: number): Promise<Page | null> {
         is_template : page.is_template
       })
   
-      return new Page(result[0]);
+      return new Page(result.rows[0]);
     } catch (err) {
       console.error("Error occurred during query execution:", err);
       throw err;
@@ -183,30 +180,48 @@ async function fetchById(id: number): Promise<Page | null> {
   
   async function update(page: Page): Promise<Page> {
     // Construct the query
-    const query_st: string = `
-          UPDATE page
-          SET title = $1, priority = $2, content = $3, discussion = $4, is_private = $5, is_kdd_only = $6, date_modified = NOW(), category_id = $7, author_id = $8, name = $9, has_publication = $10, last_updated = $11, is_home = $12, is_template = $13
-          WHERE id = $14
-          RETURNING *;
-      `;
+    // const query_st: string = `
+    //       UPDATE page
+    //       SET title = $1, priority = $2, content = $3, discussion = $4, is_private = $5, is_kdd_only = $6, date_modified = NOW(), category_id = $7, author_id = $8, name = $9, has_publication = $10, last_updated = $11, is_home = $12, is_template = $13
+    //       WHERE id = $14
+    //       RETURNING *;
+    //   `;
     try {
       // Execute the query
-      const result = await query(query_st, [
-        page.title,
-        page.priority,
-        page.content,
-        page.discussion,
-        page.is_private,
-        page.is_kdd_only,
-        page.category_id,
-        page.author_id,
-        page.name,
-        page.has_publication,
-        page.last_updated,
-        page.is_home,
-        page.is_template,
-        page.id,
-      ]);
+      // const result = await query(query_st, [
+      //   page.title,
+      //   page.priority,
+      //   page.content,
+      //   page.discussion,
+      //   page.is_private,
+      //   page.is_kdd_only,
+      //   page.category_id,
+      //   page.author_id,
+      //   page.name,
+      //   page.has_publication,
+      //   page.last_updated,
+      //   page.is_home,
+      //   page.is_template,
+      //   page.id,
+      // ]);
+      const result = await db!.update(pageTable)
+      .set({
+        title: page.title,
+        priority : page.priority,
+        content : page.content,
+        discussion : page.discussion,
+        is_private : page.is_private,
+        is_kdd_only : page.is_kdd_only,
+        category_id : page.category_id,
+        author_id : page.author_id,
+        name : page.name,
+        has_publication : page.has_publication,
+        last_updated : page.last_updated,
+        is_home : page.is_home,
+        is_template : page.is_template,
+
+      })
+      .where(eq(pageTable.id,page.id))
   
       return new Page(result.rows[0]);
     } catch (err) {

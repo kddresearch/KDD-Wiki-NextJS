@@ -62,22 +62,18 @@ async function insert(user: KddUser): Promise<KddUser> {
   try {
     // Execute the query
     //const result = await query(query_str, values);
-    const userObject={
     
-      username:user.username,
+      
+    const result = await db!.insert(kddUserTable).values({
+      
+      username : user.username,
       member : user.member,
        admin : user.admin,
       readonly : user.readonly,
-      date_created : user.date_created,
-      date_modified : user.date_modified,
       kdd_group_id : user.kdd_group_id, 
       directory_group_id : user.directory_group_id,
      is_kdd_only : user.is_kdd_only
-    }
-    const result = await db!.insert(kddUserTable).values({
-      
-      userObject
-
+    
     })
 
     return new KddUser(result.rows[0]);

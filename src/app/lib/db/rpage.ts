@@ -86,7 +86,9 @@ async function insert(page: rPage): Promise<rPage> {
                 title:page.title,
                 content : page.content,
                 author_id : page.author_id,
-
+                category_id : page.category_id,
+                views : 0,
+                access_level : page.access_level
                })
 
 

@@ -25,8 +25,8 @@ export const rCategoryTable = pgTable('r_categories', {
   role: varchar('role').notNull(),
   name: varchar('name', { length: 50 }).notNull(), 
   description: text('description').notNull(), 
-  date_created: date('date_created').notNull(), 
-  date_modified: date('date_modified').notNull()
+  date_created: date('date_created').defaultNow(), 
+  date_modified: date('date_modified').defaultNow()
 });
 
 

@@ -73,10 +73,12 @@ async function insert(userActivity: UserActivity): Promise<UserActivity> {
         // Execute the query
         //const result = await query(query_str, [userActivity.userId, userActivity.activityType, userActivity.activityDetails, userActivity.timestamp]);
         const result = await db!.insert(userActivityTable).values({
-            user_id : userActivity.userId,
-             activity_type : userActivity.activityType,
-              activity_details : userActivity.activityDetails,
-               timestamp : userActivity.timestamp
+            userId : userActivity.userId,
+            activityType : userActivity.activityType,
+            activityDetails : userActivity.activityDetails,
+            endpoint : userActivity.endpoint,
+            detected_ip : userActivity.detected_ip,
+            status : userActivity.status
         })
         return new UserActivity(result.rows[0]);
     } catch (err) {

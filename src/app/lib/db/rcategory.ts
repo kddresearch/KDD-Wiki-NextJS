@@ -62,11 +62,11 @@ async function fetchByName(name: string): Promise<rCategory | null> {
         const result = await db!.select().from(rCategoryTable).where(eq(rCategoryTable.name,name))
 
 
-        if (result.rows.length === 0) {
+        if (result.length === 0) {
             return null;
         }
 
-        return new rCategory(result.rows[0]);
+        return new rCategory(result[0]);
     } catch (err) {
         console.error("Error occurred during query execution:", err);
         throw err;
@@ -92,11 +92,11 @@ async function insert(category: rCategory): Promise<rCategory> {
        // const result = await query(query_str, values);
        const result = await db!.insert(rCategoryTable).values({
     
-        role:category.role,
-        name : category.name,
+        role:<string>category.role,
+        name :<string> category.name,
         description : category.description,
-        date_created : category.date_created,
-        date_modified : category.date_modified,
+        date_created : <string><unknown>category.date_created,
+        date_modified : <string><unknown>category.date_modified,
 
        })
 
@@ -109,12 +109,12 @@ async function insert(category: rCategory): Promise<rCategory> {
 
 async function update(category: rCategory): Promise<rCategory> {
     // Construct the query
-    const query_str: string = `
-          UPDATE rcategory
-          SET role = $1, name = $2, description = $3, date_modified = NOW()
-          WHERE id = $4
-          RETURNING *
-      `;
+    // const query_str: string = `
+    //       UPDATE rcategory
+    //       SET role = $1, name = $2, description = $3, date_modified = NOW()
+    //       WHERE id = $4
+    //       RETURNING *
+    //   `;
 
     const values: any[] = [
         category.role,
@@ -125,9 +125,19 @@ async function update(category: rCategory): Promise<rCategory> {
 
     try {
         // Execute the query
-        const result = await query(query_str, values);
+        // const result = await query(query_str, values);
 
-        return new rCategory(result.rows[0]);
+        const result = await db!.update(rCategoryTable).set({
+            role :category.role,
+            name : category.name,
+            description : category.description,
+            date_modified : <string><unknown>Date.now()
+
+        })
+        .where(eq(rCategoryTable.id,category.id))
+        .returning()
+
+        return new rCategory(result[0]);
     } catch (err) {
         console.error("Error occurred during query execution:", err);
         throw err;
@@ -136,14 +146,15 @@ async function update(category: rCategory): Promise<rCategory> {
 
 async function remove(category: rCategory): Promise<void> {
     // Construct the query
-    const query_str: string = `
-          DELETE FROM rcategory
-          WHERE id = $1
-      `;
+    // const query_str: string = `
+    //       DELETE FROM rcategory
+    //       WHERE id = $1
+    //   `;
 
     try {
         // Execute the query
-        await query(query_str, [category.id]);
+       // await query(query_str, [category.id]);
+       await db!.delete(rCategoryTable).where(eq(rCategoryTable.id,category.id))
     } catch (err) {
         console.error("Error occurred during query execution:", err);
         throw err;

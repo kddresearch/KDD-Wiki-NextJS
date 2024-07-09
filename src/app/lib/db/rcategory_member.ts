@@ -104,6 +104,7 @@ async function insert(rcategory_member: rCategoryMember): Promise<rCategoryMembe
         const result = await db!.insert(rCategoryMemberTable).values({
             user_id: rcategory_member.user_id,
             category_id:rcategory_member.category_id,
+        
 
         })
 

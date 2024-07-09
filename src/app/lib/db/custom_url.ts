@@ -85,7 +85,8 @@ async function insert(
     const result = await db!.insert(customUrlTable).values({
       url: customUrl.url,
       action: customUrl.action,
-      target: customUrl.target,
+      //string | number
+      target: <string>customUrl.target,
       author_id : customUrl.author_id,
     })
 
@@ -104,12 +105,12 @@ async function insert(
 // Update a custom url
 async function update(customUrl: CustomUrl): Promise<CustomUrl> {
   // Construct the query
-  const query_st: string = `
-        UPDATE custom_url
-        SET url = $2, action = $3, target = $4, date_modified = NOW(), author_id = $5
-        WHERE id = $1
-        RETURNING *;
-    `;
+  // const query_st: string = `
+  //       UPDATE custom_url
+  //       SET url = $2, action = $3, target = $4, date_modified = NOW(), author_id = $5
+  //       WHERE id = $1
+  //       RETURNING *;
+  //   `;
 
   try {
     // // Execute the query
@@ -127,13 +128,15 @@ async function update(customUrl: CustomUrl): Promise<CustomUrl> {
       action : customUrl.action,
       target : <string>customUrl.target,
       author_id:customUrl.author_id,
-     date_modified : new Date(),
+     date_modified : <string><unknown>new Date(),
      //timestamp vs date
 
     })
+    .where(eq(customUrlTable.id,<number>customUrl.id))
+    .returning()
 
     // Create a new CustomUrl object with the first row of the result
-    return new CustomUrl(result.rows[0]);
+    return new CustomUrl(result[0]);
   } catch (err) {
     console.error("Error occurred during query execution:", err);
     throw err;
@@ -143,17 +146,17 @@ async function update(customUrl: CustomUrl): Promise<CustomUrl> {
 // Delete a custom url
 async function remove(customUrl: CustomUrl): Promise<boolean> {
   // Construct the query
-  const query_st: string = `
-        DELETE FROM custom_url
-        WHERE id = $1;
-    `;
+  // const query_st: string = `
+  //       DELETE FROM custom_url
+  //       WHERE id = $1;
+  //   `;
 
   try {
     // Execute the query
    // await query(query_st, [customUrl.id]);
     // await db!.delete(customUrlTable).where(eq(customUrlTable.id,customUrl.id))
 
-    await db!.delete(customUrlTable).where(eq(customUrlTable.id, customUrl.id))
+    await db!.delete(customUrlTable).where(eq(customUrlTable.id, <number>customUrl.id))
 
     return true;
   } catch (err) {
