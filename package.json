@@ -40,6 +40,7 @@
     "@opentelemetry/api-logs": "^0.52.1",
     "@opentelemetry/instrumentation": "^0.52.1",
     "@opentelemetry/sdk-logs": "^0.52.1",
+    "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-popover": "^1.1.1",
     "@radix-ui/react-slot": "^1.1.0",
