@@ -20,7 +20,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import * as React from "react";
 import { ArrowClockwise, ArrowCounterclockwise, Code, Justify, Link, TextCenter, TextLeft, TextRight, TypeBold, TypeItalic, TypeStrikethrough, TypeUnderline } from "react-bootstrap-icons";
 import { getSelectedNode, sanitizeURL } from "../utils";
-import {$isCodeNode} from '@lexical/code';
+import { $isCodeNode, getCodeLanguages, getLanguageFriendlyName } from '@lexical/code';
+import { Combobox } from "@/components/ui/combo-box";
 
 // No clue what this is for
 const LowPriority = 1;
@@ -149,6 +150,7 @@ export default function ToolbarPlugin() {
   }, [editor, updateToolbar]);
 
   const buttonClasses = classNames(
+    "size-8",
     "flex",
     "border-0",
     "rounded-lg",
@@ -194,6 +196,43 @@ export default function ToolbarPlugin() {
     "text-darkergray": !isCode
   });
 
+  const iconSize = "1rem";
+
+  const onSelectLanguage = (language: string) => {
+
+    editor.update(() => {
+      const selection = $getSelection();
+
+      if (!$isRangeSelection(selection)) {
+        return;
+      }
+      const node = getSelectedNode(selection);
+      const parent = node.getParent();
+
+      if (!$isCodeNode(node)) {
+        return;
+      }
+
+      if (parent !== null && $isCodeNode(parent)) {
+        parent.setLanguage(language);
+        setCodeLanguage(language);
+        return
+      }
+
+      node.setLanguage(language);
+
+      setCodeLanguage(language);
+    });
+  };
+
+  const languages = getCodeLanguages().map((language) => {
+    return {
+      value: language,
+      label: getLanguageFriendlyName(language),
+    };
+  });
+
+
   return (
     <div
       className="flex bg-white mx-1 py-1 rounded-t-lg align-middle text-darkgray border-b border-gray"
@@ -209,7 +248,7 @@ export default function ToolbarPlugin() {
         className={buttonClasses}
         aria-label="Undo"
       >
-        <ArrowCounterclockwise />
+        <ArrowCounterclockwise size={iconSize} />
       </button>
 
       {/* Redo Button */}
@@ -221,7 +260,7 @@ export default function ToolbarPlugin() {
         className={buttonClasses}
         aria-label="Redo"
       >
-        <ArrowClockwise />
+        <ArrowClockwise size={iconSize} />
       </button>
       <Divider />
 
@@ -233,7 +272,7 @@ export default function ToolbarPlugin() {
         className={boldButtonClasses}   
         aria-label="Format Bold"
       >
-        <TypeBold />
+        <TypeBold size={iconSize} />
       </button>
 
       {/* Italics Button */}
@@ -244,7 +283,7 @@ export default function ToolbarPlugin() {
         className={italicButtonClasses}
         aria-label="Format Italics"
       >
-        <TypeItalic />
+        <TypeItalic size={iconSize} />
       </button>
 
       {/* Underline Button */}
@@ -255,7 +294,7 @@ export default function ToolbarPlugin() {
         className={underlineButtonClasses}
         aria-label="Format Underline"
       >
-        <TypeUnderline />
+        <TypeUnderline size={iconSize} />
       </button>
 
       {/* Strikethrough Button */}
@@ -266,7 +305,7 @@ export default function ToolbarPlugin() {
         className={strikethroughButtonClasses}
         aria-label="Format Strikethrough"
       >
-        <TypeStrikethrough />
+        <TypeStrikethrough size={iconSize} />
       </button>
 
       {/* Insert Link Button */}
@@ -275,7 +314,7 @@ export default function ToolbarPlugin() {
         className={buttonClasses}
         aria-label="Insert Link"
       >
-        <Link />
+        <Link size={iconSize} />
       </button>
 
       <Divider />
@@ -288,12 +327,15 @@ export default function ToolbarPlugin() {
         className={codeButtonClasses}
         aria-label="Code Block"
       >
-        <Code />
+        <Code size={iconSize} />
       </button>
       {isCode ? (
-        <div>
-          Lang: {codeLanguage}
-        </div>
+        <Combobox
+          options={languages}
+          defaultSelect={codeLanguage}
+          onSelect={onSelectLanguage}
+          type="language"
+        />
       ) : null}
     </div>
   );
