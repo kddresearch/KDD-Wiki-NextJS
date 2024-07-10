@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { fetchByURL } from "../lib/db/custom_url";
-import { fetchByName, fetchById } from "../lib/db/_page";
+import { fetchById } from "../lib/db/rpage";
 import { number } from "joi";
 import StripeBackDrop from "@/components/layout/backdrop";
 import Card from "@/components/layout/card";
@@ -26,19 +26,25 @@ export default async function Page({
   if (customUrl == null) {
     notFound();
   }
+  console.log("here")
   var page = await fetchById(parseInt(customUrl.target.toString()));
 
   if (page == null) 
     return notFound();
+
+  if (page.content == null){
+    page.content = "";
+  }
+
   const isHTML =
-    page.content.trim().startsWith("<") && page.content.trim().endsWith(">");
+    page.content.trim().startsWith("<") && page.content.trim().endsWith(">")
 
   title = baseTitle + page.title;
-
+  // {page?.editUrl!}
   const PageOptions = () => {
     return (
       <div className="text-lg text-black mb-auto">
-        <Link href={page?.editUrl!} className="flex items-center text-2xl text-purple hover:underline">
+        <Link href="test" className="flex items-center text-2xl text-purple hover:underline">
           <span className="mr-1"><Pencil color="#512888"/></span>
           Edit
         </Link>
@@ -52,8 +58,8 @@ export default async function Page({
         <Card subTitle="Navigation" className="bg-gray">
           TO BE IMPLEMENTED
         </Card>
-      </div>
-      <Card title={page.title} smallTitle={page.minutesToReadString} className="grow" actions={<PageOptions/>}>
+      </div> 
+      <Card title={page.title} className="grow" actions={<PageOptions/>}> 
         {isHTML ? (
           <div className="mt-4 prose max-w-none prose-a:text-purple prose-a:underline" dangerouslySetInnerHTML={{ __html: page.content }}></div>
         ) : (
@@ -63,6 +69,7 @@ export default async function Page({
     </StripeBackDrop>
   );
 }
+// smallTitle={page.minutesToReadString}
 
 export async function generateMetadata(
   { params }: { params: { slug: string[] } },

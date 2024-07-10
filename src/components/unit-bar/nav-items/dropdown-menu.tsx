@@ -1,29 +1,24 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Category from "@/models/nav-model/category";
+import NavItem from "@/models/nav-model/nav_item";
 
-const Dropdown = (category: Category) => {
+const Dropdown = ({ category }: { category: Category }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  if (
-    category.location === "dropdown-left" &&
-    category.categories &&
-    category.categories.length > 0
-  ) {
-    throw new Error("Dropdown-left categories cannot have subcategories");
-  }
 
   const buttonid = `dropDownButton_${category.title}`;
   const dropdownid = `dropDown_${category.title}`;
 
-  // Handle mouse entering the button or dropdown
   const handleMouseEnter = () => {
     setIsDropdownOpen(true);
   };
 
-  // Handle mouse leaving the button or dropdown
   const handleMouseLeave = () => {
     setIsDropdownOpen(false);
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
   return (
@@ -31,7 +26,6 @@ const Dropdown = (category: Category) => {
       <button
         onClick={toggleDropdown}
         onMouseOver={handleMouseEnter}
-        onMouseLeave={toggleDropdown}
         id={buttonid}
         className="mx-auto text-white bg-purple hover:underline underline-offset-3 decoration-3 font-bold text-lg pr-5 text-center inline-flex items-center"
         type="button"
@@ -56,19 +50,15 @@ const Dropdown = (category: Category) => {
               </Link>
             </li>
           ))}
-          {/* {category.categories && category.categories.map(subCategory => (
+          {category.categories.map((subCategory) => (
             <li key={subCategory.id} className="relative">
               <Dropdown category={subCategory} />
             </li>
-          ))} */}
+          ))}
         </ul>
       </div>
     </div>
   );
-
-  function toggleDropdown() {
-    setIsDropdownOpen(!isDropdownOpen);
-  }
 };
 
 export default Dropdown;
