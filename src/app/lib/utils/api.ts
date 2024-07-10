@@ -22,25 +22,20 @@ function handleAPIError(err: any): [ { error: string }, { status: number } ] {
     return [ { error: "An error occurred"}, { status: 500 } ];
 }
 
-async function bodyParser<T extends new (...args: any[]) => any>(
-    req: NextRequest,
-    ModelClass: T
-): Promise<InstanceType<T>> {
-    try {
-        const json = await req.json();
-        const instance = new ModelClass(json);
-        return instance;
-    } catch (err) {
+async function bodyParser(req: NextRequest, schema?: any) {
+  const body = await req.json();
 
-        if (err instanceof SyntaxError) {
-            console.error('Error occurred during bodyParser:', err);
-            throw { status: 400, message: 'Invalid JSON in request body' };
-        }
-
-        console.error('Error occurred during bodyParser:', err);
-        throw { status: 400, message: `Invalid request body of type: ${ModelClass.name}` };
+  if (schema) {
+    const { error, value } = schema.validate(body, { abortEarly: false });
+    if (error) {
+      throw { status: 400, message: `Validation error: ${error.message}` };
     }
+    return value;
+  }
+
+  return body;
 }
+
 
 export {
     handleAPIError,

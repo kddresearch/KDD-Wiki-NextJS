@@ -6,7 +6,6 @@ const pageSchema = joi.object({
     title: joi.string().max(50).required(),
     priority: joi.number().integer().min(0).default(1000).required(),
     content: joi.string().min(0),
-    discussion: joi.string().required().min(0).allow(null),
     is_private: joi.boolean().required(),
     date_created: joi.date().required(),
     date_modified: joi.date().required(),
@@ -18,6 +17,7 @@ const pageSchema = joi.object({
     last_updated: joi.string().required().allow(null),
     is_home: joi.boolean().required().allow(null),
     is_template: joi.boolean().required().allow(null),
+    discussion: joi.any().required(),
 });
 
 class Page {
@@ -25,18 +25,18 @@ class Page {
     title: string;
     priority: number;
     content: string;
-    discussion: string;
     is_private: boolean;
     date_created: Date;
     date_modified: Date;
     category_id: number;
     author_id: number;
-    name: string;
     has_publication: boolean;
     is_kdd_only: boolean;
     last_updated: string;
     is_home: boolean;
     is_template: boolean;
+    name: string;
+    discussion: string;
 
     /**
      * Returns the url path for the page
@@ -83,18 +83,18 @@ class Page {
         this.title = value.title;
         this.priority = value.priority;
         this.content = value.content;
-        this.discussion = value.discussion;
         this.is_private = value.is_private;
-        this.date_created = value.date_created;
+        this.date_created = value.date_created; // TODO Add date_created and date_modified in table definition
         this.date_modified = value.date_modified;
         this.category_id = value.category_id;
         this.author_id = value.author_id;
-        this.name = value.name;
         this.has_publication = value.has_publication;
         this.is_kdd_only = value.is_kdd_only;
         this.last_updated = value.last_updated;
         this.is_home = value.is_home;
         this.is_template = value.is_template;
+        this.name = 'test';
+        this.discussion = 'test';
     }
 
     /**
@@ -102,21 +102,21 @@ class Page {
      * @param page 
      */
     update(page: Page) {
-        // this.id = page.id;
+        this.id = page.id;
         this.title = page.title;
         this.priority = page.priority;
         this.content = page.content;
-        this.discussion = page.discussion;
         this.is_private = page.is_private;
         this.date_modified = new Date();
         this.category_id = page.category_id;
-        // this.author_id = page.author_id;
-        this.name = page.name;
+        this.author_id = page.author_id;
         this.has_publication = page.has_publication;
         this.is_kdd_only = page.is_kdd_only;
         this.last_updated = page.last_updated;
         this.is_home = page.is_home;
         this.is_template = page.is_template;
+        this.name = 'test';
+        this.discussion = 'test';
     }
 
     /**
@@ -128,18 +128,18 @@ class Page {
             title: this.title,
             priority: this.priority,
             content: this.content,
-            discussion: this.discussion,
             is_private: this.is_private,
             date_created: this.date_created,
             date_modified: this.date_modified,
             category_id: this.category_id,
             author_id: this.author_id,
-            name: this.name,
             has_publication: this.has_publication,
             is_kdd_only: this.is_kdd_only,
             last_updated: this.last_updated,
             is_home: this.is_home,
             is_template: this.is_template,
+            name: 'test',
+            discussion: 'test'
         };
     }
 }

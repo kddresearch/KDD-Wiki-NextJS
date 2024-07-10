@@ -1,22 +1,38 @@
 "use client";
 import TextEditor from "@/components/editors/lexical/editor";
-import Page from "@/app/lib/models/_page";
-import { useState } from 'react';
+import rPage from "@/app/lib/models/rpage";
+import Directory from "@/app/lib/models/directory";
+import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
-import QueryProvider from "@/components/providers/query_provider";
 
 function PageEditor({ inputPage }: { inputPage: object }) {
-  let page = (new Page(inputPage)).toJSON();
+  let page = (new rPage(inputPage)).toJSON();
   const [title, setTitle] = useState(page.title);
   const [content, setContent] = useState(page.content);
+  const [parentId, setParentId] = useState<number | null>(null);
+  const [parentType, setParentType] = useState<string | null>(null);
+  const [directoriesAndPages, setDirectoriesAndPages] = useState<(Directory | rPage)[]>([]);
 
-  async function submitPageCall(page: Page) {
-    const response = await fetch(`/api/page/${page.id}`, {
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch('/api/directory/all-dirs-pages');
+      if (!response.ok) {
+        console.error('Failed to fetch directories and pages');
+        return;
+      }
+      const data = await response.json();
+      setDirectoriesAndPages(data);
+    }
+    fetchData();
+  }, []);
+
+  async function submitPageCall(page: rPage, parentId?: number, parentType?: string) {
+    const response = await fetch(`/api/rpage/${page.id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(page)
+      body: JSON.stringify({ page, parentId, parentType })
     });
 
     if (!response.ok) {
@@ -28,7 +44,7 @@ function PageEditor({ inputPage }: { inputPage: object }) {
 
   const queryClient = useQueryClient();
   const { mutate, isLoading, isError, error } = useMutation(
-    (page: Page) => submitPageCall(page),
+    (data: { page: rPage, parentId?: number, parentType?: string }) => submitPageCall(data.page, data.parentId, data.parentType),
     {
       onSuccess: () => {
         queryClient.invalidateQueries('pages');
@@ -45,14 +61,14 @@ function PageEditor({ inputPage }: { inputPage: object }) {
 
     let validatedPage;
     try {
-      validatedPage = new Page(updatedPage);
+      validatedPage = new rPage(updatedPage);
     } catch (error: any) {
       let errorMessage = `${error.message}`;
       alert(errorMessage);
       return;
     }
 
-    mutate(validatedPage, {
+    mutate({ page: validatedPage, parentId, parentType }, {
       onError: (error) => {
         let errorMessage;
         if (error instanceof Error) {
@@ -76,11 +92,28 @@ function PageEditor({ inputPage }: { inputPage: object }) {
           onChange={(e) => setTitle(e.target.value)}
         />
       </div>
-      {/* TODO: Fix editor on this page lol */}
-      {/* <TextEditor
-        markdown={content}
+      <TextEditor
+        markdown={content || ""}
         onContentChange={(newContent: string) => setContent(newContent)}
-      /> */}
+      />
+      <div className="flex flex-row content-center">
+        <label className="text-2xl font-bold mr-2 my-auto">Parent:</label>
+        <select
+          value={parentId ? `${parentId}-${parentType}` : ""}
+          onChange={(e) => {
+            const selectedOption = e.target.value.split("-");
+            setParentId(Number(selectedOption[0]));
+            setParentType(selectedOption[1]);
+          }}
+        >
+          <option value="">Select Parent</option>
+          {directoriesAndPages.map((item) => (
+            <option key={item.id} value={`${item.id}-${item.type}`}>
+              {item.title} ({item.type === 'directory' ? 'Directory' : 'Page'})
+            </option>
+          ))}
+        </select>
+      </div>
       <button
         className="bg-purple text-white p-2 rounded-md mt-2"
         onClick={submitPage}
