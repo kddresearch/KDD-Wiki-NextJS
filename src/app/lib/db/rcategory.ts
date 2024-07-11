@@ -89,17 +89,15 @@ async function insert(category: rCategory): Promise<rCategory> {
 
     try {
         // Execute the query
-       // const result = await query(query_str, values);
-       const result = await db!.insert(rCategoryTable).values({
-    
-        role:<string>category.role,
-        name :<string> category.name,
-        description : category.description,
-        date_created : <string><unknown>category.date_created,
-        date_modified : <string><unknown>category.date_modified,
-
-       })
-       .returning()
+        // const result = await query(query_str, values);
+        const result = await db!.insert(rCategoryTable).values({
+            role: category.role,
+            name: category.name,
+            description: category.description,
+            date_created: new Date().toISOString(), // Setting to ISO string for postgres
+            date_modified: new Date().toISOString()
+        })
+        .returning()
 
         return new rCategory(result[0]);
     } catch (err) {
