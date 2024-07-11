@@ -75,8 +75,9 @@ async function insert(user: KddUser): Promise<KddUser> {
      is_kdd_only : user.is_kdd_only
     
     })
+    .returning()
 
-    return new KddUser(result.rows[0]);
+    return new KddUser(result[0]);
   } catch (err) {
     console.error("Error occurred during query execution:", err);
     throw err;

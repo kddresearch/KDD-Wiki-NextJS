@@ -80,7 +80,8 @@ async function insert(userActivity: UserActivity): Promise<UserActivity> {
             detected_ip : userActivity.detected_ip,
             status : userActivity.status
         })
-        return new UserActivity(result.rows[0]);
+        .returning()
+        return new UserActivity(result[0]);
     } catch (err) {
         console.error("Error occurred during query execution:", err);
         throw err;

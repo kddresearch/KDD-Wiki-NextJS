@@ -107,8 +107,9 @@ async function insert(rcategory_member: rCategoryMember): Promise<rCategoryMembe
         
 
         })
+        .returning()
 
-        return new rCategoryMember(result.rows[0]);
+        return new rCategoryMember(result[0]);
     } catch (err) {
         console.error("Error occurred during query execution:", err);
         throw err;

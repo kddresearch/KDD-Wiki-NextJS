@@ -90,9 +90,10 @@ async function insert(page: rPage): Promise<rPage> {
                 views : 0,
                 access_level : page.access_level
                })
+               .returning()
 
 
-        return new rPage(result.rows[0]);
+        return new rPage(result[0]);
     } catch (err) {
         console.error("Error occurred during query execution:", err);
         throw err;

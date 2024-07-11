@@ -26,8 +26,8 @@ export const customUrlTable = pgTable('custom_urls', {
   url: varchar('url', { length: 50 }).notNull(), 
   action: text('action').notNull(),
   target:text('target').notNull(),
-  date_created: date('date_created').notNull().defaultNow(), 
-  date_modified: date('date_modified').notNull().defaultNow(), 
+  date_created: date('date_created').defaultNow(), 
+  date_modified: date('date_modified').defaultNow(), 
   author_id: integer('author_id').notNull(), 
 });
 

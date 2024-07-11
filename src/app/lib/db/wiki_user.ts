@@ -112,8 +112,9 @@ async function insert(user: WikiUser): Promise<WikiUser> {
       last_login :<string><unknown>Date.now()
       
     })
+    .returning()
 
-    return new WikiUser(result.rows[0]);
+    return new WikiUser(result[0]);
   } catch (err) {
     console.error("Error occurred during query execution:", err);
     throw err;
@@ -160,8 +161,9 @@ async function update(user: WikiUser): Promise<WikiUser> {
       date_modified : <string><unknown>Date.now(),
 
     }).where(eq(wikiUserTable.id,user.id))
+    .returning()
 
-    return new WikiUser(result.rows[0]);
+    return new WikiUser(result[0]);
   } catch (err) {
     console.error("Error occurred during query execution:", err);
     throw err;
@@ -181,6 +183,7 @@ async function remove(id: number): Promise<boolean> {
     // Execute the query
     // const result = await query(query_str, values);
     const result = await db!.delete(wikiUserTable).where(eq(wikiUserTable.id,id))
+    .returning()
 
     return true;
   } catch (err) {
