@@ -56,16 +56,6 @@ async function insert(category: rCategory): Promise<rCategory> {
     ];
 
     try {
-       const result = await db!.insert(rCategoryTable).values({
-    
-        role:<string>category.role,
-        name :<string> category.name,
-        description : category.description,
-        date_created : <string><unknown>category.date_created,
-        date_modified : <string><unknown>category.date_modified,
-
-       })
-       .returning()
         // Execute the query
         // const result = await query(query_str, values);
         const result = await db!.insert(rCategoryTable).values({
@@ -94,7 +84,7 @@ async function update(category: rCategory): Promise<rCategory> {
     ];
 
     try {
-     const result = await db!.update(rCategoryTable).set({
+        const result = await db!.update(rCategoryTable).set({
             role :category.role,
             name : category.name,
             description : category.description,
