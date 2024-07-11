@@ -170,8 +170,9 @@ async function fetchById(id: number): Promise<Page | null> {
         is_home : page.is_home,
         is_template : page.is_template
       })
+      .returning()
   
-      return new Page(result.rows[0]);
+      return new Page(result[0]);
     } catch (err) {
       console.error("Error occurred during query execution:", err);
       throw err;

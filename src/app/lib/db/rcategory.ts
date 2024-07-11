@@ -99,8 +99,9 @@ async function insert(category: rCategory): Promise<rCategory> {
         date_modified : <string><unknown>category.date_modified,
 
        })
+       .returning()
 
-        return new rCategory(result.rows[0]);
+        return new rCategory(result[0]);
     } catch (err) {
         console.error("Error occurred during query execution:", err);
         throw err;

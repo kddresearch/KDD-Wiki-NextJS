@@ -31,9 +31,9 @@ export const rPageTable = pgTable('r_pages', {
   category_id: integer('category_id').notNull(), 
   views: integer('views').notNull().default(0),
   access_level: varchar('access_level').notNull(),
-  date_created: date('date_created').notNull(), 
-  date_modified: date('date_modified').notNull(),
-      email: text('email').notNull(),
+  date_created: date('date_created').defaultNow(), 
+  date_modified: date('date_modified').defaultNow(),
+    //  email: text('email').notNull(),
 
     },);
 

@@ -89,13 +89,14 @@ async function insert(
       target: <string>customUrl.target,
       author_id : customUrl.author_id,
     })
+    .returning()
 
     if (isFromClient) {
-      return JSON.stringify(new CustomUrl(result.rows[0]));
+      return JSON.stringify(new CustomUrl(result[0]));
     }
 
     // Create a new CustomUrl object with the first row of the result
-    return new CustomUrl(result.rows[0]);
+    return new CustomUrl(result[0]);
   } catch (err) {
     console.error("Error occurred during query execution:", err);
     throw err;

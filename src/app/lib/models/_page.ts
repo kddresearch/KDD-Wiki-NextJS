@@ -1,5 +1,5 @@
 import joi from "joi";
-import { char,varchar,integer, text, boolean, date, pgTable } from 'drizzle-orm/pg-core';
+import { serial,char,varchar,integer, text, boolean, date, pgTable } from 'drizzle-orm/pg-core';
 
 // Joi schema for page validation
 const pageSchema = joi.object({
@@ -22,7 +22,7 @@ const pageSchema = joi.object({
 });
 
 const pageTable = pgTable('page', {
-    id: integer('id').notNull(),
+    id: serial('id').primaryKey(),
     title: varchar('title',{length:50}).notNull(),
     //min 0
     priority: integer('priority').default(1000).notNull(),
@@ -32,8 +32,8 @@ const pageTable = pgTable('page', {
     is_private: boolean('is_private').notNull(),
         is_kdd_only: boolean('is_kdd_only').notNull(),
 
-    date_created: date('date_created').notNull(),
-    date_modified: date('date_modified').notNull(),
+    date_created: date('date_created').defaultNow(),
+    date_modified: date('date_modified').defaultNow(),
     //to be required
     category_id: integer('category_id'),
     //min 0
