@@ -90,26 +90,15 @@ async function fetchByCategoryandUser(category_id: number, user_id: number): Pro
 }
 
 async function insert(rcategory_member: rCategoryMember): Promise<rCategoryMember> {
-    // Construct the query
-    // const query_str: string = `
-    //       INSERT INTO category_member (category_id, user_id)
-    //       VALUES ($1, $2)
-    //       RETURNING *
-    //   `;
 
     try {
-        // Execute the query
-        // const result = await query(query_str, [rcategory_member.category_id, rcategory_member.user_id]);
-
         const result = await db!.insert(rCategoryMemberTable).values({
             user_id: rcategory_member.user_id,
             category_id:rcategory_member.category_id,
-        
-
         })
         .returning()
-
         return new rCategoryMember(result[0]);
+
     } catch (err) {
         console.error("Error occurred during query execution:", err);
         throw err;
@@ -117,15 +106,8 @@ async function insert(rcategory_member: rCategoryMember): Promise<rCategoryMembe
 }
 
 async function remove(rcategory_member: rCategoryMember): Promise<boolean> {
-    // Construct the query
-    // const query_str: string = `
-    //       DELETE FROM category_member
-    //       WHERE category_id = $1 AND user_id = $2
-    //   `;
-
+  
     try {
-        // Execute the query
-        // const result = await query(query_str, [rcategory_member.category_id, rcategory_member.user_id]);
         const result = await db!.delete(rCategoryMemberTable).where(
                     and(
                         eq(rCategoryMemberTable.user_id,rcategory_member.user_id),

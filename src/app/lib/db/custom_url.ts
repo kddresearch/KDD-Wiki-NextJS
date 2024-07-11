@@ -7,17 +7,11 @@ import {eq,inArray,isNull,or,asc,desc} from 'drizzle-orm'
 import {db} from '../db'
 
 
-// Get custom url by url
 async function fetchByURL(url: string): Promise<CustomUrl | null> {
-  // Construct the query
-  // const query_st: string = `
-  //       SELECT * FROM custom_url
-  //       WHERE url = $1;
-  //   `;
+ 
 
   try {
-    // Execute the query
-    // const result = await query(query_st, [url]);
+  
     const result = await db!.select().from(customUrlTable).where(eq(customUrlTable.url,url))
 
     if (result.length === 0) {
@@ -25,7 +19,6 @@ async function fetchByURL(url: string): Promise<CustomUrl | null> {
       return null;
     }
 
-    // Create a new CustomUrl object with the first row of the result
     return new CustomUrl(result[0]);
   } catch (err) {
     console.error("Error occurred during query execution:", err);
@@ -35,14 +28,10 @@ async function fetchByURL(url: string): Promise<CustomUrl | null> {
 
 // Get all custom urls
 async function fetchAll(): Promise<CustomUrl[]> {
-  // Construct the query
-  // const query_st: string = `
-  //       SELECT * FROM custom_url;
-  //   `;
+ 
 
   try {
-    // Execute the query
-    //const result = await query(query_st);
+    
     const result = await db!.select().from(customUrlTable)
 
     // Create a new CustomUrl object for each row of the result
@@ -66,23 +55,12 @@ async function insert(
 
   console.log("Inserting custom URL:", customUrl);
 
-  // Construct the query
-  // const query_st: string = `
-  //       INSERT INTO custom_url (url, action, target, date_created, date_modified, author_id)
-  //       VALUES ($1, $2, $3, NOW(), NOW(), $4)
-  //       RETURNING *;
-  //   `;
+ 
 
   try {
-    // Execute the query
-    // const result = await query(query_st, [
-    //   customUrl.url,
-    //   customUrl.action,
-    //   customUrl.target,
-    //   customUrl.author_id,
-    // ]);
+    
 
-    const result = await db!.insert(customUrlTable).values({
+      const result = await db!.insert(customUrlTable).values({
       url: customUrl.url,
       action: customUrl.action,
       //string | number
@@ -105,24 +83,10 @@ async function insert(
 
 // Update a custom url
 async function update(customUrl: CustomUrl): Promise<CustomUrl> {
-  // Construct the query
-  // const query_st: string = `
-  //       UPDATE custom_url
-  //       SET url = $2, action = $3, target = $4, date_modified = NOW(), author_id = $5
-  //       WHERE id = $1
-  //       RETURNING *;
-  //   `;
+
 
   try {
-    // // Execute the query
-    // const result = await query(query_st, [
-    //   customUrl.id,
-    //   customUrl.url,
-    //   customUrl.action,
-    //   customUrl.target,
-    //   customUrl.author_id,
-    // ]);
-
+    
     const result = await db!.update(customUrlTable).
     set({
       url : customUrl.url,
@@ -146,20 +110,13 @@ async function update(customUrl: CustomUrl): Promise<CustomUrl> {
 
 // Delete a custom url
 async function remove(customUrl: CustomUrl): Promise<boolean> {
-  // Construct the query
-  // const query_st: string = `
-  //       DELETE FROM custom_url
-  //       WHERE id = $1;
-  //   `;
+ 
 
   try {
-    // Execute the query
-   // await query(query_st, [customUrl.id]);
-    // await db!.delete(customUrlTable).where(eq(customUrlTable.id,customUrl.id))
 
     await db!.delete(customUrlTable).where(eq(customUrlTable.id, <number>customUrl.id))
-
     return true;
+    
   } catch (err) {
     console.error("Error occurred during query execution:", err);
     throw err;
