@@ -12,13 +12,7 @@ const rPageVersionSchema = Joi.object({
 
 
 
-export const rPageVersionTable = pgTable('r_page_versions', {
-  id: serial('id').primaryKey(),
-  page_id: integer('page_id').notNull(), 
-  content: text('content').notNull(), 
-  author: integer('author').notNull(), 
-  date_created: date('date_created').notNull() 
-});
+
 
 class rPageVersion {
     id: number;

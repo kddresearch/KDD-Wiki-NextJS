@@ -21,18 +21,6 @@ const customUrlSchema = Joi.object({
   author_id: Joi.number().integer().min(0).required(),
 });
 
-export const customUrlTable = pgTable('custom_urls', {
-  id: serial('id').primaryKey(), 
-  url: varchar('url', { length: 50 }).notNull(), 
-  action: text('action').notNull(),
-  target:text('target').notNull(),
-  date_created: date('date_created').defaultNow(), 
-  date_modified: date('date_modified').defaultNow(), 
-  author_id: integer('author_id').notNull(), 
-});
-
-
-
 class CustomUrl {
   id?: number;
   url: string;

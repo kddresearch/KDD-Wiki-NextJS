@@ -42,20 +42,6 @@ const userActivitySchema = joi.object({
   timestamp: joi.date().default(new Date()),
 });
 
-
-
-
-export const userActivityTable = pgTable('user_activities', {
-  id: serial('id').primaryKey(), 
-  userId: integer('user_id').notNull(), 
-  activityType: varchar('activity_type').notNull(),
-  endpoint: varchar('endpoint').notNull(), 
-  detected_ip: varchar('detected_ip').notNull(), 
-  status: integer('status').notNull(), 
-  activityDetails: text('activity_details').notNull(), 
-  timestamp: date('timestamp').notNull().defaultNow()
-});
-
 class UserActivity {
   id: number;
   userId: number; // Foreign key referencing the KddUser.id

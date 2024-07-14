@@ -1,8 +1,7 @@
-import { query } from "../db";
-import KddUser from "../models/kdd_user";
-import { kddUserTable } from "../models/kdd_user";
+import KddUser from "@/models/kdd_user";
+import { kddUserTable } from "@/schema/kdd_user";
 import {eq,inArray,isNull,or,asc,desc} from 'drizzle-orm'
-import {db} from '../db'
+import {db} from '@/db'
 
 async function fetchAll(): Promise<KddUser[]> {
 

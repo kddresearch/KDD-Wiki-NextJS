@@ -7,12 +7,6 @@ const rCategoryMemberSchema = Joi.object({
     user_id: Joi.number().required(),
 });
 
-export const rCategoryMemberTable = pgTable('r_category_members', {
-  category_id: integer('category_id').notNull(), 
-  user_id: integer('user_id').notNull()
-});
-
-
 class rCategoryMember {
     category_id: number;
     user_id: number;

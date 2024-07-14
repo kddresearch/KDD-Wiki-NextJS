@@ -1,5 +1,4 @@
 import joi from "joi";
-import { query } from "../db";
 import { pgTable, integer, text, varchar, boolean, date, serial } from 'drizzle-orm/pg-core';
 
 
@@ -13,24 +12,6 @@ const announcementSchema = joi.object({
   author_id: joi.number().integer().min(0).required(),
   is_old: joi.boolean().required(),
 });
-
-
-export const announcementTable = pgTable('announcements', {
-  //auto-increment key?
-  id: serial('id'),
-  title: varchar('title', { length: 50 }).notNull(), 
-  content: text('content').notNull(), 
-  date_created: date('date_created').notNull(), 
-  date_modified: date('date_modified').notNull(), 
-  //min 0
-  author_id: integer('author_id').notNull(),
-  is_old: boolean('is_old').notNull() 
-});
-
-
-
-
-
 
 class Announcement {
   id: number;
@@ -65,92 +46,5 @@ class Announcement {
 
 export { Announcement };
 
-// Database functions
-
-/**
- * Get all announcements
- */
-
-// Get all announcements
-async function fetchAll(): Promise<Announcement[]> {
-  // Construct the query
-  const query_str: string = `
-        SELECT * FROM announcement
-    `;
-
-  try {
-    // Execute the query
-    const result = await query(query_str);
-
-    // Build the array of announcements
-    const announcements: Announcement[] = [];
-
-    // Map the rows to Announcement objects
-    result.rows.map((row: any) => {
-      announcements.push(new Announcement(row));
-    });
-
-    return announcements;
-  } catch (err) {
-    console.error("Error occurred during query execution:", err);
-    throw err;
-  }
-}
-
-// Get all current announcements
-async function fetchCurrent(): Promise<Announcement[]> {
-  // Construct the query
-  const query_str: string = `
-        SELECT * FROM announcement
-        WHERE is_old = false
-        OR
-        is_old IS NULL
-        ORDER BY date_created desc;
-    `;
-
-  try {
-    // Execute the query
-    const result = await query(query_str);
-
-    // Build the array of announcements
-    const announcements: Announcement[] = [];
-
-    result.rows.map((row: any) => {
-      announcements.push(new Announcement(row));
-    });
-
-    return announcements;
-  } catch (err) {
-    console.error("Error occurred during query execution:", err);
-    throw err;
-  }
-}
-
-// Get announcement by id
-async function fetchById(id: number): Promise<Announcement> {
-  // Construct the query
-  const query_str: string = `
-        SELECT * FROM announcement
-        WHERE id = $1
-    `;
-
-  try {
-    // Execute the query
-    const result = await query(query_str, [id]);
-
-    // Build the array of announcements
-    const announcements: Announcement[] = [];
-
-    result.rows.map((row: any) => {
-      announcements.push(new Announcement(row));
-    });
-
-    return announcements[0];
-  } catch (err) {
-    console.error("Error occurred during query execution:", err);
-    throw err;
-  }
-}
 
 // export functions
-export { fetchAll, fetchCurrent, fetchById };
