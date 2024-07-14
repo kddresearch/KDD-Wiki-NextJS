@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchAll, fetchByName, insert } from "@/app/lib/db/_page";
+import { fetchAll, fetchByName, insert } from "@/db/_page";
 
 import { checkAuthAPI } from "@/auth";
-import { AccessLevel } from "@/app/lib/models/wikiuser";
-import Page from "@/app/lib/models/_page";
-import { bodyParser, handleAPIError } from "@/app/lib/utils/api";
+import { AccessLevel } from "@/models/wikiuser";
+import Page from "@/models/_page";
+import { bodyParser, handleAPIError } from "@/utils/api";
 
 export async function GET(
     req: NextRequest

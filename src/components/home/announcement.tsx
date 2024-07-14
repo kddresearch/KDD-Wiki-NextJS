@@ -1,4 +1,4 @@
-import { Announcement } from "@/app/lib/models/announcement";
+import { Announcement } from "@/models/announcement";
 import Link from "next/link";
 
 const AnnouncementListComponent = ({

@@ -4,7 +4,7 @@ import Announcements from "@/components/home/AnnouncementComponent";
 import StripeBackDrop from "@/components/layout/backdrop";
 import Image from "next/image";
 import Link from "next/link";
-import { fetchCurrent } from "./lib/models/announcement";
+import { fetchCurrent } from "../models/announcement";
 import ImageBackDrop from "@/components/layout/imagebackdrop";
 
 export const metadata = {

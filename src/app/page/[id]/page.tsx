@@ -1,6 +1,6 @@
 import StripeBackDrop from "@/components/layout/backdrop";
 import { notFound, redirect } from "next/navigation";
-import { fetchById, fetchByName } from "@/app/lib/db/_page";
+import { fetchById, fetchByName } from "@/db/_page";
 import Card from "@/components/layout/card";
 
 import { remark } from "remark";

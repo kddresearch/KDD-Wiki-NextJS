@@ -14,7 +14,7 @@ import { Alt, ArrowUpRight, ArrowUpRightSquare, Gear, PersonAdd } from 'react-bo
 import { QueryClient, QueryClientProvider } from "react-query";
 
 import { redirect } from 'next/navigation'
-import WikiUser from '@/app/lib/models/wikiuser';
+import WikiUser from '@/models/wikiuser';
 
 export default function AccountMenu(
   {user} : 

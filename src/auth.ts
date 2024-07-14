@@ -6,7 +6,7 @@ import getConfig from "@/config";
 const env_config = await getConfig();
 
 import google from "next-auth/providers/google";
-import KddUser from "@/app/lib/models/kdd_user";
+import KddUser from "@/models/kdd_user";
 import { OAuthUserConfig } from "next-auth/providers";
 import type { OAuth2Config } from "next-auth/providers";
 import type { OIDCConfig } from "@auth/core/providers";
@@ -94,9 +94,9 @@ export async function getCurrentUser(): Promise<KddUser> {
   return KddUser.guestFactory();
 }
 
-import WikiUser, { AccessLevel } from "./app/lib/models/wikiuser";
-import { ActivityType } from "./app/lib/models/user_activity";
-import { fetchByUsername } from "./app/lib/db/wiki_user";
+import WikiUser, { AccessLevel } from "./models/wikiuser";
+import { ActivityType } from "./models/user_activity";
+import { fetchByUsername } from "./db/wiki_user";
 
 /**
  * Check if the user is authenticated

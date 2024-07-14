@@ -5,7 +5,7 @@ import Link from "next/link";
 // import { useRouter } from "next/router";
 // import React, { useState, useEffect } from "react";
 import { notFound, redirect } from "next/navigation";
-import KddUser from "../lib/models/kdd_user";
+import KddUser from "../../models/kdd_user";
 
 export default async function AdminLayout({
   children,

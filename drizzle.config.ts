@@ -9,7 +9,7 @@ dotenv.config({ path: ".env.local" });
 console.log("DB_NAME: ", process.env.DB_NAME);
 
 export default defineConfig({
-    schema: "./src/lib/db/*",
+    schema: "./src/lib/models/*",
     out: "./drizzle",
     dialect: 'postgresql',
     dbCredentials: {

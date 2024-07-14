@@ -1,6 +1,6 @@
 import { expect, test, vi } from "vitest";
-import WikiUser, { AccessLevel } from "@/app/lib/models/wikiuser"
-import { testConnection } from '@/app/lib/db';
+import WikiUser, { AccessLevel } from "@/models/wikiuser"
+import { testConnection } from '@/db';
 import getConfig from "@/config";
 const config = await getConfig();
 import { getRandomValues } from "crypto";
