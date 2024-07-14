@@ -9,7 +9,7 @@ import Card from "@/components/layout/card";
 import { remark } from "remark";
 import html from "remark-html";
 import { UserActivity } from "../lib/models/user_activity";
-import { RenderMarkdownString } from "../lib/utils/markdown";
+import { RenderMarkdownString } from "../../components/markdown/markdown";
 import { Metadata, ResolvingMetadata } from "next";
 import { Pencil } from "react-bootstrap-icons";
 

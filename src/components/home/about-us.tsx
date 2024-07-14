@@ -1,4 +1,4 @@
-import { RenderMarkdownString } from "@/app/lib/utils/markdown";
+import { RenderMarkdownString } from "@/components/markdown/markdown";
 import Card from "../layout/card";
 
 const AboutUsMD = `

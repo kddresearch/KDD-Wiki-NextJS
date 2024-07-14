@@ -5,7 +5,7 @@ import Card from "@/components/layout/card";
 
 import { remark } from "remark";
 import html from "remark-html";
-import { RenderMarkdownString } from "@/app/lib/utils/markdown";
+import { RenderMarkdownString } from "@/components/markdown/markdown";
 import { Pencil } from "react-bootstrap-icons";
 import Link from "next/link";
 

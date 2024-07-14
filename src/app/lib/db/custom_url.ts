@@ -1,16 +1,18 @@
 "use server";
 
-import { query } from "../db";
+// import { query } from "../db";
 import CustomUrl from "../models/custom_url";
 import { customUrlTable } from "../models/custom_url";
-import {eq,inArray,isNull,or,asc,desc} from 'drizzle-orm'
-import {db} from '../db'
+import { eq, inArray, isNull, or, asc, desc } from 'drizzle-orm'
+import { db } from '../db'
 
 
 async function fetchByURL(url: string): Promise<CustomUrl | null> {
  
 
   try {
+
+    console.log("db Object", db);
   
     const result = await db!.select().from(customUrlTable).where(eq(customUrlTable.url,url))
 

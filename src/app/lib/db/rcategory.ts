@@ -1,5 +1,4 @@
 import rCategory,{rCategoryTable} from "../models/rcategory";
-import { query } from "../db";
 import {db} from "../db"
 import {eq,inArray,isNull,or,asc,desc,and} from 'drizzle-orm'
 

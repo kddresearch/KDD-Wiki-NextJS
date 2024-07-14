@@ -25,64 +25,74 @@ poolConfig = {
     ssl: true
 }
 
-const pool = new Pool(poolConfig);
+let db: ReturnType<typeof drizzle>;
+
+// const pool = new Pool(poolConfig);
 
 var connected = false;
 
-let db : ReturnType<typeof drizzle> |null = null
+// let db : ReturnType<typeof drizzle> |null = null
 async function connectDrizzle() {
-
     try {
         const client = new Client(poolConfig);
         await client.connect();
-         db = drizzle(client);
+
+        const result = await client.query(`SELECT NOW()`);
+        console.log("Database connection successful", result);
+
+        db = drizzle(client);
     } catch (err: any) {
         console.error("Database connection error", err.stack);
     }
 }
-export {db}
 
+await connectDrizzle();
 
-async function connect() {
-
-    await connectDrizzle();
-
-    pool.connect((err: Error | undefined, client: any, done: any) => {
-        if (err) {
-            console.error("Database connection error", err.stack);
-        } else {
-            client.release();
-        }
-    });
-
-    connected = true;
+export {
+    db
 }
+
+
+// async function connect() {
+
+//     await connectDrizzle();
+
+//     pool.connect((err: Error | undefined, client: any, done: any) => {
+//         if (err) {
+//             console.error("Database connection error", err.stack);
+//         } else {
+//             client.release();
+//         }
+//     });
+
+//     connected = true;
+// }
 
 /**
  * ### ***DO NOT USE*** OUTSIDE SPECIFIC QUERY FUNCTIONS
  * 
  * Executes a query on the PostgreSQL database
  */
-async function query(text: string, params?: any[]): Promise<QueryResult> {
-    if (!connected) {
-        connect();
-    }
+// async function query(text: string, params?: any[]): Promise<QueryResult> {
+//     if (!connected) {
+//         connect();
+//     }
 
-    try {
-        const result = await pool.query(text, params);
-        return result;
-    } catch (err) {
-        console.error("Error occurred during query execution:", err);
-        console.error("Query: ", text + "\n" + params);
+//     try {
+//         const result = await pool.query(text, params);
+//         return result;
+//     } catch (err) {
+//         console.error("Error occurred during query execution:", err);
+//         console.error("Query: ", text + "\n" + params);
 
-        throw err;
-    }
-}
+//         throw err;
+//     }
+// }
 
 async function testConnection(): Promise<boolean> {
     try {
-        connect();
-        await query("SELECT NOW()");
+        // connect();
+        // await query("SELECT NOW()");
         return true;
     } catch (err) {
         console.error("Error occurred during testConnection:", err);
@@ -90,4 +100,7 @@ async function testConnection(): Promise<boolean> {
     }
 }
 
-export { query, testConnection };
+export { 
+    // query,
+    testConnection
+};
