@@ -27,18 +27,13 @@ poolConfig = {
 
 let db: ReturnType<typeof drizzle>;
 
-// const pool = new Pool(poolConfig);
-
-var connected = false;
-
-// let db : ReturnType<typeof drizzle> |null = null
 async function connectDrizzle() {
     try {
         const client = new Client(poolConfig);
         await client.connect();
 
         const result = await client.query(`SELECT NOW()`);
-        console.log("Database connection successful", result);
+        console.log("Database connection successful at", result.rows[0]["now"]);
 
         db = drizzle(client);
     } catch (err: any) {
@@ -50,44 +45,7 @@ await connectDrizzle();
 
 export {
     db
-}
-
-
-// async function connect() {
-
-//     await connectDrizzle();
-
-//     pool.connect((err: Error | undefined, client: any, done: any) => {
-//         if (err) {
-//             console.error("Database connection error", err.stack);
-//         } else {
-//             client.release();
-//         }
-//     });
-
-//     connected = true;
-// }
-
-/**
- * ### ***DO NOT USE*** OUTSIDE SPECIFIC QUERY FUNCTIONS
- * 
- * Executes a query on the PostgreSQL database
- */
-// async function query(text: string, params?: any[]): Promise<QueryResult> {
-//     if (!connected) {
-//         connect();
-//     }
-
-//     try {
-//         const result = await pool.query(text, params);
-//         return result;
-//     } catch (err) {
-//         console.error("Error occurred during query execution:", err);
-//         console.error("Query: ", text + "\n" + params);
-
-//         throw err;
-//     }
-// }
+};
 
 async function testConnection(): Promise<boolean> {
     try {

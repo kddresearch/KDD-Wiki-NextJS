@@ -1,7 +1,7 @@
-import { query } from "../db";
-import { ActivityType, UserActivity,userActivityTable } from "../models/user_activity";
-import {db} from "../db"
-import {eq,inArray,isNull,or,asc,desc,and} from 'drizzle-orm'
+import { ActivityType, UserActivity } from "@/models/user_activity";
+import { userActivityTable } from "@/schema/user_activity";
+import { db } from "@/db"
+import { eq, inArray, isNull, or, asc, desc, and } from 'drizzle-orm'
 
 async function fetchAll(): Promise<UserActivity[]> {
     

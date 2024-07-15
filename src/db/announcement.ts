@@ -1,25 +1,17 @@
-import { Announcement } from "@/models/announcement";
-
-// Database functions
+import Announcement from "@/models/announcement";
+import { db } from "@/db";
+import { announcementTable } from "@/schema/announcement";
+import { eq, desc, isNull, or } from "drizzle-orm";
 
 /**
  * Get all announcements
  */
 async function fetchAll(): Promise<Announcement[]> {
-    // Construct the query
-    const query_str: string = `
-        SELECT * FROM announcement
-    `;
-  
     try {
-        // Execute the query
-        const result = await query(query_str);
-  
-        // Build the array of announcements
         const announcements: Announcement[] = [];
-  
-        // Map the rows to Announcement objects
-        result.rows.map((row: any) => {
+        const result = await db!.select().from(announcementTable);
+
+        result.map((row: any) => {
             announcements.push(new Announcement(row));
         });
 
@@ -31,23 +23,18 @@ async function fetchAll(): Promise<Announcement[]> {
 }
 
 async function fetchCurrent(): Promise<Announcement[]> {
-    // Construct the query
-    const query_str: string = `
-        SELECT * FROM announcement
-        WHERE is_old = false
-        OR
-        is_old IS NULL
-        ORDER BY date_created desc;
-    `;
-  
     try {
-        // Execute the query
-        const result = await query(query_str);
-    
-        // Build the array of announcements
         const announcements: Announcement[] = [];
+        const result = await db.select().from(announcementTable).where(
+            or(
+                eq(announcementTable.is_old, false),
+                isNull(announcementTable.is_old)
+            )
+        ).orderBy(
+            desc(announcementTable.date_created)
+        );
     
-        result.rows.map((row: any) => {
+        result.map((row: any) => {
             announcements.push(new Announcement(row));
         });
     
@@ -57,23 +44,13 @@ async function fetchCurrent(): Promise<Announcement[]> {
         throw err;
     }
 }
-  
-  // Get announcement by id
-  async function fetchById(id: number): Promise<Announcement> {
-    // Construct the query
-    const query_str: string = `
-        SELECT * FROM announcement
-        WHERE id = $1
-    `;
-  
+
+async function fetchById(id: number): Promise<Announcement> {
     try {
-        // Execute the query
-        const result = await query(query_str, [id]);
-    
-        // Build the array of announcements
         const announcements: Announcement[] = [];
+        const result = await db!.select().from(announcementTable).where(eq(announcementTable.id, id));
     
-        result.rows.map((row: any) => {
+        result.map((row: any) => {
             announcements.push(new Announcement(row));
         });
     
@@ -83,6 +60,5 @@ async function fetchCurrent(): Promise<Announcement[]> {
         throw err;
     }
 }
-
 
 export { fetchAll, fetchCurrent, fetchById };

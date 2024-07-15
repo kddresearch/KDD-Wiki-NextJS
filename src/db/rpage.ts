@@ -1,7 +1,7 @@
-import rPage,{rPageTable} from "../models/rpage";
-import { query } from "../db";
-import {db} from "../db"
-import {eq,inArray,isNull,or,asc,desc,and} from 'drizzle-orm'
+import rPage from "@/models/rpage";
+import { rPageTable } from "@/schema/rpage";
+import { db } from "@/db"
+import { eq, inArray, isNull, or, asc, desc, and } from 'drizzle-orm'
 
 
 async function fetchAll(): Promise<rPage[]> {

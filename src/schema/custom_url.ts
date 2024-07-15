@@ -1,6 +1,6 @@
 import { pgTable, integer, varchar, text, date, serial, jsonb, boolean } from 'drizzle-orm/pg-core';
 
-export const customUrlTable = pgTable('custom_urls', {
+export const customUrlTable = pgTable('custom_url', {
     id: serial('id').primaryKey(), 
     url: varchar('url', { length: 50 }).notNull(), 
     action: text('action').notNull(),

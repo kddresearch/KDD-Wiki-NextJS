@@ -1,6 +1,7 @@
-import rCategory,{rCategoryTable} from "../models/rcategory";
-import {db} from "../db"
-import {eq,inArray,isNull,or,asc,desc,and} from 'drizzle-orm'
+import rCategory from "../models/rcategory";
+import { rCategoryTable } from "@/schema/rcategory";
+import { db } from "../db"
+import { eq, inArray, isNull, or, asc, desc, and } from 'drizzle-orm'
 
 async function fetchAll(): Promise<rCategory[]> {
 

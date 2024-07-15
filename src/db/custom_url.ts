@@ -1,11 +1,7 @@
-"use server";
-
-// import { query } from "../db";
-import CustomUrl from "../models/custom_url";
-import { customUrlTable } from "../models/custom_url";
+import CustomUrl from "@/models/custom_url";
+import { customUrlTable } from "@/schema/custom_url";
 import { eq, inArray, isNull, or, asc, desc } from 'drizzle-orm'
-import { db } from '../db'
-
+import { db } from '@/db'
 
 async function fetchByURL(url: string): Promise<CustomUrl | null> {
  

@@ -1,6 +1,6 @@
 import { pgTable, integer, varchar, text, date, serial, jsonb, boolean } from 'drizzle-orm/pg-core';
 
-export const announcementTable = pgTable('announcements', {
+export const announcementTable = pgTable('announcement', {
     //auto-increment key?
     id: serial('id'),
     title: varchar('title', { length: 50 }).notNull(), 

@@ -1,6 +1,7 @@
 import { SrvRecord } from "dns";
 import Link from "next/link";
-import { Announcement, fetchById } from "@/models/announcement";
+import Announcement from "@/models/announcement";
+import { fetchById } from "@/db/announcement";
 import sanitizeHtml from "sanitize-html";
 import StripeBackDrop from "@/components/layout/backdrop";
 import Card from "@/components/layout/card";

@@ -1,7 +1,7 @@
-import { query } from "../db";
-import rCategoryMember ,{rCategoryMemberTable} from "../models/rcategory_member";
-import {db} from "../db"
-import {eq,inArray,isNull,or,asc,desc,and} from 'drizzle-orm'
+import rCategoryMember from "../models/rcategory_member";
+import { rCategoryMemberTable } from "@/schema/rcategory_member";
+import { db } from "../db"
+import { eq, inArray, isNull, or, asc, desc, and } from 'drizzle-orm'
 
 async function fetchAll(): Promise<rCategoryMember[]> {
     // Construct the query

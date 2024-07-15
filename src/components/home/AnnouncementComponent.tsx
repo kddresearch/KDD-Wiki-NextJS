@@ -1,4 +1,5 @@
-import { Announcement, fetchCurrent } from "@/models/announcement";
+import Announcement from "@/models/announcement";
+import { fetchCurrent } from "@/db/announcement";
 import Link from "next/link";
 import AnnouncementListComponent from "./announcement";
 import { BoxArrowUpRight } from "react-bootstrap-icons";

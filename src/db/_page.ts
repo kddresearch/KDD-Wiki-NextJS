@@ -1,7 +1,7 @@
-// import { query } from "../db";
-import Page,{pageTable} from "../models/_page";
-import {db} from "../db"
-import {eq,inArray,isNull,or,asc,desc} from 'drizzle-orm'
+import Page from "../models/_page";
+import { pageTable } from "@/schema/_page";
+import { db } from "../db"
+import { eq, inArray, isNull, or, asc, desc } from 'drizzle-orm'
 
 
 async function fetchById(id: number): Promise<Page | null> {

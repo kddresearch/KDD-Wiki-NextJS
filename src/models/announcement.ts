@@ -1,5 +1,4 @@
 import joi from "joi";
-import { pgTable, integer, text, varchar, boolean, date, serial } from 'drizzle-orm/pg-core';
 
 
 //Joi schema for announcement validation
@@ -42,9 +41,4 @@ class Announcement {
   }
 }
 
-// export default Announcement;
-
-export { Announcement };
-
-
-// export functions
+export default Announcement;
