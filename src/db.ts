@@ -5,8 +5,8 @@ import {
     PoolConfig
 } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
-import getConfig from "@/config";
 import { sql } from "drizzle-orm";
+import getConfig from "@/config";
 const env_config = await getConfig();
 
 let poolConfig: PoolConfig;
@@ -27,12 +27,12 @@ async function connectDrizzle() {
         const client = new Client(poolConfig);
         await client.connect();
 
+        db = drizzle(client);
+
         if (await testConnection() === false) {
-            console.error("Database connection failed");
-            return;
+            throw new Error("Database connection failed");
         }
 
-        db = drizzle(client);
     } catch (err: any) {
         console.error("Database connection error", err.stack);
     }

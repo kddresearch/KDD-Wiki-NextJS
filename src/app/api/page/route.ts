@@ -12,7 +12,7 @@ export async function GET(
     let pages;
 
     try {
-        const authUser = checkAuthAPI(AccessLevel.Admin);
+        const authUser = await checkAuthAPI(AccessLevel.Admin);
 
         pages = await fetchAll();
         pages.sort((a, b) => a.id - b.id);
@@ -32,7 +32,7 @@ export async function POST(
     let existingPage;
 
     try {
-        const authUser = checkAuthAPI(AccessLevel.Admin);
+        const authUser = await checkAuthAPI(AccessLevel.Admin);
 
         page = await bodyParser(req, Page);
         existingPage = await fetchByName(page.name);

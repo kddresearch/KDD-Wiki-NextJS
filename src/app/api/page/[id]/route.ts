@@ -24,7 +24,7 @@ export async function GET(
     let page;
 
     try {
-        const authUser = checkAuthAPI(AccessLevel.Admin);
+        const authUser = await checkAuthAPI(AccessLevel.Admin);
 
         page = await fetchPage(params.id);
 
