@@ -4,14 +4,7 @@ import { db } from "../db"
 import { eq, inArray, isNull, or, asc, desc, and } from 'drizzle-orm'
 
 async function fetchAll(): Promise<rCategoryMember[]> {
-    // Construct the query
-    // const query_str: string = `
-    //       SELECT * FROM category_member
-    //   `;
-
     try {
-        // Execute the query
-        // const result = await query(query_str);
         const result = await db!.select().from(rCategoryMemberTable)
 
         return result.map((row: any) => new rCategoryMember(row));
@@ -22,17 +15,8 @@ async function fetchAll(): Promise<rCategoryMember[]> {
 }
 
 async function fetchByCategoryId(category_id: number): Promise<rCategoryMember[]> {
-    // Construct the query
-    // const query_str: string = `
-    //       SELECT * FROM category_member
-    //       WHERE category_id = $1
-    //   `;
-
     try {
-        // Execute the query
-        // const result = await query(query_str, [category_id]);
         const result = await db!.select().from(rCategoryMemberTable).where(eq(rCategoryMemberTable.category_id,category_id))
-
 
         return result.map((row: any) => new rCategoryMember(row));
     } catch (err) {
@@ -42,15 +26,7 @@ async function fetchByCategoryId(category_id: number): Promise<rCategoryMember[]
 }
 
 async function fetchByUserId(user_id: number): Promise<rCategoryMember[]> {
-    // Construct the query
-    // const query_str: string = `
-    //       SELECT * FROM category_member
-    //       WHERE user_id = $1
-    //   `;
-
     try {
-        // Execute the query
-        // const result = await query(query_str, [user_id]);
         const result = await db!.select().from(rCategoryMemberTable).where(eq(rCategoryMemberTable.user_id,user_id))
 
         return result.map((row: any) => new rCategoryMember(row));
@@ -61,21 +37,13 @@ async function fetchByUserId(user_id: number): Promise<rCategoryMember[]> {
 }
 
 async function fetchByCategoryandUser(category_id: number, user_id: number): Promise<rCategoryMember | null> {
-    // Construct the query
-    // const query_str: string = `
-    //       SELECT * FROM category_member
-    //       WHERE category_id = $1 AND user_id = $2
-    //   `;
-
-    // console.log("running query", query_str, [category_id, user_id])
-
     try {
-        // Execute the query
-        // const result = await query(query_str, [category_id, user_id]);
-                const result = await db!.select().from(rCategoryMemberTable).where(
-                    and(
-                        eq(rCategoryMemberTable.user_id,user_id),
-                    eq(rCategoryMemberTable.category_id,category_id)))
+        const result = await db!.select().from(rCategoryMemberTable).where(
+            and(
+                eq(rCategoryMemberTable.user_id,user_id),
+                eq(rCategoryMemberTable.category_id,category_id)
+            )
+        );
 
 
         if (result.length === 0) {
@@ -109,9 +77,11 @@ async function remove(rcategory_member: rCategoryMember): Promise<boolean> {
   
     try {
         const result = await db!.delete(rCategoryMemberTable).where(
-                    and(
-                        eq(rCategoryMemberTable.user_id,rcategory_member.user_id),
-                    eq(rCategoryMemberTable.category_id,rcategory_member.category_id)))
+            and(
+                eq(rCategoryMemberTable.user_id,rcategory_member.user_id),
+                eq(rCategoryMemberTable.category_id,rcategory_member.category_id)
+            )
+        );
 
         return true;
     } catch (err) {
