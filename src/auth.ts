@@ -94,9 +94,9 @@ export async function getCurrentUser(): Promise<KddUser> {
   return KddUser.guestFactory();
 }
 
-import WikiUser, { AccessLevel } from "./models/wikiuser";
-import { ActivityType } from "./models/user_activity";
-import { fetchByUsername } from "./db/wiki_user";
+import WikiUser, { AccessLevel } from "@/models/wikiuser";
+import { ActivityType } from "@/models/user_activity";
+import { fetchByUsername } from "@/db/wiki_user";
 
 /**
  * Check if the user is authenticated

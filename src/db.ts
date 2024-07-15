@@ -4,14 +4,9 @@ import {
     Client,
     PoolConfig
 } from "pg";
-import { 
-    pgTable,
-    serial,
-    text,
-    varchar
-} from "drizzle-orm/pg-core";
 import { drizzle } from "drizzle-orm/node-postgres";
 import getConfig from "@/config";
+import { sql } from "drizzle-orm";
 const env_config = await getConfig();
 
 let poolConfig: PoolConfig;
@@ -32,8 +27,10 @@ async function connectDrizzle() {
         const client = new Client(poolConfig);
         await client.connect();
 
-        const result = await client.query(`SELECT NOW()`);
-        console.log("Database connection successful at", result.rows[0]["now"]);
+        if (await testConnection() === false) {
+            console.error("Database connection failed");
+            return;
+        }
 
         db = drizzle(client);
     } catch (err: any) {
@@ -49,8 +46,12 @@ export {
 
 async function testConnection(): Promise<boolean> {
     try {
-        // connect();
-        // await query("SELECT NOW()");
+        const result = db.execute(sql`SELECT 1`);
+
+        if (result === undefined) {
+            return false;
+        }
+
         return true;
     } catch (err) {
         console.error("Error occurred during testConnection:", err);
@@ -59,6 +60,5 @@ async function testConnection(): Promise<boolean> {
 }
 
 export { 
-    // query,
     testConnection
 };
