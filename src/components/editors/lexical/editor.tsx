@@ -12,6 +12,7 @@ import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import MarkdownPlugin from "./plugins/markdown-plugin";
 import ToolbarPlugin from './plugins/toolbar-plugin';
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
+import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';     
 
 import {
   $convertFromMarkdownString,
@@ -48,6 +49,7 @@ function Editor() {
         <AutoFocusPlugin />
         <MarkdownShortcutPlugin />
         <CodeHighlightPlugin />
+        <LinkPlugin />
       </div>
     </div>
   );

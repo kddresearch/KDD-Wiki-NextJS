@@ -17,6 +17,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { cva } from "class-variance-authority"
+
+const comboBoxVariants = cva(
+  "w-[200px] justify-between py-0 px-2 h-9 border-0"
+)
 
 type ComboboxProps = {
   options: {
@@ -27,6 +32,7 @@ type ComboboxProps = {
   type: string;
   placeholder?: string;
   onSelect?: (value: string) => void;
+  className?: string;
 }
 
 export function Combobox({
@@ -34,10 +40,13 @@ export function Combobox({
   defaultSelect,
   type,
   placeholder,
-  onSelect
+  onSelect,
+  className
 }: 
   ComboboxProps
 ) {
+
+
 
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState(defaultSelect ?? "")
@@ -50,6 +59,8 @@ export function Combobox({
     }
   }, [defaultSelect]);
 
+
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -57,7 +68,12 @@ export function Combobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between py-0 px-2 h-8 border-0"
+          className={
+            cn(
+              comboBoxVariants({ className }),
+              "flex items-center justify-between"
+            )
+          }
         >
           {value
             ? options.find((framework) => framework.value === value)?.label
@@ -67,7 +83,7 @@ export function Combobox({
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search framework..." />
+          <CommandInput placeholder={`Search ${type} ...`} />
           <CommandEmpty>No {type} found.</CommandEmpty>
           <CommandGroup>
             {options.map((option) => (
