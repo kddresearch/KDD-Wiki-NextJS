@@ -2,10 +2,10 @@ import rPage from "@/models/rpage";
 import { rPageTable } from "@/schema/rpage";
 import { db } from "@/db"
 import { eq, inArray, isNull, or, asc, desc, and } from 'drizzle-orm'
+import exp from "constants";
 
 
 async function fetchAll(): Promise<rPage[]> {
-  
     try {
         const result = await db!.select().from(rPageTable)
         return result.map((row: any) => new rPage(row));
@@ -16,7 +16,6 @@ async function fetchAll(): Promise<rPage[]> {
 }
 
 async function fetchById(id: number): Promise<rPage | null> {
-
     try {
 
         const result = await db!.select().from(rPageTable).where(eq(rPageTable.id,id))
@@ -33,7 +32,6 @@ async function fetchById(id: number): Promise<rPage | null> {
 }
 
 async function fetchByTitle(title: string): Promise<rPage | null> {
-
     try {
         title = title.toLowerCase();
         
@@ -49,16 +47,14 @@ async function fetchByTitle(title: string): Promise<rPage | null> {
 }
 
 async function insert(page: rPage): Promise<rPage> {
-  
     try {
-       
         const result = await db!.insert(rPageTable).values({
-        title:page.title,
-        content : page.content,
-        author_id : page.author_id,
-        category_id : page.category_id,
-        views : 0,
-        access_level : page.access_level
+            title:page.title,
+            content : page.content,
+            author_id : page.author_id,
+            category_id : page.category_id,
+            views : 0,
+            access_level : page.access_level
         })
         .returning()
 
@@ -68,3 +64,5 @@ async function insert(page: rPage): Promise<rPage> {
         throw err;
     }
 }
+
+export { fetchAll, fetchById, fetchByTitle, insert };

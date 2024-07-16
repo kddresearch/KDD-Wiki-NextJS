@@ -58,7 +58,6 @@ async function fetchByCategoryandUser(category_id: number, user_id: number): Pro
 }
 
 async function insert(rcategory_member: rCategoryMember): Promise<rCategoryMember> {
-
     try {
         const result = await db!.insert(rCategoryMemberTable).values({
             user_id: rcategory_member.user_id,
@@ -74,7 +73,6 @@ async function insert(rcategory_member: rCategoryMember): Promise<rCategoryMembe
 }
 
 async function remove(rcategory_member: rCategoryMember): Promise<boolean> {
-  
     try {
         const result = await db!.delete(rCategoryMemberTable).where(
             and(

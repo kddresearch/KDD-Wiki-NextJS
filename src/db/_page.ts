@@ -137,7 +137,7 @@ async function update(page: Page): Promise<Page> {
         console.error("Error occurred during query execution:", err);
         throw err;
     }
-  }
+}
   
 async function remove(page: Page): Promise<boolean> {
     try {
