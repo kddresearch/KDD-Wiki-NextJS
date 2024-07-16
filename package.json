@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest",
-    "ci-test": "vitest run"
+    "ci-test": "vitest run",
+    "drizzle-studio": "pnpm drizzle-kit studio"
   },
   "dependencies": {
     "@auth/core": "^0.29.0",

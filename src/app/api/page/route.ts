@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchAll, fetchByName, insert } from "@/app/lib/db/_page";
+import { fetchAll, fetchByName, insert } from "@/db/_page";
 
 import { checkAuthAPI } from "@/auth";
-import { AccessLevel } from "@/app/lib/models/wikiuser";
-import Page from "@/app/lib/models/_page";
-import { bodyParser, handleAPIError } from "@/app/lib/utils/api";
+import { AccessLevel } from "@/models/wikiuser";
+import Page from "@/models/_page";
+import { bodyParser, handleAPIError } from "@/utils/api";
 
 export async function GET(
     req: NextRequest
@@ -12,7 +12,7 @@ export async function GET(
     let pages;
 
     try {
-        const authUser = checkAuthAPI(AccessLevel.Admin);
+        const authUser = await checkAuthAPI(AccessLevel.Admin);
 
         pages = await fetchAll();
         pages.sort((a, b) => a.id - b.id);
@@ -32,7 +32,7 @@ export async function POST(
     let existingPage;
 
     try {
-        const authUser = checkAuthAPI(AccessLevel.Admin);
+        const authUser = await checkAuthAPI(AccessLevel.Admin);
 
         page = await bodyParser(req, Page);
         existingPage = await fetchByName(page.name);

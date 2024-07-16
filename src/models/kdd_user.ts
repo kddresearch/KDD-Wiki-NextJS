@@ -1,5 +1,6 @@
 import joi from "joi";
 
+
 // Joi schema for kdd user validation
 const kdd_userSchema = joi.object({
   id: joi.number().integer(),

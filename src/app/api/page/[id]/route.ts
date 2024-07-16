@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import Page from "@/app/lib/models/_page";
+import Page from "@/models/_page";
 import { 
     fetchAll,
     fetchAllByCategoryIdsOrNoCategory,
@@ -9,11 +9,11 @@ import {
     insert,
     update,
     remove, 
-} from "@/app/lib/db/_page";
+} from "@/db/_page";
 import { checkAuthAPI } from "@/auth";
-import { AccessLevel } from "@/app/lib/models/wikiuser";
-import { fetchPage } from "@/app/lib/utils/_page";
-import { bodyParser, handleAPIError } from "@/app/lib/utils/api";
+import { AccessLevel } from "@/models/wikiuser";
+import { fetchPage } from "@/utils/_page";
+import { bodyParser, handleAPIError } from "@/utils/api";
 
 // All page routes are protected by the Admin access level
 
@@ -24,7 +24,7 @@ export async function GET(
     let page;
 
     try {
-        const authUser = checkAuthAPI(AccessLevel.Admin);
+        const authUser = await checkAuthAPI(AccessLevel.Admin);
 
         page = await fetchPage(params.id);
 

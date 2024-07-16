@@ -1,6 +1,6 @@
 "use client";
 import TextEditor from "@/components/editors/lexical/editor";
-import Page from "@/app/lib/models/_page";
+import Page from "@/models/_page";
 import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import QueryProvider from "@/components/providers/query_provider";

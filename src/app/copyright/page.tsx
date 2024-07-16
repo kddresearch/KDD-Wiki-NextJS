@@ -1,6 +1,6 @@
 import StripeBackDrop from "@/components/layout/backdrop";
 import Card from "@/components/layout/card";
-import { RenderMarkdownFile } from "@/app/lib/utils/markdown";
+import { RenderMarkdownFile } from "@/components/markdown/markdown";
 import path from 'path';
 
 const COPYRIGHTFILE = path.join(process.cwd(), 'LICENSE.md');

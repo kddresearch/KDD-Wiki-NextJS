@@ -6,11 +6,11 @@ import {
   insert,
   update,
   remove,
-} from "@/app/lib/db/rcategory";
+} from "@/db/rcategory";
 import { checkAuthAPI } from "@/auth";
-import { AccessLevel } from "@/app/lib/models/wikiuser";
-import rCategory from "@/app/lib/models/rcategory";
-import { bodyParser, handleAPIError } from "@/app/lib/utils/api";
+import { AccessLevel } from "@/models/wikiuser";
+import rCategory from "@/models/rcategory";
+import { bodyParser, handleAPIError } from "@/utils/api";
 
 export async function GET(req: NextRequest) {
     let rcategories;

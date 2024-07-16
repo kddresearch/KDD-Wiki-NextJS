@@ -1,5 +1,6 @@
 import AnnouncementListComponent from "@/components/home/announcement";
-import { Announcement, fetchAll } from "../lib/models/announcement";
+import Announcement from "@/models/announcement";
+import { fetchAll } from "@/db/announcement";
 
 export default async function Home() {
   var allAnnouncements = await fetchAll();

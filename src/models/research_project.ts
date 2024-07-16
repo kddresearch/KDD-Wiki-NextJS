@@ -21,6 +21,7 @@ const researchProjectSchema = Joi.object({
     date_modified: Joi.date().required(),
 });
 
+
 class ResearchProject {
     id: number;
     title: string;

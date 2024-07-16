@@ -10,7 +10,7 @@ import { BlobStorageError } from "../files";
  */
 function handleAPIError(err: any): [ { error: string }, { status: number } ] {
 
-    console.error(err);
+    console.error("API Error", err);
 
     if (err instanceof BlobStorageError) {
         return [ { error: err.message }, { status: err.statusCode } ];

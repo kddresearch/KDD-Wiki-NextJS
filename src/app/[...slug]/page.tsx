@@ -1,15 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { fetchByURL } from "../lib/db/custom_url";
-import { fetchByName, fetchById } from "../lib/db/_page";
-import { number } from "joi";
+import { fetchByURL } from "@/db/custom_url";
+import { fetchById } from "@/db/_page";
 import StripeBackDrop from "@/components/layout/backdrop";
 import Card from "@/components/layout/card";
-import { remark } from "remark";
-import html from "remark-html";
-import { UserActivity } from "../lib/models/user_activity";
-import { RenderMarkdownString } from "../lib/utils/markdown";
+import { RenderMarkdownString } from "@/components/markdown/markdown";
 import { Metadata, ResolvingMetadata } from "next";
 import { Pencil } from "react-bootstrap-icons";
 
