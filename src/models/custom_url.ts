@@ -1,6 +1,4 @@
 import Joi from "joi";
-import { pgTable, integer, text, varchar, date, serial } from 'drizzle-orm/pg-core';
-
 
 enum ActionType {
   toPage = "pg",

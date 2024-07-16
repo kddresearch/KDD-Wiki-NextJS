@@ -1,12 +1,6 @@
 import Joi from "joi";
 import { AccessLevel } from "./wikiuser";
 import Page from "./_page";
-import {SQL,sql} from 'drizzle-orm'
-import rPageVersion from "./rpage_version";
-
-import { pgTable, integer, varchar, text, date, serial, AnyPgColumn,uniqueIndex } from 'drizzle-orm/pg-core';
-import { Index, IndexColumn } from "drizzle-orm/mysql-core";
-
 
 const rpageSchema = Joi.object({
     id: Joi.number().integer().min(0),

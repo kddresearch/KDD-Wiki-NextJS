@@ -1,5 +1,4 @@
 import joi from "joi";
-import { pgTable, integer, text, varchar, boolean, date, serial } from 'drizzle-orm/pg-core';
 
 
 // Joi schema for kdd user validation

@@ -1,5 +1,4 @@
-import Joi, { link } from "joi";
-import { pgTable, integer, text, varchar, boolean, date, serial } from 'drizzle-orm/pg-core';
+import Joi from "joi";
 
 
 enum DatasetType {

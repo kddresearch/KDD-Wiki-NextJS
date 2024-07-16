@@ -1,5 +1,4 @@
 import joi from "joi";
-import { serial,char,varchar,integer, text, boolean, date, pgTable } from 'drizzle-orm/pg-core';
 
 // Joi schema for page validation
 const pageSchema = joi.object({

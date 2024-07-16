@@ -1,7 +1,6 @@
 import Joi from "joi";
 import KddUser from "./kdd_user";
 
-
 enum AccessLevel {
     Guest = "guest",
     ReadOnly = "readonly",

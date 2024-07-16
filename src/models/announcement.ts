@@ -1,6 +1,5 @@
 import joi from "joi";
 
-
 //Joi schema for announcement validation
 const announcementSchema = joi.object({
   id: joi.number().integer().min(0),

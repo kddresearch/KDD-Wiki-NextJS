@@ -1,6 +1,4 @@
 import Joi from "joi";
-import { pgTable, integer, text, date, serial } from 'drizzle-orm/pg-core';
-
 
 const rPageVersionSchema = Joi.object({
     id: Joi.number().integer().min(0).required(),

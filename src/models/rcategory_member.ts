@@ -1,7 +1,5 @@
 import Joi from "joi";
 
-import { pgTable, integer } from 'drizzle-orm/pg-core';
-
 const rCategoryMemberSchema = Joi.object({
     category_id: Joi.number().required(),
     user_id: Joi.number().required(),

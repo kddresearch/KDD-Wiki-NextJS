@@ -1,6 +1,4 @@
 import Joi from "joi";
-import { pgTable, integer, text, date, serial, jsonb } from 'drizzle-orm/pg-core';
-
 
 enum PublicationPlatform {
     ARXIV = 'arxiv',

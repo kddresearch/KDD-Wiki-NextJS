@@ -1,5 +1,4 @@
 import Joi from "joi";
-import { pgTable, integer, varchar, text, date, serial } from 'drizzle-orm/pg-core';
 
 enum CategoryType {
     research = "research",
