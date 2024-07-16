@@ -1,5 +1,5 @@
-import { fetchById } from "@/app/lib/db/_page";
-import { AccessLevel } from "@/app/lib/models/wikiuser";
+import { fetchById } from "@/db/_page";
+import { AccessLevel } from "@/models/wikiuser";
 import NotAuthorized from "@/app/notauthorized/page";
 import { checkAuth } from "@/auth";
 import TextEditor from "@/components/editors/lexical/editor";

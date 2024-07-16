@@ -1,6 +1,6 @@
 import StripeBackDrop from "@/components/layout/backdrop";
 import Card from "@/components/layout/card";
-import { fetchAll } from "@/app/lib/db/_page";
+import { fetchAll } from "@/db/_page";
 import Link from "next/link";
 
 async function pageIndex() {

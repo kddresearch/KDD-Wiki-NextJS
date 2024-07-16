@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { checkAuthAPI } from "@/auth";
-import { AccessLevel } from "@/app/lib/models/wikiuser";
-import { handleAPIError } from "@/app/lib/utils/api";
+import { AccessLevel } from "@/models/wikiuser";
+import { handleAPIError } from "@/utils/api";
 // import { WikiContainerServiceClient } from "@/app/lib/files";
 import getConfig from "@/config";
 const config = await getConfig();
-import { getFile, getFilesFromFormData, uploadFile } from "@/app/lib/files";
+import { getFile, getFilesFromFormData, uploadFile } from "@/files";
 
 export async function GET(
     req: NextRequest,

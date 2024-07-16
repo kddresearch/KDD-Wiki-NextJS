@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import * as rCategoryMemberdb from "@/app/lib/db/rcategory_member";
+import * as rCategoryMemberdb from "@/db/rcategory_member";
 import { checkAuthAPI } from "@/auth";
-import { AccessLevel } from "@/app/lib/models/wikiuser";
-import rCategoryMember from "@/app/lib/models/rcategory_member";
-import * as userUtils from "@/app/lib/utils/wiki_user";
-import * as categoryUtils from "@/app/lib/utils/rcategory";
-import { handleAPIError } from "@/app/lib/utils/api";
+import { AccessLevel } from "@/models/wikiuser";
+import rCategoryMember from "@/models/rcategory_member";
+import * as userUtils from "@/utils/wiki_user";
+import * as categoryUtils from "@/utils/rcategory";
+import { handleAPIError } from "@/utils/api";
 
 /**
  * name of route to fetch all members in a category | Protected keyword

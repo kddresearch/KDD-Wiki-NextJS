@@ -11,14 +11,14 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 // import TablePagination from '@mui/material/TablePagination';
 
-import * as kdd_user from "@/app/lib/db/kdd_user";
+import * as kdd_user from "@/db/kdd_user";
 
-import * as rkdd_user from "@/app/lib/db/wiki_user";
+import * as rkdd_user from "@/db/wiki_user";
 
-import KddUser from "@/app/lib/models/kdd_user";
+import KddUser from "@/models/kdd_user";
 import Link from "next/link";
 import { Button, TableFooter, TablePagination } from "@mui/material";
-import WikiUser from "@/app/lib/models/wikiuser";
+import WikiUser from "@/models/wikiuser";
 
 export default async function UserDashboard() {
   var allUsers = await kdd_user.fetchAll();

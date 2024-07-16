@@ -1,5 +1,5 @@
 import Card from "@/components/layout/card";
-import { RenderMarkdownString } from "../lib/utils/markdown";
+import { RenderMarkdownString } from "@/components/markdown/markdown";
 import StripeBackDrop from "@/components/layout/backdrop";
 
 const privacyMD = `

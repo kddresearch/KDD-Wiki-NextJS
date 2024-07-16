@@ -1,4 +1,4 @@
-import KddUser from "@/app/lib/models/kdd_user";
+import KddUser from "@/models/kdd_user";
 import UnitBar from "./unit-bar/unit-bar";
 import Navigation from "./unit-bar/nav-menu";
 import Link from "next/link";
@@ -15,7 +15,7 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import AccountMenu from "./user-menu";
-import WikiUser from "@/app/lib/models/wikiuser";
+import WikiUser from "@/models/wikiuser";
 // import PersonAdd from '@mui/icons-material/PersonAdd';
 // import Settings from '@mui/icons-material/Settings';
 // import Logout from '@mui/icons-material/Logout';

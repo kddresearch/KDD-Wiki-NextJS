@@ -6,12 +6,12 @@ import {
   insert,
   update,
   remove,
-} from "@/app/lib/db/wiki_user";
+} from "@/db/wiki_user";
 import { checkAuthAPI } from "@/auth";
-import KddUser from "@/app/lib/models/kdd_user";
-import { AccessLevel } from "@/app/lib/models/wikiuser";
-import WikiUser from "@/app/lib/models/wikiuser";
-import { bodyParser, handleAPIError } from "@/app/lib/utils/api";
+import KddUser from "@/models/kdd_user";
+import { AccessLevel } from "@/models/wikiuser";
+import WikiUser from "@/models/wikiuser";
+import { bodyParser, handleAPIError } from "@/utils/api";
 
 
 export async function GET(
