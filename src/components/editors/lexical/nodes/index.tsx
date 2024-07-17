@@ -26,6 +26,7 @@ const editorNodes: Array<Klass<LexicalNode>> = [
   TableCellNode,
   TableNode,
   TableRowNode,
+  LinkNode,
 ];
 
 export default editorNodes;

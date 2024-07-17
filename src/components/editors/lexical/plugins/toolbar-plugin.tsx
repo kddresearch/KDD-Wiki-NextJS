@@ -12,6 +12,7 @@ import {
   SELECTION_CHANGE_COMMAND,
   TextNode,
   UNDO_COMMAND,
+  $createTextNode
 } from "lexical";
 import {
   $isLinkNode,
@@ -22,10 +23,9 @@ import * as React from "react";
 // import { ArrowClockwise, ArrowCounterclockwise, Code, Justify, Link, TextCenter, TextLeft, TextRight, TypeBold, TypeItalic, TypeStrikethrough, TypeUnderline } from "react-bootstrap-icons";
 import { getSelectedNode, sanitizeURL } from "../utils";
 import { $isCodeNode, getCodeLanguages, getLanguageFriendlyName } from '@lexical/code';
-import { Combobox } from "@/components/ui/combo-box";
 
-import { Bold, Italic, Underline, Strikethrough, Undo, Redo, Code, Link } from "lucide-react"
- 
+import { Bold, Italic, Underline, Strikethrough, Undo, Redo, Code, Link, User, CreditCard, Settings, Keyboard, Users, UserPlus, Mail, MessageSquare, PlusCircle, Plus, Github, LifeBuoy, Cloud, LogOut, Calendar, Smile, Calculator, Heading1Icon, Heading2Icon, Heading3Icon, Heading } from "lucide-react"
+import { Combobox } from "@/components/ui/combo-box";
 import {
   ToggleGroup,
   ToggleGroupItem,
@@ -33,10 +33,58 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Toggle } from "@/components/ui/toggle";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+  PopoverTrigger
+} from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { any } from "joi";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from "@/components/ui/command"
+import KeyboardShortcutMenu from "./toolbar-plugin/keyboard-shortcut-menu";
+import InsertElementDropdown from "./toolbar-plugin/insert-dropdown";
+
+const getSelectionCoordinates = () => {
+  const selection = window.getSelection();
+
+  if (selection === null) {
+    return null;
+  }
+
+  if (selection.rangeCount === 0) {
+    return null;
+  }
+  const range = selection.getRangeAt(0).cloneRange();
+  const rect = range.getBoundingClientRect();
+  return {
+    top: rect.top + window.scrollY,
+    left: rect.left + window.scrollX,
+  };
+};
 
 // No clue what this is for
 const LowPriority = 1;
@@ -73,6 +121,10 @@ export default function ToolbarPlugin() {
   const [isCode, setIsCode] = useState(false);
   const [codeLanguage, setCodeLanguage] = useState("plaintext");
 
+  const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
+
+  const [keyboardShortcutsOpen, setKeyboardShortcutsOpen] = useState(false);
+
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
     if ($isRangeSelection(selection)) {
@@ -84,6 +136,13 @@ export default function ToolbarPlugin() {
       // setIsCode(selection.hasFormat('code'));
 
       let selectedNode = getSelectedNode(selection);
+
+      const popoverPosition = getSelectionCoordinates();
+      if (popoverPosition !== null) {
+        console.log(popoverPosition);
+
+        setPopoverPosition(popoverPosition);
+      }
 
       setCurrentNode(selectedNode);
 
@@ -128,16 +187,52 @@ export default function ToolbarPlugin() {
     }
   }, []);
 
-  const removeLink = (open: boolean) => {
+  const removeLink = (opening: boolean) => {
 
-    console.log("isOpenNow: ", open);
+    console.log("isOpening: ", opening);
 
     console.log("Removing link");
 
+    if (opening) {
+      return;
+    }
+
     editor.update(() => {
-      if ($isLinkNode(currentNode)) {
+
+      let node = currentNode;
+
+      while (node !== null) {
+        if (node.getParent() === null) {
+          break;
+        } else if ($isLinkNode(node)) {
+          break;
+        } else {
+          node = node.getParent()!;
+        }
+      }
+
+      const selection = $getSelection();
+
+      if (selection === null) {
+        return;
+      }
+
+      if (!$isRangeSelection(selection)) {
+        return;
+      }
+
+      let selectedNode = getSelectedNode(selection);
+
+      if ($isLinkNode(node)) {
+        // Move text content to parent
+        const parent = node.getParent()!;
+        const text = node.getTextContent();
+
+        // edit the contend of the parent node to the original text
+
+        node.remove();
+
         console.log("Really removing link");
-        currentNode.remove();
       }
     });
   };
@@ -184,7 +279,6 @@ export default function ToolbarPlugin() {
         TOGGLE_LINK_COMMAND,
         "",
       );
-
     });
   }, [editor, isLink]);
 
@@ -273,6 +367,11 @@ export default function ToolbarPlugin() {
         ref={toolbarRef}
       >
 
+        <KeyboardShortcutMenu
+          open={keyboardShortcutsOpen}
+          onOpenChange={setKeyboardShortcutsOpen}
+        />
+          
         <div className="" >
           <Button 
             variant={"ghost"} 
@@ -345,91 +444,23 @@ export default function ToolbarPlugin() {
 
         <Separator orientation="vertical" />
 
-        <div
-          data-active={isCode ? "true" : "false"}
-          className="flex transition-all duration-75 items-center rounded-md text-secondary-foreground gap-1 h-10 px-[1px]"
-          // className='flex transition-all duration-75 items-center rounded-md text-secondary-foreground gap-1 h-10 px-[1px] data-[active=false]:border-0 data-[active=true]:border '
-        >
-          <Toggle
-            size={"sm"}
-            onClick={() => {
-              console.log("isCode: ", isCode);
-            }}
-            pressed={isCode}
-          > 
-            <Code className="h-4 w-4" />
-          </Toggle>
-          {isCode ? (
-            <>
-              <Separator orientation="vertical" className="my-1" />
-              <Combobox
-                className={`transition-transform duration-300 ease-in-out1 ${isCode ? 'transform translate-x-0 opacity-100' : 'transform -translate-x-4 opacity-0'}`}
-                options={languages}
-                defaultSelect={codeLanguage}
-                onSelect={onSelectLanguage}
-                type="language"
-              />
-            </>
-          ) : (
-            <>
-            </>
-          )}
-        </div>
+        <InsertElementDropdown openKeyboardShortcuts={setKeyboardShortcutsOpen}/>
 
-        <div className="flex items-center h-10">
-          <Popover
-            onOpenChange={removeLink}
-          >
-            <PopoverTrigger asChild>
-              <Button
-                variant={"ghost"}
-                size="icon"
-                onClick={insertLink}
-              >
-                <Link className="h-4 w-4" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent>
-              <div className="grid gap-4">
-                <div className="space-y-2">
-                  <h4 className="font-medium leading-none">Insert Link</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Set the link content and URL
-                  </p>
-                </div>
-                <div className="grid gap-2">
-                  <div className="grid grid-cols-3 items-center gap-4">
-                    <Label htmlFor="width">Title</Label>
-                    <Input
-                      id="width"
-                      placeholder="Title"
-                      className="col-span-2 h-8"
-                      value={linkTitle}
-                      onChange={(e) => setLinkTitle(e.target.value)}
-                    />
-                  </div>
-                  <div className="grid grid-cols-3 items-center gap-4">
-                    <Label htmlFor="maxWidth">URL</Label>
-                    <Input
-                      id="maxWidth"
-                      placeholder="https://"
-                      className="col-span-2 h-8"
-                      value={linkURL}
-                      onChange={(e) => setLinkURL(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-end">
-                  <Button variant="outline" size="sm" onClick={updateLink}>
-                    Update Link
-                  </Button>
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
-        </div>
-
-        {/* Code Block Button */}
+        {isCode ? (
+          <>
+            <Separator orientation="vertical" className="my-1" />
+            <Combobox
+              className={`transition-transform duration-300 ease-in-out1 ${isCode ? 'transform translate-x-0 opacity-100' : 'transform -translate-x-4 opacity-0'}`}
+              options={languages}
+              defaultSelect={codeLanguage}
+              onSelect={onSelectLanguage}
+              type="language"
+            />
+          </>
+        ) : (
+          <>
+          </>
+        )}
 
       </div>
     </div>

@@ -24,6 +24,7 @@ import editorNodes from './nodes';
 
 import { Placeholder, prePopulate } from './theme';
 import CodeHighlightPlugin from './plugins/code-highlighting-plugin';
+import ContextMenuPlugin from './plugins/context-menu-plugin';
 
 function onError(error: Error) {
   console.error(error);
@@ -34,7 +35,7 @@ function Editor() {
   return (
     <div id="hello" className="my-5 bg-white text-black relative leading-5 font-normal text-left rounded-lg border-gray border">
       <ToolbarPlugin />
-      <div id="world" className=" relative prose max-w-none prose-h1:text-purple prose-a:text-purple prose-a:underline">
+      <ContextMenuPlugin id="world" className="relative prose max-w-none prose-h1:text-purple prose-a:text-purple prose-a:underline">
         <RichTextPlugin
           contentEditable={                
             <ContentEditable 
@@ -50,7 +51,7 @@ function Editor() {
         <MarkdownShortcutPlugin />
         <CodeHighlightPlugin />
         <LinkPlugin />
-      </div>
+      </ContextMenuPlugin>
     </div>
   );
 };
