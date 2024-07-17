@@ -1,0 +1,132 @@
+"use client";
+
+import { Combobox } from "@/components/ui/combo-box";
+import { $isCodeNode, getCodeLanguages, getLanguageFriendlyName } from "@lexical/code";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { Label } from "@radix-ui/react-label";
+import { $getSelection, $isRangeSelection, LexicalEditor } from "lexical";
+import { getSelectedNode } from "../../utils";
+import React, { useEffect, useState } from "react";
+import { mergeRegister } from "@lexical/utils";
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "@/lib/utils"
+
+interface CodeDropdownProps extends React.HTMLProps<HTMLDivElement> {
+  editor: LexicalEditor;
+}
+
+const languages = getCodeLanguages().map((language) => {
+  return {
+    value: language,
+    label: getLanguageFriendlyName(language),
+  };
+});
+
+function CodeDropdown({
+  editor,
+  ...props
+}:
+  CodeDropdownProps
+) {
+  const [codeLanguage, setCodeLanguage] = useState("plaintext");
+
+  const updateDropdown = () => {
+    const selection = $getSelection();
+
+    if (!$isRangeSelection(selection)) {
+      return;
+    }
+
+    let node = getSelectedNode(selection);
+    let codeNode = null;
+
+    // Get all nodes up to the parent
+    while (node !== null) {
+
+      if ($isCodeNode(node)) {
+        codeNode = node;
+        break;
+      }
+
+      if (node.getParent() === null) {
+        break;
+      } else {
+        node = node.getParent()!;
+      }
+    }
+
+    if (codeNode === null) {
+      return;
+    }
+
+    setCodeLanguage(codeNode.getLanguage()!);
+  };
+
+  useEffect(() => {
+    return mergeRegister(
+      editor.registerUpdateListener(({ editorState }) => {
+        editorState.read(() => {
+          updateDropdown();
+        });
+      }),
+    );
+  }, [editor, updateDropdown]);
+
+  const onSelectLanguage = (language: string) => {
+
+    editor.update(() => {
+      const selection = $getSelection();
+
+      if (!$isRangeSelection(selection)) {
+        return;
+      }
+
+      let node = getSelectedNode(selection);
+      let codeNode = null;
+
+      // Get all nodes up to the parent
+      while (node !== null) {
+
+        if ($isCodeNode(node)) {
+          codeNode = node;
+          break;
+        }
+
+        if (node.getParent() === null) {
+          break;
+        } else {
+          node = node.getParent()!;
+        }
+      }
+
+      if (codeNode === null) {
+        return;
+      }
+
+      setCodeLanguage(language);
+      codeNode.setLanguage(language);
+    });
+  };
+
+  return (
+    <div 
+      className={
+        cn(
+          "flex align-middle h-10 gap-1",
+          props.className
+        )}
+      {...props}
+    >
+      <Label className="my-auto">Language: </Label>
+      <Combobox
+        options={languages}
+        defaultSelect={codeLanguage}
+        onSelect={onSelectLanguage}
+        type="language"
+      />
+    </div>
+  );
+}
+
+export default CodeDropdown;

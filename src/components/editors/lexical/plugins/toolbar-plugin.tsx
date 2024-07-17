@@ -1,3 +1,5 @@
+"use client";
+
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { mergeRegister } from "@lexical/utils";
 import {
@@ -20,71 +22,19 @@ import {
 } from "@lexical/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as React from "react";
-// import { ArrowClockwise, ArrowCounterclockwise, Code, Justify, Link, TextCenter, TextLeft, TextRight, TypeBold, TypeItalic, TypeStrikethrough, TypeUnderline } from "react-bootstrap-icons";
-import { getSelectedNode, sanitizeURL } from "../utils";
-import { $isCodeNode, getCodeLanguages, getLanguageFriendlyName } from '@lexical/code';
+import { getSelectedNode } from "../utils";
+import { $isCodeNode } from '@lexical/code';
 
 import { Bold, Italic, Underline, Strikethrough, Undo, Redo, Code, Link, User, CreditCard, Settings, Keyboard, Users, UserPlus, Mail, MessageSquare, PlusCircle, Plus, Github, LifeBuoy, Cloud, LogOut, Calendar, Smile, Calculator, Heading1Icon, Heading2Icon, Heading3Icon, Heading } from "lucide-react"
-import { Combobox } from "@/components/ui/combo-box";
 import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@/components/ui/toggle-group"
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Toggle } from "@/components/ui/toggle";
-import {
-  Popover,
-  PopoverAnchor,
-  PopoverContent,
-  PopoverTrigger
-} from "@/components/ui/popover";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
-} from "@/components/ui/command"
 import KeyboardShortcutMenu from "./toolbar-plugin/keyboard-shortcut-menu";
 import InsertElementDropdown from "./toolbar-plugin/insert-dropdown";
-
-const getSelectionCoordinates = () => {
-  const selection = window.getSelection();
-
-  if (selection === null) {
-    return null;
-  }
-
-  if (selection.rangeCount === 0) {
-    return null;
-  }
-  const range = selection.getRangeAt(0).cloneRange();
-  const rect = range.getBoundingClientRect();
-  return {
-    top: rect.top + window.scrollY,
-    left: rect.left + window.scrollX,
-  };
-};
+import CodeDropdown from "./toolbar-plugin/code-dropdown";
 
 // No clue what this is for
 const LowPriority = 1;
@@ -114,12 +64,7 @@ export default function ToolbarPlugin() {
   // Blocks
   const [currentNode, setCurrentNode] = useState<TextNode | ElementNode | null>(null);
 
-  const [isLink, setIsLink] = useState(false);
-  const [linkURL, setLinkURL] = useState("");
-  const [linkTitle, setLinkTitle] = useState("");
-
   const [isCode, setIsCode] = useState(false);
-  const [codeLanguage, setCodeLanguage] = useState("plaintext");
 
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
 
@@ -137,7 +82,7 @@ export default function ToolbarPlugin() {
 
       let selectedNode = getSelectedNode(selection);
 
-      const popoverPosition = getSelectionCoordinates();
+      // const popoverPosition = getSelectionCoordinates();
       if (popoverPosition !== null) {
         console.log(popoverPosition);
 
@@ -159,25 +104,7 @@ export default function ToolbarPlugin() {
       }
 
       for (let node of nodes) {
-        if ($isLinkNode(node)) {
-          setIsLink(true);
-          break;
-        } else {
-          setIsLink(false);
-        }
-      }
-
-      for (let node of nodes) {
         if ($isCodeNode(node)) {
-          const language = node.getLanguage();
-
-          if (language === null) {
-            setCodeLanguage("plaintext");
-          } else {
-            console.log("Language: ", language!);
-            setCodeLanguage(language!);
-          }
-
           setIsCode(true);
           break;
         } else {
@@ -186,101 +113,6 @@ export default function ToolbarPlugin() {
       }
     }
   }, []);
-
-  const removeLink = (opening: boolean) => {
-
-    console.log("isOpening: ", opening);
-
-    console.log("Removing link");
-
-    if (opening) {
-      return;
-    }
-
-    editor.update(() => {
-
-      let node = currentNode;
-
-      while (node !== null) {
-        if (node.getParent() === null) {
-          break;
-        } else if ($isLinkNode(node)) {
-          break;
-        } else {
-          node = node.getParent()!;
-        }
-      }
-
-      const selection = $getSelection();
-
-      if (selection === null) {
-        return;
-      }
-
-      if (!$isRangeSelection(selection)) {
-        return;
-      }
-
-      let selectedNode = getSelectedNode(selection);
-
-      if ($isLinkNode(node)) {
-        // Move text content to parent
-        const parent = node.getParent()!;
-        const text = node.getTextContent();
-
-        // edit the contend of the parent node to the original text
-
-        node.remove();
-
-        console.log("Really removing link");
-      }
-    });
-  };
-
-  const updateLink = () => {};
-
-  const insertLink = useCallback(() => {
-
-    console.log("Inserting link");
-
-    editor.update(() => {
-    
-      const selection = $getSelection();
-
-      if (selection === null) {
-        return;
-      }
-
-      // get selection content
-      const content = selection.getTextContent();
-      setLinkTitle(content);
-
-      console.log("isLink: ", isLink);
-
-      if (isLink) {
-
-        return;
-      }
-
-      if (!$isRangeSelection(selection)) {
-        return;
-      }
-
-      let selectedNode = getSelectedNode(selection);
-
-      if ($isLinkNode(selectedNode)) {
-        setIsLink(true);
-        setLinkTitle(selectedNode.getTextContent());
-        setLinkURL(selectedNode.getURL());
-        return;
-      }
-
-      editor.dispatchCommand(
-        TOGGLE_LINK_COMMAND,
-        "",
-      );
-    });
-  }, [editor, isLink]);
 
   useEffect(() => {
     return mergeRegister(
@@ -315,50 +147,6 @@ export default function ToolbarPlugin() {
       ),
     );
   }, [editor, updateToolbar]);
-
-  const onSelectLanguage = (language: string) => {
-
-    editor.update(() => {
-      const selection = $getSelection();
-
-      if (!$isRangeSelection(selection)) {
-        return;
-      }
-
-      let node = getSelectedNode(selection);
-      let codeNode = null;
-
-      // Get all nodes up to the parent
-      while (node !== null) {
-
-        if ($isCodeNode(node)) {
-          codeNode = node;
-          break;
-        }
-
-        if (node.getParent() === null) {
-          break;
-        } else {
-          node = node.getParent()!;
-        }
-      }
-
-      if (codeNode === null) {
-        return;
-      }
-
-      codeNode.setLanguage(language);
-      setCodeLanguage(language);
-    });
-  };
-
-  const languages = getCodeLanguages().map((language) => {
-    return {
-      value: language,
-      label: getLanguageFriendlyName(language),
-    };
-  });
-
 
   return (
     <div className="border-b border-gray">
@@ -446,21 +234,11 @@ export default function ToolbarPlugin() {
 
         <InsertElementDropdown openKeyboardShortcuts={setKeyboardShortcutsOpen}/>
 
-        {isCode ? (
-          <>
-            <Separator orientation="vertical" className="my-1" />
-            <Combobox
-              className={`transition-transform duration-300 ease-in-out1 ${isCode ? 'transform translate-x-0 opacity-100' : 'transform -translate-x-4 opacity-0'}`}
-              options={languages}
-              defaultSelect={codeLanguage}
-              onSelect={onSelectLanguage}
-              type="language"
-            />
-          </>
-        ) : (
-          <>
-          </>
-        )}
+        <CodeDropdown
+          editor={editor}
+          data-shown={isCode}
+          className="data-[shown=false]:hidden"
+        />
 
       </div>
     </div>

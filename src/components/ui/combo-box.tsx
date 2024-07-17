@@ -70,12 +70,7 @@ export function Combobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={
-            cn(
-              comboBoxVariants({ className }),
-              "flex items-center justify-between"
-            )
-          }
+          className="w-[200px] justify-between"
         >
           {value
             ? options.find((framework) => framework.value === value)?.label
