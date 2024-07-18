@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { BoxArrowUpRight } from "react-bootstrap-icons";
 import StripeBackDrop from "@/components/layout/backdrop";
 import Card from "@/components/layout/card";
-import { URL } from 'whatwg-url';
 import IssueReportButton from "@/components/buttons/report";
 
 export default function NotFound() {
@@ -14,7 +13,7 @@ export default function NotFound() {
 
   return (
     <StripeBackDrop>
-      <Card isFlex={false} title="404: Page Not Found" actions={<IssueReportButton pathname={pathname} type="missing"/>} className="">
+      <Card isFlex={false} title="404: Page Not Found" actions={<IssueReportButton pathname={pathname} type="missing" size="lg" variant="default" />} >
         <p className="my-4 inline-block">
           Requested resource at
           <span className="inline-block bg-lightgray p-1 mx-1 rounded-md max-w-48 md:max-w-xs lg:max-w-sm xl:max-w-3xl overflow-hidden truncate align-middle">

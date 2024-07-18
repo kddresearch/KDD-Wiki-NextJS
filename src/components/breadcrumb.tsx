@@ -58,16 +58,37 @@ const ResponsiveBreadcrumb = () => {
     };
   });
 
+  const finalSlice = items.length > ITEMS_TO_DISPLAY ? -2 : -1;
+
   const newItem = {
     href: "/",
-    label: "Home",
+    label: "Wiki Home",
   };
   items.unshift(newItem);
 
   console.log("items", items);
 
+  if (items.length === 1) {
+    return (
+      <Breadcrumb className="bg-white text-purple h-14 font-light flex">
+        <BreadcrumbList className="container h-14">
+          <BreadcrumbPage className="flex gap-1">
+            <House className="w-5 h-5"/>
+            {items[0].label}
+          </BreadcrumbPage>
+
+          <li className="flex-grow" />
+
+          <li className="justify-end">
+            <IssueReportButton pathname={pathname} type="general"/>
+          </li>
+        </BreadcrumbList>
+      </Breadcrumb>
+    );
+  }
+
   return (
-    <Breadcrumb className="bg-white text-purple h-14 font-light">
+    <Breadcrumb className="bg-white text-purple h-14 font-light flex">
       <BreadcrumbList className="container h-14">
         <BreadcrumbItem key="home">
           <BreadcrumbLink href={items[0].href!} className="flex gap-1">
@@ -81,7 +102,7 @@ const ResponsiveBreadcrumb = () => {
         {items.length > ITEMS_TO_DISPLAY ? (
           <>
             <BreadcrumbItem key={"toggle-menu"}>
-              {/* <DropdownMenu>
+              <DropdownMenu>
                 <DropdownMenuTrigger className="flex items-center gap-1">
                   <BreadcrumbEllipsis className="h-4 w-4" />
                   <span className="sr-only">Toggle menu</span>
@@ -95,12 +116,12 @@ const ResponsiveBreadcrumb = () => {
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
-              </DropdownMenu> */}
+              </DropdownMenu>
             </BreadcrumbItem>
             <BreadcrumbSeparator key="toggle-menu-sep"/>
           </>
         ) : (
-          items.slice(1, items.length).map((item, index) => (
+          items.slice(1, items.length - 1).map((item, index) => (
             <BreadcrumbItem key={index}>
               <BreadcrumbLink href={item.href!} className="flex gap-1">
                 {item.label}
@@ -109,7 +130,7 @@ const ResponsiveBreadcrumb = () => {
           ))
         )}
 
-        {items.slice(-ITEMS_TO_DISPLAY + 1).map((item, index) => (
+        {items.slice(finalSlice).map((item, index) => (
           <React.Fragment key={`last-${index}`}>
             {item.href ? (
               <>
@@ -133,6 +154,13 @@ const ResponsiveBreadcrumb = () => {
             )}
           </React.Fragment>
         ))}
+
+        <li className="flex-grow" />
+
+        <li className="justify-end">
+          <IssueReportButton pathname={pathname} type="general"/>
+        </li>
+
       </BreadcrumbList>
     </Breadcrumb>
   );
