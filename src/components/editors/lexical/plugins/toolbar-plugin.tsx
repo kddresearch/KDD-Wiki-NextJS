@@ -66,7 +66,7 @@ export default function ToolbarPlugin() {
 
   const [isCode, setIsCode] = useState(false);
 
-  const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
+  // const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
 
   const [keyboardShortcutsOpen, setKeyboardShortcutsOpen] = useState(false);
 
@@ -83,11 +83,11 @@ export default function ToolbarPlugin() {
       let selectedNode = getSelectedNode(selection);
 
       // const popoverPosition = getSelectionCoordinates();
-      if (popoverPosition !== null) {
-        console.log(popoverPosition);
+      // if (popoverPosition !== null) {
+      //   console.log(popoverPosition);
 
-        setPopoverPosition(popoverPosition);
-      }
+      //   setPopoverPosition(popoverPosition);
+      // }
 
       setCurrentNode(selectedNode);
 

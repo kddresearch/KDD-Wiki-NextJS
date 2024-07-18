@@ -9,14 +9,27 @@ import {
   CommandShortcut,
 } from "@/components/ui/command"
 import { type DialogProps } from "@radix-ui/react-dialog"
+import { cloneElement } from 'react';
 
 interface CommandDialogProps extends DialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-import { Heading1Icon, Heading2Icon, Heading3Icon, Link } from "lucide-react"
+import {
+  Heading1Icon,
+  Heading2Icon,
+  Heading3Icon,
+  Link
+} from "lucide-react"
 import React from "react"
+
+enum Category {
+  SUGGESTIONS = "Suggestions",
+  FORMATTING = "Formatting",
+}
+
+import { nodeKeyboardShortcuts } from "../../nodes";
 
 function KeyboardShortcutMenu({
   ...props
@@ -34,38 +47,28 @@ function KeyboardShortcutMenu({
  
     document.addEventListener("keydown", down)
     return () => document.removeEventListener("keydown", down)
-  }, [])
+  })
+
+  function onselect() {
+    props.onOpenChange(false);
+  }
 
   return (
-    <CommandDialog {...props} >
+    <CommandDialog DialogTitle="Keyboard Shortcuts" {...props} >
       <CommandInput placeholder="Search for a element..." />
       <CommandList>
         <CommandEmpty>No elements found</CommandEmpty>
-        <CommandGroup heading="Suggestions">
-          <CommandItem>
-            <Heading1Icon className="mr-2 h-4 w-4" />
-            <span>Heading 1</span>
-            <CommandShortcut>(Largest) #</CommandShortcut>
-          </CommandItem>
-          <CommandItem>
-            <Heading2Icon className="mr-2 h-4 w-4" />
-            <span>Heading 2</span>
-            <CommandShortcut>##</CommandShortcut>
-          </CommandItem>
-          <CommandItem>
-            <Heading3Icon className="mr-2 h-4 w-4" />
-            <span>Heading 3</span>
-            <CommandShortcut>(Smallest) ###</CommandShortcut>
-          </CommandItem>
-        </CommandGroup>
-        <CommandSeparator />
-        <CommandGroup heading="Formatting">
-          <CommandItem>
-            <Link className="mr-2 h-4 w-4" />
-            <span>Link</span>
-            <CommandShortcut>[Title](https://url.com)</CommandShortcut>
-          </CommandItem>
-        </CommandGroup>
+          {nodeKeyboardShortcuts.map((group, index) => (
+            <CommandGroup key={index} heading={group.category}>
+              {group.shortcuts.map((shortcut, index) => (
+                <CommandItem key={index}>
+                  {cloneElement(shortcut.icon, { className: 'mr-2 h-4 w-4' })}
+                  <span>{shortcut.name}</span>
+                  <CommandShortcut>{shortcut.shortcut}</CommandShortcut>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          ))}
       </CommandList>
     </CommandDialog>
   );

@@ -4,18 +4,14 @@ import dynamic from "next/dynamic";
 
 // const LexicalEditor = dynamic(() => import('@/components/editors/lexical/editor'), { ssr: false });
 
-import TextEditor from "@/components/editors/lexical/editor";
+import LexicalEditor from "@/components/editors/lexical/editor";
 
 function devEditorPage() {
   return (
     <StripeBackDrop>
-      <TextEditor/>
-      {/* <Card title="My Editor">
-        hello
+      <Card title="Editor">
+        <LexicalEditor/>
       </Card>
-      <Card title="Why does this work?">
-        HELLO
-      </Card> */}
     </StripeBackDrop>
   )
 }

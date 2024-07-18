@@ -25,6 +25,7 @@ import editorNodes from './nodes';
 import { Placeholder, prePopulate } from './theme';
 import CodeHighlightPlugin from './plugins/code-highlighting-plugin';
 import ContextMenuPlugin from './plugins/context-menu-plugin';
+import dynamic from 'next/dynamic';
 
 function onError(error: Error) {
   console.error(error);
@@ -90,4 +91,6 @@ function TextEditor({
   )
 }
 
-export default TextEditor;
+const LexicalEditor = dynamic(() => Promise.resolve(TextEditor), { ssr: false });
+
+export default LexicalEditor;
