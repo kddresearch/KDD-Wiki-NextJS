@@ -16,18 +16,7 @@ interface CommandDialogProps extends DialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-import {
-  Heading1Icon,
-  Heading2Icon,
-  Heading3Icon,
-  Link
-} from "lucide-react"
 import React from "react"
-
-enum Category {
-  SUGGESTIONS = "Suggestions",
-  FORMATTING = "Formatting",
-}
 
 import { nodeKeyboardShortcuts } from "../../nodes";
 
@@ -58,7 +47,8 @@ function KeyboardShortcutMenu({
       <CommandInput placeholder="Search for a element..." />
       <CommandList>
         <CommandEmpty>No elements found</CommandEmpty>
-          {nodeKeyboardShortcuts.map((group, index) => (
+        {nodeKeyboardShortcuts.map((group, index) => (
+          <React.Fragment key={index}>
             <CommandGroup key={index} heading={group.category}>
               {group.shortcuts.map((shortcut, index) => (
                 <CommandItem key={index}>
@@ -68,7 +58,9 @@ function KeyboardShortcutMenu({
                 </CommandItem>
               ))}
             </CommandGroup>
-          ))}
+            {index < nodeKeyboardShortcuts.length - 1 && <CommandSeparator key={index * 2}/>}
+          </React.Fragment>
+        ))}
       </CommandList>
     </CommandDialog>
   );
