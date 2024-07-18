@@ -81,7 +81,7 @@ const ResponsiveBreadcrumb = () => {
         {items.length > ITEMS_TO_DISPLAY ? (
           <>
             <BreadcrumbItem key={"toggle-menu"}>
-              <DropdownMenu>
+              {/* <DropdownMenu>
                 <DropdownMenuTrigger className="flex items-center gap-1">
                   <BreadcrumbEllipsis className="h-4 w-4" />
                   <span className="sr-only">Toggle menu</span>
@@ -95,7 +95,7 @@ const ResponsiveBreadcrumb = () => {
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
-              </DropdownMenu>
+              </DropdownMenu> */}
             </BreadcrumbItem>
             <BreadcrumbSeparator key="toggle-menu-sep"/>
           </>
@@ -110,10 +110,10 @@ const ResponsiveBreadcrumb = () => {
         )}
 
         {items.slice(-ITEMS_TO_DISPLAY + 1).map((item, index) => (
-          <>
+          <React.Fragment key={`last-${index}`}>
             {item.href ? (
               <>
-                <BreadcrumbItem key={index}>
+                <BreadcrumbItem>
                   <BreadcrumbLink
                     asChild
                     className="max-w-20 truncate md:max-w-none"
@@ -122,16 +122,16 @@ const ResponsiveBreadcrumb = () => {
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 
-                <BreadcrumbSeparator key={`${index}-sep`}/>
+                {index < ITEMS_TO_DISPLAY - 2 && <BreadcrumbSeparator />}
               </>
             ) : (
-              <BreadcrumbItem key={index}>
+              <BreadcrumbItem>
                 <BreadcrumbPage className="max-w-20 truncate md:max-w-none">
                   {item.label}
                 </BreadcrumbPage>
               </BreadcrumbItem>
             )}
-          </>
+          </React.Fragment>
         ))}
       </BreadcrumbList>
     </Breadcrumb>
