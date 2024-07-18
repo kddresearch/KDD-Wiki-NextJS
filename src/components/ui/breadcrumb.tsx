@@ -1,8 +1,12 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
-import { ChevronRight, MoreHorizontal } from "lucide-react"
+import { ChevronRight, ChevronsRight, MoreHorizontal } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+
+function generateUniqueKey() {
+  return Math.random().toString(36).substr(2, 9)
+}
 
 const Breadcrumb = React.forwardRef<
   HTMLElement,
@@ -34,6 +38,7 @@ const BreadcrumbItem = React.forwardRef<
   <li
     ref={ref}
     className={cn("inline-flex items-center gap-1.5", className)}
+    key={generateUniqueKey()}
     {...props}
   />
 ))
@@ -81,9 +86,10 @@ const BreadcrumbSeparator = ({
     role="presentation"
     aria-hidden="true"
     className={cn("[&>svg]:size-3.5", className)}
+    key={generateUniqueKey()}
     {...props}
   >
-    {children ?? <ChevronRight />}
+    {children ?? <ChevronsRight className="text-yellow" />}
   </li>
 )
 BreadcrumbSeparator.displayName = "BreadcrumbSeparator"
