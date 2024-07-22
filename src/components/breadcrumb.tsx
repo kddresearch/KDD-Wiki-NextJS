@@ -122,11 +122,15 @@ const ResponsiveBreadcrumb = () => {
           </>
         ) : (
           items.slice(1, items.length - 1).map((item, index) => (
-            <BreadcrumbItem key={index}>
-              <BreadcrumbLink href={item.href!} className="flex gap-1">
-                {item.label}
-              </BreadcrumbLink>
-            </BreadcrumbItem>
+            <React.Fragment key={`last-${index}`}>
+              <BreadcrumbItem>
+                <BreadcrumbLink href={item.href!} className="flex gap-1">
+                  {item.label}
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              
+              <BreadcrumbSeparator />
+            </React.Fragment>
           ))
         )}
 
@@ -142,15 +146,23 @@ const ResponsiveBreadcrumb = () => {
                     <Link href={item.href}>{item.label}</Link>
                   </BreadcrumbLink>
                 </BreadcrumbItem>
+
+                <BreadcrumbSeparator />
                 
-                {index < ITEMS_TO_DISPLAY - 2 && <BreadcrumbSeparator />}
+                {/* {(index < ITEMS_TO_DISPLAY - 3) && <BreadcrumbSeparator />}
+
+                {(index < ITEMS_TO_DISPLAY - 3) && <div>Index:{index} Items:{ITEMS_TO_DISPLAY - 3}</div>} */}
+
               </>
             ) : (
-              <BreadcrumbItem>
-                <BreadcrumbPage className="max-w-20 truncate md:max-w-none">
-                  {item.label}
-                </BreadcrumbPage>
-              </BreadcrumbItem>
+              <>
+                {/* <BreadcrumbSeparator /> */}
+                <BreadcrumbItem>
+                  <BreadcrumbPage className="max-w-20 truncate md:max-w-none">
+                    {item.label}
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+              </>
             )}
           </React.Fragment>
         ))}

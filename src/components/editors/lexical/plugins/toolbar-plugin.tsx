@@ -82,13 +82,6 @@ export default function ToolbarPlugin() {
 
       let selectedNode = getSelectedNode(selection);
 
-      // const popoverPosition = getSelectionCoordinates();
-      // if (popoverPosition !== null) {
-      //   console.log(popoverPosition);
-
-      //   setPopoverPosition(popoverPosition);
-      // }
-
       setCurrentNode(selectedNode);
 
       let nodes = [];
