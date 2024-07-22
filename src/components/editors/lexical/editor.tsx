@@ -30,6 +30,7 @@ import dynamic from 'next/dynamic';
 import InsertCommandsPlugin from './plugins/insert-commands-plugin';
 import TreeViewPlugin from './plugins/tree-view-plugin';
 import { SettingsContext, useSettings } from './plugins/settings-context-plugin';
+import SelectionToolbarPlugin from './plugins/selection-toolbar-plugin';
 
 function onError(error: Error) {
   console.error(error);
@@ -48,10 +49,11 @@ function Editor() {
   return (
     <div id="hello" className="my-5 bg-white text-black relative leading-5 font-normal text-left rounded-lg border-gray border">
       <ToolbarPlugin />
-      <ContextMenuPlugin id="world" className="relative prose max-w-none prose-h1:text-purple prose-a:text-purple prose-a:underline">
+      <ContextMenuPlugin className="relative prose max-w-none prose-h1:text-purple prose-a:text-purple prose-a:underline">
         <RichTextPlugin
           contentEditable={                
-            <ContentEditable 
+            <ContentEditable
+              id='lexical-text-editable'
               className="bg-white min-h-[150px] resize-none text-[15px] caret-darkGray relative outline-none m-[15px_10px] caret-[#444] px-6"
             />
           }
@@ -65,6 +67,7 @@ function Editor() {
         <InsertCommandsPlugin />
         <CodeHighlightPlugin />
         <LinkPlugin />
+        <SelectionToolbarPlugin />
         {isDebug && <TreeViewPlugin />}
       </ContextMenuPlugin>
     </div>
