@@ -49,6 +49,8 @@ enum Category {
   INTEGRATIONS = "Integrations",
 }
 
+import { COMMANDS } from '../plugins/insert-commands-plugin';
+
 const nodeKeyboardShortcuts = [
   {
     category: Category.SUGGESTIONS,
@@ -57,16 +59,20 @@ const nodeKeyboardShortcuts = [
         icon: <Heading1Icon />,
         name: "Heading 1",
         shortcut: "(Largest) #",
+        command: COMMANDS.INSERT_H1
       },
       {
         icon: <Heading2Icon />,
         name: "Heading 2",
         shortcut: "##",
+        node: HeadingNode,
+        command: COMMANDS.INSERT_H2
       },
       {
         icon: <Heading3Icon />,
         name: "Heading 3",
         shortcut: "(Smallest) ###",
+        node: HeadingNode,
       },
     ]
   },

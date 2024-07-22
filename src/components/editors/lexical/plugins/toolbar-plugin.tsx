@@ -66,8 +66,6 @@ export default function ToolbarPlugin() {
 
   const [isCode, setIsCode] = useState(false);
 
-  // const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
-
   const [keyboardShortcutsOpen, setKeyboardShortcutsOpen] = useState(false);
 
   const updateToolbar = useCallback(() => {
@@ -78,7 +76,6 @@ export default function ToolbarPlugin() {
       setIsItalic(selection.hasFormat("italic"));
       setIsUnderline(selection.hasFormat("underline"));
       setIsStrikethrough(selection.hasFormat("strikethrough"));
-      // setIsCode(selection.hasFormat('code'));
 
       let selectedNode = getSelectedNode(selection);
 
@@ -225,7 +222,10 @@ export default function ToolbarPlugin() {
 
         <Separator orientation="vertical" />
 
-        <InsertElementDropdown openKeyboardShortcuts={setKeyboardShortcutsOpen}/>
+        <InsertElementDropdown
+          editor={editor}
+          openKeyboardShortcuts={setKeyboardShortcutsOpen}
+        />
 
         <CodeDropdown
           editor={editor}

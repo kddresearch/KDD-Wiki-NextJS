@@ -26,6 +26,7 @@ import { Placeholder, prePopulate } from './theme';
 import CodeHighlightPlugin from './plugins/code-highlighting-plugin';
 import ContextMenuPlugin from './plugins/context-menu-plugin';
 import dynamic from 'next/dynamic';
+import InsertCommandsPlugin from './plugins/insert-commands-plugin';
 
 function onError(error: Error) {
   console.error(error);
@@ -50,6 +51,7 @@ function Editor() {
         <MarkdownPlugin />
         <AutoFocusPlugin />
         <MarkdownShortcutPlugin />
+        <InsertCommandsPlugin />
         <CodeHighlightPlugin />
         <LinkPlugin />
       </ContextMenuPlugin>

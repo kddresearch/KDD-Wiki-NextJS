@@ -66,8 +66,6 @@ const ResponsiveBreadcrumb = () => {
   };
   items.unshift(newItem);
 
-  console.log("items", items);
-
   if (items.length === 1) {
     return (
       <Breadcrumb className="bg-white text-purple h-14 font-light flex">
@@ -148,15 +146,9 @@ const ResponsiveBreadcrumb = () => {
                 </BreadcrumbItem>
 
                 <BreadcrumbSeparator />
-                
-                {/* {(index < ITEMS_TO_DISPLAY - 3) && <BreadcrumbSeparator />}
-
-                {(index < ITEMS_TO_DISPLAY - 3) && <div>Index:{index} Items:{ITEMS_TO_DISPLAY - 3}</div>} */}
-
               </>
             ) : (
               <>
-                {/* <BreadcrumbSeparator /> */}
                 <BreadcrumbItem>
                   <BreadcrumbPage className="max-w-20 truncate md:max-w-none">
                     {item.label}

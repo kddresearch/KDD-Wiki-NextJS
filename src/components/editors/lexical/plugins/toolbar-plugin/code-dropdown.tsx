@@ -29,7 +29,7 @@ function CodeDropdown({
     };
   });
 
-  const [codeLanguage, setCodeLanguage] = useState("plaintext");
+  const [codeLanguage, setCodeLanguage] = useState<undefined | string>(undefined);
 
   const updateDropdown = useCallback(() => {
     const selection = $getSelection();
@@ -60,7 +60,16 @@ function CodeDropdown({
       return;
     }
 
-    setCodeLanguage(codeNode.getLanguage()!);
+    const language = codeNode.getLanguage()!;
+    
+    console.log("Setting language", language);
+
+    if (language === "plaintext") {
+      setCodeLanguage(undefined);
+      return;
+    }
+
+    setCodeLanguage(language);
   }, []);
 
   useEffect(() => {
