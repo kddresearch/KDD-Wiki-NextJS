@@ -25,7 +25,7 @@ import * as React from "react";
 import { getSelectedNode } from "../utils";
 import { $isCodeNode } from '@lexical/code';
 
-import { Bold, Italic, Underline, Strikethrough, Undo, Redo, Code, Link, User, CreditCard, Settings, Keyboard, Users, UserPlus, Mail, MessageSquare, PlusCircle, Plus, Github, LifeBuoy, Cloud, LogOut, Calendar, Smile, Calculator, Heading1Icon, Heading2Icon, Heading3Icon, Heading } from "lucide-react"
+import { Bold, Italic, Underline, Strikethrough, Undo, Redo, Code, Link, User, CreditCard, Settings, Keyboard, Users, UserPlus, Mail, MessageSquare, PlusCircle, Plus, Github, LifeBuoy, Cloud, LogOut, Calendar, Smile, Calculator, Heading1Icon, Heading2Icon, Heading3Icon, Heading, Bug } from "lucide-react"
 import {
   ToggleGroup,
   ToggleGroupItem,
@@ -35,6 +35,8 @@ import { Separator } from "@/components/ui/separator";
 import KeyboardShortcutMenu from "./toolbar-plugin/keyboard-shortcut-menu";
 import InsertElementDropdown from "./toolbar-plugin/insert-dropdown";
 import CodeDropdown from "./toolbar-plugin/code-dropdown";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useSettings } from "./settings-context-plugin";
 
 // No clue what this is for
 const LowPriority = 1;
@@ -51,7 +53,7 @@ export default function ToolbarPlugin() {
   const [isStrikethrough, setIsStrikethrough] = useState(false);
 
   const [currentElementEditor, setCurrentElementEditor] = useState();
-  const [isDebug, setIsDebug] = useState(false);
+  // const [isDebug, setIsDebug] = useState(false);
 
   const getValue = () => {
     const values = [];
@@ -61,6 +63,13 @@ export default function ToolbarPlugin() {
     if (isStrikethrough) values.push("strikethrough");
     return values;
   };
+
+  const {
+    setOption,
+    settings: {
+      isDebug
+    },
+  } = useSettings();
 
   // Blocks
   const [currentNode, setCurrentNode] = useState<TextNode | ElementNode | null>(null);
@@ -234,6 +243,30 @@ export default function ToolbarPlugin() {
           className="data-[shown=false]:hidden"
         />
 
+        <div className="grow">
+
+        </div>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost">
+              <Settings className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56" side="left">
+            <DropdownMenuLabel>Settings</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuCheckboxItem
+              checked={isDebug}
+              onCheckedChange={() => {
+                setOption("isDebug", !isDebug)
+              }}
+            >
+              <Bug className="mr-2 h-4 w-4" />
+              <span>Debug</span>
+            </DropdownMenuCheckboxItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );

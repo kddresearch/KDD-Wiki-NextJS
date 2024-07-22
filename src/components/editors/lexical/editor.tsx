@@ -29,6 +29,7 @@ import ContextMenuPlugin from './plugins/context-menu-plugin';
 import dynamic from 'next/dynamic';
 import InsertCommandsPlugin from './plugins/insert-commands-plugin';
 import TreeViewPlugin from './plugins/tree-view-plugin';
+import { SettingsContext, useSettings } from './plugins/settings-context-plugin';
 
 function onError(error: Error) {
   console.error(error);
@@ -36,6 +37,14 @@ function onError(error: Error) {
 
 
 function Editor() {
+
+  const {
+    setOption,
+    settings: {
+      isDebug
+    },
+  } = useSettings();
+
   return (
     <div id="hello" className="my-5 bg-white text-black relative leading-5 font-normal text-left rounded-lg border-gray border">
       <ToolbarPlugin />
@@ -56,7 +65,7 @@ function Editor() {
         <InsertCommandsPlugin />
         <CodeHighlightPlugin />
         <LinkPlugin />
-        <TreeViewPlugin />
+        {isDebug && <TreeViewPlugin />}
       </ContextMenuPlugin>
     </div>
   );
@@ -88,7 +97,9 @@ function TextEditor({
   return (
     isClient ? (
       <LexicalComposer initialConfig={initialConfig}>
-        <Editor/>
+        <SettingsContext>
+          <Editor/>
+        </SettingsContext>
       </LexicalComposer>
     ) : (
       <div>Loading editor... (enable javascript)</div>
