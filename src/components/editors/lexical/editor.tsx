@@ -12,7 +12,8 @@ import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import MarkdownPlugin from "./plugins/markdown-plugin";
 import ToolbarPlugin from './plugins/toolbar-plugin';
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
-import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';     
+import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
+import { TreeView } from '@lexical/react/LexicalTreeView';
 
 import {
   $convertFromMarkdownString,
@@ -27,6 +28,7 @@ import CodeHighlightPlugin from './plugins/code-highlighting-plugin';
 import ContextMenuPlugin from './plugins/context-menu-plugin';
 import dynamic from 'next/dynamic';
 import InsertCommandsPlugin from './plugins/insert-commands-plugin';
+import TreeViewPlugin from './plugins/tree-view-plugin';
 
 function onError(error: Error) {
   console.error(error);
@@ -54,6 +56,7 @@ function Editor() {
         <InsertCommandsPlugin />
         <CodeHighlightPlugin />
         <LinkPlugin />
+        <TreeViewPlugin />
       </ContextMenuPlugin>
     </div>
   );

@@ -92,6 +92,16 @@ function InsertCommandsPlugin() {
         const focusNode = selection.focus.getNode();
         if (focusNode !== null) {
           const newNode = NODE_TYPES[nodeTypeKey].create();
+
+          const node = focusNode.getLatest();
+
+          console.log("offset:", selection.focus.offset, "content size:", node.getTextContentSize());
+
+          if (selection.focus.offset === node.getTextContentSize()) {
+            node.getParent()?.insertAfter(newNode, true);
+            return true;
+          }
+          
           $insertNodeToNearestRoot(newNode);
         }
 
