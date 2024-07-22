@@ -51,6 +51,7 @@ export default function ToolbarPlugin() {
   const [isStrikethrough, setIsStrikethrough] = useState(false);
 
   const [currentElementEditor, setCurrentElementEditor] = useState();
+  const [isDebug, setIsDebug] = useState(false);
 
   const getValue = () => {
     const values = [];
