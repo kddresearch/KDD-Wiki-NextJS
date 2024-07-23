@@ -25,7 +25,7 @@ import * as React from "react";
 import { getSelectedNode } from "../utils";
 import { $isCodeNode } from '@lexical/code';
 
-import { Bold, Italic, Underline, Strikethrough, Undo, Redo, Code, Link, User, CreditCard, Settings, Keyboard, Users, UserPlus, Mail, MessageSquare, PlusCircle, Plus, Github, LifeBuoy, Cloud, LogOut, Calendar, Smile, Calculator, Heading1Icon, Heading2Icon, Heading3Icon, Heading, Bug } from "lucide-react"
+import { Bold, Italic, Underline, Strikethrough, Undo, Redo, Code, Link, User, CreditCard, Settings, Keyboard, Users, UserPlus, Mail, MessageSquare, PlusCircle, Plus, Github, LifeBuoy, Cloud, LogOut, Calendar, Smile, Calculator, Heading1Icon, Heading2Icon, Heading3Icon, Heading, Bug, PictureInPicture2 } from "lucide-react"
 import {
   ToggleGroup,
   ToggleGroupItem,
@@ -66,7 +66,8 @@ export default function ToolbarPlugin() {
   const {
     setOption,
     settings: {
-      isDebug
+      isDebug,
+      useSelectionToolbar
     },
   } = useSettings();
 
@@ -263,6 +264,20 @@ export default function ToolbarPlugin() {
             >
               <Bug className="mr-2 h-4 w-4" />
               <span>Debug</span>
+            </DropdownMenuCheckboxItem>
+
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel>Experimental</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+
+            <DropdownMenuCheckboxItem
+              checked={useSelectionToolbar}
+              onCheckedChange={() => {
+                setOption("useSelectionToolbar", !useSelectionToolbar)
+              }}
+            >
+              <PictureInPicture2 className="mr-2 h-4 w-4" />
+              <span>Selection Toolbar</span>
             </DropdownMenuCheckboxItem>
           </DropdownMenuContent>
         </DropdownMenu>

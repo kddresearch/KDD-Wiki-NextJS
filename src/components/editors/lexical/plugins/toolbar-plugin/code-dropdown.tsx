@@ -61,8 +61,6 @@ function CodeDropdown({
     }
 
     const language = codeNode.getLanguage()!;
-    
-    console.log("Setting language", language);
 
     if (language === "plaintext") {
       setCodeLanguage(undefined);
@@ -127,7 +125,7 @@ function CodeDropdown({
         )}
       {...props}
     >
-      <Label className="my-auto">Language: </Label>
+      <Label className="my-auto text-sm">Language: </Label>
       <Combobox
         options={languages}
         defaultSelect={codeLanguage}

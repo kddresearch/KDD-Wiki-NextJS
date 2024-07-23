@@ -19,6 +19,7 @@ import {
 
 export const DEFAULT_SETTINGS = {
   isDebug: false,
+  useSelectionToolbar: false,
 } as const;
 
 export type SettingName = keyof typeof DEFAULT_SETTINGS;
@@ -46,7 +47,32 @@ export const SettingsContext = ({
 }: {
   children: ReactNode;
 }): JSX.Element => {
-  const [settings, setSettings] = useState(INITIAL_SETTINGS);
+
+  const windowLocation = window.location;
+  const searchParams = new URLSearchParams(windowLocation.search);
+  const initialSettings: Record<SettingName, boolean> = {
+    ...INITIAL_SETTINGS,
+  };
+
+  console.log("search params", searchParams);
+
+  searchParams.forEach((value, key) => {
+
+    console.log("key", key);
+
+    if (key in initialSettings) {
+      const value = searchParams.get(key) === 'true';
+      initialSettings[key as SettingName] = value;
+      console.log("key in initial settings", key, initialSettings[key as SettingName]);
+    }
+  });
+
+  const [settings, setSettings] = useState(initialSettings);
+
+  for (let key in settings) {
+    console.log("inital key", key, initialSettings[key as SettingName]);
+    console.log("settings key", key, settings[key as SettingName]);
+  }
 
   const setOption = useCallback((setting: SettingName, value: boolean) => {
     setSettings((options) => ({

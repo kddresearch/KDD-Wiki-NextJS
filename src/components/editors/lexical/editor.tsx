@@ -42,7 +42,8 @@ function Editor() {
   const {
     setOption,
     settings: {
-      isDebug
+      isDebug,
+      useSelectionToolbar
     },
   } = useSettings();
 
@@ -67,7 +68,7 @@ function Editor() {
         <InsertCommandsPlugin />
         <CodeHighlightPlugin />
         <LinkPlugin />
-        <SelectionToolbarPlugin />
+        {useSelectionToolbar && <SelectionToolbarPlugin />}
         {isDebug && <TreeViewPlugin />}
       </ContextMenuPlugin>
     </div>

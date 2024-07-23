@@ -18,6 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import StripeBackDrop from "@/components/layout/backdrop"
+import Card from "@/components/layout/card"
 
 const frameworks = [
   {
@@ -42,7 +43,7 @@ const frameworks = [
   },
 ]
 
-export function ComboboxDemo() {
+function ComboboxDemo() {
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState("")
 
@@ -94,7 +95,9 @@ export function ComboboxDemo() {
 function ComponentPage() {
   return (
     <StripeBackDrop>
-      <ComboboxDemo />
+      <Card>
+        <ComboboxDemo />
+      </Card>
     </StripeBackDrop>
   )
 }
