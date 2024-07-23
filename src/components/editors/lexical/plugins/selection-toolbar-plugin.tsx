@@ -4,7 +4,6 @@ import { $isCodeNode } from "@lexical/code";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { mergeRegister } from "@lexical/utils";
 import { $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND, SELECTION_CHANGE_COMMAND } from "lexical";
-import { set } from "lodash-es";
 import { Bold, Italic, Strikethrough, Underline } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getSelectedNode } from "../utils";
@@ -22,9 +21,9 @@ function SelectionToolbarPlugin() {
 
   // selection states
   const [isValidSelection, setIsValidSelection] = useState(false);
-  const [isWithinTextbox, setIsWithinTextbox] = useState(false);
-  const [show, setShow] = useState(false);
-  
+  const [isValidSelectionBoundary, setIsValidSelectionBoundary] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+
   // format states
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
@@ -42,11 +41,10 @@ function SelectionToolbarPlugin() {
 
   const selectionToolbarRef = useRef<HTMLDivElement | null>(null);
 
-  
   const setMenuPosition = useCallback(() => {
     const nativeSelection = window.getSelection();
     const textbox = document.getElementById(textboxId);
-    
+
     if (textbox === null) {
       throw new Error("Element not found, the selection toolbar plugin requires 'lexical-text-editable' id to be present on the content editable element");
     }
@@ -66,10 +64,10 @@ function SelectionToolbarPlugin() {
     setSelection({ x, y });
   }, []);
 
-  const updateShow = useCallback(() => {
-    const show = isValidSelection && isWithinTextbox;
+  const updateMenuVisibility = useCallback((isValidSelection: boolean, isValidSelectionBoundary: boolean) => {
+    const show = isValidSelection && isValidSelectionBoundary;
 
-    console.log("isWithinTextbox", isWithinTextbox);
+    console.log("isValidSelectionBoundary", isValidSelectionBoundary);
     console.log("isValidSelection", isValidSelection);
     console.log("show", show);
 
@@ -77,49 +75,93 @@ function SelectionToolbarPlugin() {
       setMenuPosition();
     }
 
-    setShow(show);
-  }, [isValidSelection, isWithinTextbox, setMenuPosition]);
-4
-  useEffect(() => {
-    updateShow();
-  }, [isValidSelection, isWithinTextbox, updateShow]);
-
+    setIsVisible(show);
+  }, [setMenuPosition]);
 
   const onPopoverOpenChange = useCallback((event: boolean) => {
+    if (!event) return setIsVisible(false);
+  }, []);
 
-    if (event) console.log("opening Menu");
-    else console.log("closing Menu");
+  // Syncronous function to wait for composition to finish
+  const waitForComposition = useCallback(() => {
+    const checkComposition = () => {
+      editor.getEditorState().read(() => {
+        const isComposing = editor.isComposing();
+        if (!isComposing) {
+          console.log("Editor is finished composing");
+          return isComposing;
+        } else {
+          setTimeout(checkComposition, 10); // Check again after 10ms
+        }
+      });
+    };
+    checkComposition();
+  }, [editor]);
 
-    updateShow();
-    setShow(event);
+  const updateSelectionValidity = useCallback(() => {
 
-  }, [updateShow]);
+    const completed = waitForComposition();
 
-  const updateSelectionToolbarState = useCallback(() => {
     const lexicalSelection = $getSelection();
 
     if (lexicalSelection === null) {
       console.log("invalidSelection: selection is null");
-      setIsValidSelection(false);
-      return;
+      return false;
     }
     if (!$isRangeSelection(lexicalSelection)) {
       console.log("invalidSelection: selection is not range selection");
-      setIsValidSelection(false);
-      return;
+      return false;
     }
-
     if (lexicalSelection.anchor.offset === lexicalSelection.focus.offset) {
       console.log("invalidSelection: selection range is 0 offset");
-      setIsValidSelection(false);
-      console.log("selection", isValidSelection);
-      return;
+      return false;
+    }
+
+    return true;
+  }, [waitForComposition]);
+
+  const checkSelectiongBoundary = useCallback(() => {
+    const nativeSelection = window.getSelection();
+    const textbox = document.getElementById(textboxId);
+
+    if (textbox === null) {
+      return false;
+      throw new Error("Element not found, the selection toolbar plugin requires 'lexical-text-editable' id to be present on the content editable element");
+    }
+
+    if (nativeSelection === null) {
+      return false;
+    }
+
+    if (!nativeSelection.rangeCount) {
+      return false;
+    }
+    
+    const range = nativeSelection.getRangeAt(0);
+    const textboxRange = document.createRange();
+    textboxRange.selectNodeContents(textbox);
+
+    const result = textboxRange.compareBoundaryPoints(Range.START_TO_START, range) <= 0 &&
+      textboxRange.compareBoundaryPoints(Range.END_TO_END, range) >= 0;
+    
+    setIsValidSelectionBoundary(result);
+    return result;
+  }, []);
+
+  const handleSelectionChange = useCallback(() => {
+    const lexicalSelection = $getSelection();
+
+    if (lexicalSelection === null) {
+      return false;
+    }
+    if (!$isRangeSelection(lexicalSelection)) {
+      return false;
     }
 
     // Update text format
     editor.getEditorState().read(() => {
       if (editor.isComposing()) {
-        return;
+        return false;
       }
 
       // Update text format
@@ -130,79 +172,70 @@ function SelectionToolbarPlugin() {
       // setIsSubscript(lexicalSelection.hasFormat('subscript'));
       // setIsSuperscript(lexicalSelection.hasFormat('superscript'));
       // setIsCode(lexicalSelection.hasFormat('code'));
-    })
+    });
 
-    setIsValidSelection(true);
+    const result = updateSelectionValidity();
+    console.log("isValidSelection", result);
 
-  }, [editor, isValidSelection, setIsValidSelection]);
+    setIsValidSelection(result);
 
-  function mouseUpListener(e: MouseEvent) {
+    return result;
+  }, [editor, updateSelectionValidity]);
 
-    const nativeSelection = window.getSelection();
-    const textbox = document.getElementById(textboxId);
+  const handleMouseUp = useCallback((e: MouseEvent) => {
 
-    if (textbox === null) {
-      throw new Error("Element not found, the selection toolbar plugin requires 'lexical-text-editable' id to be present on the content editable element");
-    }
+    console.log("Mouse Released");
 
-    if (nativeSelection === null) {
-      return;
-    }
+    const boundaryResult = checkSelectiongBoundary();
+    console.log("boundaryResult", boundaryResult);
 
-    if (nativeSelection.rangeCount) {
-      const range = nativeSelection.getRangeAt(0);
-      const textboxRange = document.createRange();
-      textboxRange.selectNodeContents(textbox);
+    editor.update(async () => {
+      const validSelectionResult = await handleSelectionChange();
+      console.log("validSelectionResult", validSelectionResult);
+      updateMenuVisibility(validSelectionResult, boundaryResult);
+    });
 
-      setIsWithinTextbox(textboxRange.compareBoundaryPoints(Range.START_TO_START, range) <= 0 &&
-        textboxRange.compareBoundaryPoints(Range.END_TO_END, range) >= 0);
-    }
+  }, [editor, checkSelectiongBoundary, updateMenuVisibility, handleSelectionChange]);
 
-    updateShow();
-  }
 
+  // Register Hooks
   useEffect(() => {
-    document.addEventListener("mouseup", mouseUpListener);
-    // document.addEventListener("mousemove", mouseMoveListener);
+    document.addEventListener("mouseup", handleMouseUp);
 
     return () => {
-      document.removeEventListener("mouseup", mouseUpListener);
-      // document.removeEventListener("mousemove", mouseMoveListener);
+      document.removeEventListener("mouseup", handleMouseUp);
     }
-  })
+  });
 
   useEffect(() => {
     return mergeRegister(
       editor.registerUpdateListener(({ editorState }) => {
         editorState.read(() => {
-          updateSelectionToolbarState();
-          updateShow();
+          handleSelectionChange();
         });
       }),
 
       editor.registerCommand(
         SELECTION_CHANGE_COMMAND,
         (_payload, newEditor) => {
-          updateSelectionToolbarState();
-          updateShow();
-
+          handleSelectionChange();
           return false;
         },
         LowPriority,
       )
     );
-  }, [editor, updateSelectionToolbarState, updateShow]);
+  }, [editor, handleSelectionChange]);
 
   const xOffset = selection?.x;
   const yOffset = selection?.y;
 
   return (
-    <Popover open={show} onOpenChange={onPopoverOpenChange} >
+    <Popover open={isVisible} onOpenChange={onPopoverOpenChange} >
       <PopoverAnchor asChild>
         <div
           id="selection-toolbar-anchor"
           className="absolute data-[show=true]:block hidden"
-          data-show={show}
+          data-show={isVisible}
           style={{
             left: xOffset,
             top: yOffset
