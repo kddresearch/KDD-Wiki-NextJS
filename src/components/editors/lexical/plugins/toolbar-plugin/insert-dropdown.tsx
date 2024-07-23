@@ -153,7 +153,11 @@ function InsertElementDropdown({
             }}
           >
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              editor.dispatchCommand(COMMANDS.INSERT_LINK, "myPayload");
+            }}
+          >
             <Link className="mr-2 h-4 w-4" />
             <span>Link</span>
           </DropdownMenuItem>
@@ -162,19 +166,15 @@ function InsertElementDropdown({
         <DropdownMenuSeparator />
 
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                openKeyboardShortcuts(true);
-              }}
-            >
-              <Keyboard className="mr-2 h-4 w-4" />
-              <span>Keyboard shortcuts</span>
-              <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-            </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              openKeyboardShortcuts(true);
+            }}
+          >
+            <Keyboard className="mr-2 h-4 w-4" />
+            <span>Keyboard shortcuts</span>
+            <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
