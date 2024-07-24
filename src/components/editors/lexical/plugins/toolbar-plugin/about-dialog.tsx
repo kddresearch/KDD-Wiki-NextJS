@@ -42,7 +42,7 @@ function AboutDialog({
   Markdown WYSIWYG *(What You See Is What You Get)* editor.
 
   The code can be found on the github page, at
-  [/src/components/editors/lexical](${githubLink})
+  [/src/components/editors/lexical](${githubLink}).
 
   This is built upon the amazing work of the Meta team, who created the
   Lexical editor. The Lexical editor is a powerful, flexible, and extensible
