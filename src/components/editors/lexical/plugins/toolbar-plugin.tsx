@@ -25,7 +25,7 @@ import * as React from "react";
 import { getSelectedNode } from "../utils";
 import { $isCodeNode } from '@lexical/code';
 
-import { Bold, Italic, Underline, Strikethrough, Undo, Redo, Code, Link, User, CreditCard, Settings, Keyboard, Users, UserPlus, Mail, MessageSquare, PlusCircle, Plus, Github, LifeBuoy, Cloud, LogOut, Calendar, Smile, Calculator, Heading1Icon, Heading2Icon, Heading3Icon, Heading, Bug, PictureInPicture2 } from "lucide-react"
+import { Bold, Italic, Underline, Strikethrough, Undo, Redo, Code, Link, User, CreditCard, Settings, Keyboard, Users, UserPlus, Mail, MessageSquare, PlusCircle, Plus, Github, LifeBuoy, Cloud, LogOut, Calendar, Smile, Calculator, Heading1Icon, Heading2Icon, Heading3Icon, Heading, Bug, PictureInPicture2, Info } from "lucide-react"
 import {
   ToggleGroup,
   ToggleGroupItem,
@@ -37,6 +37,7 @@ import InsertElementDropdown from "./toolbar-plugin/insert-dropdown";
 import CodeDropdown from "./toolbar-plugin/code-dropdown";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useSettings } from "./settings-context-plugin";
+import AboutDialog from "./toolbar-plugin/about-dialog";
 
 // No clue what this is for
 const LowPriority = 1;
@@ -53,6 +54,8 @@ export default function ToolbarPlugin() {
   const [isStrikethrough, setIsStrikethrough] = useState(false);
 
   const [currentElementEditor, setCurrentElementEditor] = useState();
+
+  const [showAboutDialog, setShowAboutDialog] = React.useState(false)
 
   const getValue = () => {
     const values = [];
@@ -254,6 +257,21 @@ export default function ToolbarPlugin() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" side="left">
+
+            <DropdownMenuLabel>KDD Editor</DropdownMenuLabel>
+
+            
+            <DropdownMenuItem
+              onClick={() => {
+                setShowAboutDialog(true)
+              }}
+            >
+              <Info className="mr-2 h-4 w-4" />
+              About KDD Editor
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
+
             <DropdownMenuLabel>Settings</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuCheckboxItem
@@ -281,6 +299,9 @@ export default function ToolbarPlugin() {
             </DropdownMenuCheckboxItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <AboutDialog open={showAboutDialog} onOpenChange={setShowAboutDialog} />
+
       </div>
     </div>
   );

@@ -64,7 +64,7 @@ export function sanitizeURL(url: string): string {
 }
 
 import {$isAtNodeEnd} from '@lexical/selection';
-import {ElementNode, RangeSelection, TextNode} from 'lexical';
+import {$isRootNode, ElementNode, LexicalNode, RangeSelection, TextNode} from 'lexical';
 
 export function getSelectedNode(
   selection: RangeSelection,
@@ -115,4 +115,12 @@ export function useDebounce<T extends (...args: never[]) => void>(
       ),
     [ms, maxWait],
   );
+}
+
+export function getNodeBeforeRoot(node: LexicalNode): LexicalNode {
+  let currentNode = node;
+  while (currentNode.getParent() && !$isRootNode(currentNode.getParent())) {
+    currentNode = currentNode.getParent()!;
+  }
+  return currentNode;
 }

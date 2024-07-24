@@ -17,7 +17,8 @@ import {
 } from "@/components/ui/context-menu"
 import { useCallback, useEffect, useState } from "react";
 import { mergeRegister } from "@lexical/utils";
-import { CAN_REDO_COMMAND, CAN_UNDO_COMMAND, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND } from "lexical";
+import { $getSelection, $isRangeSelection, CAN_REDO_COMMAND, CAN_UNDO_COMMAND, LexicalNode, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND } from "lexical";
+import { getNodeBeforeRoot } from "../utils";
 
 // Still no clue what this is for
 const LowPriority = 1;
@@ -31,6 +32,8 @@ function ContextMenuPlugin({
 
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
+
+  const [currentNode, setCurrentNode] = useState<LexicalNode | null>(null);
 
   const updateCommandBar = useCallback(() => {
 
@@ -72,8 +75,51 @@ function ContextMenuPlugin({
     );
   }, [editor, updateCommandBar]);
 
+  const getCurrentNode = useCallback(() => {
+
+    editor.update(() => {
+      const selection = $getSelection();
+      let node;
+
+      if (!selection) {
+        return;
+      }
+
+      if ($isRangeSelection(selection)) {
+        node = selection.focus.getNode();
+
+        node = getNodeBeforeRoot(node);
+      }
+
+      if (node === undefined) {
+        return;
+      }
+
+      setCurrentNode(node);
+    })
+
+  }, [editor])
+
+  const onOpenChange = useCallback((isOpen: boolean) => {
+
+    if (!isOpen) {
+      return;
+    }
+
+    getCurrentNode();
+
+  }, [getCurrentNode]);
+
+  const currentNodeToText = useCallback(() => {
+    if (!currentNode) {
+      return "";
+    }
+
+    return currentNode.getType();
+  }, [currentNode]);
+
   return (
-    <ContextMenu>
+    <ContextMenu onOpenChange={onOpenChange}>
       <ContextMenuTrigger {...props}>
         {props.children}
       </ContextMenuTrigger>
@@ -146,14 +192,13 @@ function ContextMenuPlugin({
             <ContextMenuItem>Developer Tools</ContextMenuItem>
           </ContextMenuSubContent>
         </ContextMenuSub>
-        <ContextMenuRadioGroup value="pedro">
-          <ContextMenuLabel inset>People</ContextMenuLabel>
-          <ContextMenuSeparator />
-          <ContextMenuRadioItem value="pedro">
-            Pedro Duarte
-          </ContextMenuRadioItem>
-          <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>
-        </ContextMenuRadioGroup>
+
+        <ContextMenuSeparator />
+
+        <ContextMenuItem>
+          {currentNodeToText()}
+        </ContextMenuItem>
+
       </ContextMenuContent>
     </ContextMenu>
   )

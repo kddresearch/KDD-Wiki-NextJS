@@ -6,7 +6,7 @@ import { mergeRegister } from "@lexical/utils";
 import { $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND, SELECTION_CHANGE_COMMAND } from "lexical";
 import { Bold, Italic, Strikethrough, Underline } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getSelectedNode } from "../utils";
+import { getNodeBeforeRoot, getSelectedNode } from "../utils";
 
 // Still no clue what this is for
 const LowPriority = 1;
@@ -20,8 +20,6 @@ function SelectionToolbarPlugin() {
   const [selection, setSelection] = useState<{x: number, y: number} | null>(null);
 
   // selection states
-  const [isValidSelection, setIsValidSelection] = useState(false);
-  const [isValidSelectionBoundary, setIsValidSelectionBoundary] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
   // format states
@@ -61,6 +59,8 @@ function SelectionToolbarPlugin() {
     const x = rect.left - textboxRect.left;
     const y = rect.bottom - textboxRect.top;
 
+    console.log("setMenuPosition", x, y);
+
     setSelection({ x, y });
   }, []);
 
@@ -79,7 +79,10 @@ function SelectionToolbarPlugin() {
   }, [setMenuPosition]);
 
   const onPopoverOpenChange = useCallback((event: boolean) => {
-    if (!event) return setIsVisible(false);
+
+    setIsVisible(true); // Always show the toolbar
+
+    // if (!event) return setIsVisible(false);
   }, []);
 
   // Syncronous function to wait for composition to finish
@@ -143,8 +146,7 @@ function SelectionToolbarPlugin() {
 
     const result = textboxRange.compareBoundaryPoints(Range.START_TO_START, range) <= 0 &&
       textboxRange.compareBoundaryPoints(Range.END_TO_END, range) >= 0;
-    
-    setIsValidSelectionBoundary(result);
+
     return result;
   }, []);
 
@@ -174,15 +176,40 @@ function SelectionToolbarPlugin() {
       // setIsCode(lexicalSelection.hasFormat('code'));
     });
 
+    const isCode = lexicalSelection.getNodes().some((node) => {
+
+      console.log("node", node);
+
+      const topNode = getNodeBeforeRoot(node);
+      if ($isCodeNode(topNode)) {
+        return true;
+      }
+    });
+
     const result = updateSelectionValidity();
-    console.log("isValidSelection", result);
+    const isValidSelection = result && !isCode;
 
-    setIsValidSelection(result);
+    if (!isValidSelection) {
+      setIsVisible(false);
+    }
 
-    return result;
+
+    return isValidSelection;
   }, [editor, updateSelectionValidity]);
 
   const handleMouseUp = useCallback((e: MouseEvent) => {
+
+    if (e.button === 2) {
+      setIsVisible(false);
+      return;
+    }
+
+    if (e.button !== 0) {
+      return;
+    }
+
+    // wait .5 seconds for the composition to finish
+    waitForComposition();
 
     console.log("Mouse Released");
 
@@ -195,7 +222,7 @@ function SelectionToolbarPlugin() {
       updateMenuVisibility(validSelectionResult, boundaryResult);
     });
 
-  }, [editor, checkSelectiongBoundary, updateMenuVisibility, handleSelectionChange]);
+  }, [editor, checkSelectiongBoundary, updateMenuVisibility, handleSelectionChange, waitForComposition]);
 
 
   // Register Hooks
