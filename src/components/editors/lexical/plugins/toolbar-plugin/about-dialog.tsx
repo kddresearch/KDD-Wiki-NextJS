@@ -7,29 +7,6 @@ import {
 } from "@/components/ui/dialog";
 import { DialogProps } from "@radix-ui/react-dialog";
 import RenderMarkdownStringClient from "@/components/markdown/markdown-client";
-import { Suspense } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-
-
-function LoadingComponent() {
-  return (
-    <div className="space-y-2">
-      <Skeleton className="h-4 w-[400px]" />
-      <Skeleton className="h-4 w-[350px]" />
-      <Skeleton className="h-4 w-[250px]" />
-      <div className="h-4"></div>
-      <Skeleton className="h-4 w-[400px]" />
-      <Skeleton className="h-4 w-[375px]" />
-      <div className="h-4"></div>
-      <Skeleton className="h-4 w-[400px]" />
-      <Skeleton className="h-4 w-[375px]" />
-      <Skeleton className="h-4 w-[325px]" />
-      <Skeleton className="h-4 w-[100px]" />
-      <div className="h-4"></div>
-      <Skeleton className="h-4 w-[250px]" />
-    </div>
-  );
-}
 
 function AboutDialog({
   ...props
@@ -57,10 +34,7 @@ function AboutDialog({
         <DialogHeader>
           <DialogTitle>The KDD Editor</DialogTitle>
         </DialogHeader>
-        
-        <Suspense fallback={<LoadingComponent />}>
           <RenderMarkdownStringClient markdown={markdown} />
-        </Suspense>
       </DialogContent>
     </Dialog>
   )

@@ -18,7 +18,7 @@ interface ConfigStructure {
             ClientSecret: string | undefined;
             Issuer: string;
             WellKnown: string;
-        }
+        };
     };
     Db?: {
         Name: string | undefined;

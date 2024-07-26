@@ -70,9 +70,11 @@ function RenderMarkdownStringClient({
   }
 
   return (
-    <div className={proseClasses}>
-      <MDXRemote {...mdxSource} />
-    </div>
+    <Suspense fallback={<LoadingComponent />}>
+      <div className={proseClasses}>
+        <MDXRemote {...mdxSource} />
+      </div>
+    </Suspense>
   );
 }
 

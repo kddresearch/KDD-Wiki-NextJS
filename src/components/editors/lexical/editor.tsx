@@ -86,7 +86,7 @@ function TextEditor({
 
   useEffect(() => {
     setIsClient(true);
-  }, []);
+  }, [setIsClient]);
 
   const initialConfig = {
     editorState: markdown ? () => $convertFromMarkdownString(markdown) : prePopulate,

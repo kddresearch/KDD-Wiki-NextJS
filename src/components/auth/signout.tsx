@@ -2,7 +2,7 @@ import { signOut } from "@/auth";
 import { ArrowUpRight } from "react-bootstrap-icons";
 
 export function SignOut({
-  provider = "google",
+  provider = "ksu",
   ...props
 }: { provider?: string } & React.HTMLAttributes<HTMLButtonElement>) {
   return (
