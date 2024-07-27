@@ -15,7 +15,7 @@ export default async function UnitBar({
   kdduser: any;
 }) {
   const session = await auth();
-
+  const isSignedIn = session ? true : false;
   return (
     <div className="flex items-center justify-between w-full h-16 lg:h-14 bg-white text-purple">
       <div className="container flex items-center">
@@ -41,7 +41,7 @@ export default async function UnitBar({
           </p>
         </Link>
         <div className="flex items-center justify-end ml-2">
-          {session ? <SignOut /> : <SignIn />}
+          {isSignedIn ? <SignOut /> : <SignIn />}
         </div>
       </div>
     </div>

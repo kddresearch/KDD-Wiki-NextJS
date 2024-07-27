@@ -7,41 +7,39 @@ const env_config = await getConfig();
 
 import google from "next-auth/providers/google";
 import KddUser from "@/models/kdd_user";
-import { OAuthUserConfig } from "next-auth/providers";
-import type { OAuth2Config } from "next-auth/providers";
-import type { OIDCConfig } from "@auth/core/providers";
+import Auth0 from "next-auth/providers/auth0"
 import { AdapterUser } from "next-auth/adapters";
+import type { Provider } from "next-auth/providers"
 
-export const config = {
-    trustHost: true,
-    providers: [
-        {
-            id: "ksu",
-            name: "K-State",
-            type: "oidc",
-            issuer: env_config!.Auth!.Ksu.Issuer,
-            clientId: env_config!.Auth!.Ksu.ClientId,
-            clientSecret: env_config!.Auth!.Ksu.ClientSecret,
-            profile(profile) {
-                console.log(profile);
-                return {
-                    id: profile.id,
-                    name: profile?.name,
-                };
-            },
-            authorization: {
-                params: {
-                    scope: "email openid profile",
-                },
-            },
-            wellKnown: env_config!.Auth!.Ksu.WellKnown,
+const providers: Provider[] = [
+    Auth0,
+    {
+        id: "ksu",
+        name: "K-State",
+        type: "oidc",
+        issuer: env_config!.Auth!.Ksu.Issuer,
+        clientId: env_config!.Auth!.Ksu.ClientId,
+        clientSecret: env_config!.Auth!.Ksu.ClientSecret,
+        profile(profile) {
+            console.log(profile);
+            return {
+                id: profile.id,
+                name: profile?.name,
+            };
         },
-        google({
-            clientId: env_config!.Auth!.Google.ClientId,
-            clientSecret: env_config!.Auth!.Google.ClientSecret,
-        }),
-    ],
+        authorization: {
+            params: {
+                scope: "email openid profile",
+            },
+        },
+        wellKnown: env_config!.Auth!.Ksu.WellKnown,
+    },
+];
+ 
+export const config = {
+    // trustHost: true,
     basePath: "/auth",
+    providers: providers,
     callbacks: {
         async signIn({ user, account, profile }) {
             return true;
@@ -51,20 +49,16 @@ export const config = {
             return url;
         },
         async session({ session, token, user }) {
-            session.userId = session.user.email.split("@")[0];
 
             const kddUser = token.kdd_user as AdapterUser & User;
 
             session.user = {
-              // ...session.user,
               ...kddUser,
             };
 
             return session;
         },
         authorized({ request, auth }) {
-            const { pathname } = request.nextUrl;
-            if (pathname === "/middleware-example") return !!auth;
             return true;
         },
         jwt({ token, trigger, session }) {

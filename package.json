@@ -12,8 +12,6 @@
     "drizzle-studio": "pnpm drizzle-kit studio"
   },
   "dependencies": {
-    "@auth/core": "^0.29.0",
-    "@auth/pg-adapter": "^0.8.0",
     "@azure/core-http": "^3.0.4",
     "@azure/identity": "^4.3.0",
     "@azure/keyvault-secrets": "^4.8.0",
@@ -71,7 +69,7 @@
     "lucide-react": "^0.407.0",
     "next": "^14.2.4",
     "next-auth": "5.0.0-beta.19",
-    "next-mdx-remote": "^5.0.0",
+    "next-mdx-remote": "4.4.1",
     "next-mdx-remote-client": "^1.0.3",
     "pg": "^8.12.0",
     "prismjs": "^1.29.0",

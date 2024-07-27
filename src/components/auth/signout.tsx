@@ -2,9 +2,8 @@ import { signOut } from "@/auth";
 import { ArrowUpRight } from "react-bootstrap-icons";
 
 export function SignOut({
-  provider = "ksu",
   ...props
-}: { provider?: string } & React.HTMLAttributes<HTMLButtonElement>) {
+}: React.HTMLAttributes<HTMLButtonElement>) {
   return (
     <form
       action={async () => {
