@@ -18,6 +18,7 @@
     "@azure/storage-blob": "^12.23.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@hookform/resolvers": "^3.9.0",
     "@lexical/code": "^0.16.1",
     "@lexical/hashtag": "^0.16.1",
     "@lexical/link": "^0.16.1",
@@ -78,6 +79,7 @@
     "react": "^18.3.1",
     "react-bootstrap-icons": "^1.11.4",
     "react-dom": "^18.3.1",
+    "react-hook-form": "^7.52.1",
     "react-icons": "^5.2.1",
     "react-markdown": "^9.0.1",
     "react-query": "^3.39.3",
@@ -99,7 +101,8 @@
     "tailwindcss-underline-strikethrough": "^1.0.1",
     "unified": "^11.0.5",
     "unified-stream": "^3.0.0",
-    "whatwg-url": "^14.0.0"
+    "whatwg-url": "^14.0.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.13",

@@ -18,17 +18,5 @@ export default function CodeHighlightPlugin(): JSX.Element | null {
     return registerCodeHighlighting(editor);
   }, [editor]);
 
-  // useEffect(() => {
-  //   return editor.registerNodeTransform(CodeHighlightNode, (node) => {
-  //     const codeText = node.getTextContent();
-  //     const language = node.getHighlightType();
-
-  //     if (language && Prism.languages[language]) {
-  //       const highlightedCode = Prism.highlight(codeText, Prism.languages[language], language);
-  //       node.setTextContent(highlightedCode);
-  //     }
-  //   })
-  // })
-
   return null;
 }

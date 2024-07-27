@@ -22,7 +22,7 @@ import {
 } from "@lexical/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as React from "react";
-import { getSelectedNode } from "../utils";
+import { getNodeBeforeRoot, getSelectedNode } from "../utils";
 import { $isCodeNode } from '@lexical/code';
 
 import { Bold, Italic, Underline, Strikethrough, Undo, Redo, Code, Link, User, CreditCard, Settings, Keyboard, Users, UserPlus, Mail, MessageSquare, PlusCircle, Plus, Github, LifeBuoy, Cloud, LogOut, Calendar, Smile, Calculator, Heading1Icon, Heading2Icon, Heading3Icon, Heading, Bug, PictureInPicture2, Info } from "lucide-react"
@@ -53,6 +53,8 @@ export default function ToolbarPlugin() {
   const [isUnderline, setIsUnderline] = useState(false);
   const [isStrikethrough, setIsStrikethrough] = useState(false);
 
+  const [stylingDisabled, setStylingDisabled] = useState(false);
+
   const [currentElementEditor, setCurrentElementEditor] = useState();
 
   const [showAboutDialog, setShowAboutDialog] = React.useState(false)
@@ -82,38 +84,23 @@ export default function ToolbarPlugin() {
   const [keyboardShortcutsOpen, setKeyboardShortcutsOpen] = useState(false);
 
   const updateToolbar = useCallback(() => {
-    const selection = $getSelection();
-    if ($isRangeSelection(selection)) {
+    const lexicalSelection = $getSelection();
+    if ($isRangeSelection(lexicalSelection)) {
       // Update text format
-      setIsBold(selection.hasFormat("bold"));
-      setIsItalic(selection.hasFormat("italic"));
-      setIsUnderline(selection.hasFormat("underline"));
-      setIsStrikethrough(selection.hasFormat("strikethrough"));
+      setIsBold(lexicalSelection.hasFormat("bold"));
+      setIsItalic(lexicalSelection.hasFormat("italic"));
+      setIsUnderline(lexicalSelection.hasFormat("underline"));
+      setIsStrikethrough(lexicalSelection.hasFormat("strikethrough"));
 
-      let selectedNode = getSelectedNode(selection);
-
-      setCurrentNode(selectedNode);
-
-      let nodes = [];
-
-      while (selectedNode !== null) {
-        nodes.push(selectedNode);
-
-        if (selectedNode.getParent() === null) {
-          break;
-        } else {
-          selectedNode = selectedNode.getParent()!;
+      const isCode = lexicalSelection.getNodes().some((node) => {
+        const topNode = getNodeBeforeRoot(node);
+        if ($isCodeNode(topNode)) {
+          return true;
         }
-      }
+      });
 
-      for (let node of nodes) {
-        if ($isCodeNode(node)) {
-          setIsCode(true);
-          break;
-        } else {
-          setIsCode(false);
-        }
-      }
+      setIsCode(isCode);
+      setStylingDisabled(isCode);
     }
   }, []);
 
@@ -201,6 +188,7 @@ export default function ToolbarPlugin() {
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
             }}
+            disabled={stylingDisabled}
           >
             <Bold className="h-4 w-4" />
           </ToggleGroupItem>
@@ -210,6 +198,7 @@ export default function ToolbarPlugin() {
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
             }}
+            disabled={stylingDisabled}
           >
             <Italic className="h-4 w-4" />
           </ToggleGroupItem>
@@ -219,6 +208,7 @@ export default function ToolbarPlugin() {
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
             }}
+            disabled={stylingDisabled}
           >
             <Underline className="h-4 w-4" />
           </ToggleGroupItem>
@@ -228,6 +218,7 @@ export default function ToolbarPlugin() {
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
             }}
+            disabled={stylingDisabled}
           >
             <Strikethrough className="h-4 w-4" />
           </ToggleGroupItem>

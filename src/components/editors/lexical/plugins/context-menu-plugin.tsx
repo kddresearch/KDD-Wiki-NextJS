@@ -14,11 +14,26 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuTrigger,
-} from "@/components/ui/context-menu"
+} from "@/components/ui/context-menu";
 import { useCallback, useEffect, useState } from "react";
 import { mergeRegister } from "@lexical/utils";
-import { $getSelection, $isRangeSelection, CAN_REDO_COMMAND, CAN_UNDO_COMMAND, LexicalNode, REDO_COMMAND, SELECTION_CHANGE_COMMAND, UNDO_COMMAND } from "lexical";
+import {
+  ElementNode,
+  FORMAT_ELEMENT_COMMAND,
+  FORMAT_TEXT_COMMAND,
+  TextNode,
+  $createTextNode,
+  $getSelection,
+  $isRangeSelection,
+  CAN_REDO_COMMAND,
+  CAN_UNDO_COMMAND,
+  LexicalNode,
+  REDO_COMMAND,
+  SELECTION_CHANGE_COMMAND,
+  UNDO_COMMAND
+} from "lexical";
 import { getNodeBeforeRoot } from "../utils";
+import { $isCodeNode } from "@lexical/code";
 
 // Still no clue what this is for
 const LowPriority = 1;
@@ -32,13 +47,38 @@ function ContextMenuPlugin({
 
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
+  const [isBold, setIsBold] = useState(false);
+  const [isItalic, setIsItalic] = useState(false);
+  const [isUnderline, setIsUnderline] = useState(false);
+  const [isStrikethrough, setIsStrikethrough] = useState(false);
+
+  const [stylingDisabled, setStylingDisabled] = useState(false);
+
 
   const [currentNode, setCurrentNode] = useState<LexicalNode | null>(null);
 
   const updateCommandBar = useCallback(() => {
+    const lexicalSelection = $getSelection();
 
+    if (!lexicalSelection) {
+      return;
+    }
 
+    if ($isRangeSelection(lexicalSelection)) {
+      setIsBold(lexicalSelection.hasFormat("bold"));
+      setIsItalic(lexicalSelection.hasFormat("italic"));
+      setIsUnderline(lexicalSelection.hasFormat("underline"));
+      setIsStrikethrough(lexicalSelection.hasFormat("strikethrough"));
+    }
 
+    const isCode = lexicalSelection.getNodes().some((node) => {
+      const topNode = getNodeBeforeRoot(node);
+      if ($isCodeNode(topNode)) {
+        return true;
+      }
+    });
+
+    setStylingDisabled(isCode);
   }, []);
 
   useEffect(() => {
@@ -152,19 +192,43 @@ function ContextMenuPlugin({
         <ContextMenuSeparator />
         
         {/* Styling */}
-        <ContextMenuCheckboxItem checked>
+        <ContextMenuCheckboxItem
+          checked={isBold}
+          disabled={stylingDisabled}
+          onCheckedChange={(checked) => {
+            editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
+          }}
+        >
           Bold
           <ContextMenuShortcut>⌘B</ContextMenuShortcut>
         </ContextMenuCheckboxItem>
-        <ContextMenuCheckboxItem>
+        <ContextMenuCheckboxItem
+          checked={isItalic}
+          disabled={stylingDisabled}
+          onCheckedChange={(checked) => {
+            editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
+          }}
+        >
           Italic
           <ContextMenuShortcut>⌘I</ContextMenuShortcut>
         </ContextMenuCheckboxItem>
-        <ContextMenuCheckboxItem>
+        <ContextMenuCheckboxItem
+          checked={isUnderline}
+          disabled={stylingDisabled}
+          onCheckedChange={(checked) => {
+            editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
+          }}
+        >
           Underline
           <ContextMenuShortcut>⌘U</ContextMenuShortcut>
         </ContextMenuCheckboxItem>
-        <ContextMenuCheckboxItem>
+        <ContextMenuCheckboxItem
+          checked={isStrikethrough}
+          disabled={stylingDisabled}
+          onCheckedChange={(checked) => {
+            editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
+          }}
+        >
           Strikethrough
           <ContextMenuShortcut>⌘S</ContextMenuShortcut>
         </ContextMenuCheckboxItem>
@@ -188,8 +252,6 @@ function ContextMenuPlugin({
             <ContextMenuItem>
               Insert Table
             </ContextMenuItem>
-            <ContextMenuSeparator />
-            <ContextMenuItem>Developer Tools</ContextMenuItem>
           </ContextMenuSubContent>
         </ContextMenuSub>
 

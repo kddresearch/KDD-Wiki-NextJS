@@ -78,10 +78,6 @@ function CodeActionMenuContainer({
   const codeSetRef = useRef<Set<string>>(new Set());
   const codeDOMNodeRef = useRef<HTMLElement | null>(null);
 
-  function getCodeDOMNode(): HTMLElement | null {
-    return codeDOMNodeRef.current;
-  }
-
   const debouncedOnMouseMove = useDebounce(
     (event: MouseEvent) => {
       const {codeDOMNode, isOutside} = getMouseInfo(event);

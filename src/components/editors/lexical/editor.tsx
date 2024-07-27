@@ -62,7 +62,6 @@ function Editor() {
           ErrorBoundary={LexicalErrorBoundary}
         />
         <HistoryPlugin />
-        <MarkdownPlugin />
         <AutoFocusPlugin />
         <MarkdownShortcutPlugin />
         <InsertCommandsPlugin />
@@ -70,6 +69,7 @@ function Editor() {
         <LinkPlugin />
         {useSelectionToolbar && <SelectionToolbarPlugin />}
         {isDebug && <TreeViewPlugin />}
+        {isDebug && <MarkdownPlugin />}
       </ContextMenuPlugin>
     </div>
   );

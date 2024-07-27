@@ -31,6 +31,7 @@ type NodeType =
   | "CODE_BLOCK_TS"
   | "CODE_BLOCK_PY"
   | "CODE_BLOCK_MD"
+  | "CODE_BLOCK_BASH"
   | "LINK";
 ;
 
@@ -50,7 +51,7 @@ export const COMMANDS: CommandNames = {} as CommandNames;
   COMMANDS[key] = createCommand();
 });
 
-const nodeTypes: NodeType[] = ["H1", "H2", "H3", "H4", "H5", "H6", "CODE_BLOCK", "CODE_BLOCK_TS", "CODE_BLOCK_PY", "CODE_BLOCK_MD", "LINK"];
+const nodeTypes: NodeType[] = ["H1", "H2", "H3", "H4", "H5", "H6", "CODE_BLOCK", "CODE_BLOCK_TS", "CODE_BLOCK_PY", "CODE_BLOCK_MD", "CODE_BLOCK_BASH", "LINK"];
 
 nodeTypes.forEach((nodeType) => {
   const commandKey = `INSERT_${nodeType}` as InsertCommandType;
@@ -72,6 +73,7 @@ function InsertCommandsPlugin() {
       CODE_BLOCK_TS: { create: (payload) => $createCodeNode("typescript") },
       CODE_BLOCK_PY: { create: (payload) => $createCodeNode("python") },
       CODE_BLOCK_MD: { create: (payload) => $createCodeNode("markdown") },
+      CODE_BLOCK_BASH: { create: (payload) => $createCodeNode("bash") },
       LINK: { create: (payload) => {
 
         if (!payload) return null;

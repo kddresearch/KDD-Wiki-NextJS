@@ -110,7 +110,7 @@ function prePopulate() {
 const x = 5;
 console.log(x);`;
 
-    const code = $createCodeNode("javascript");
+    const code = $createCodeNode("js");
     code.append($createCodeHighlightNode(codestr));
     root.append(code);
 
@@ -122,7 +122,7 @@ def foo():
     
 foo()`;
 
-    const pyCode = $createCodeNode("python");
+    const pyCode = $createCodeNode("py");
     pyCode.append($createCodeHighlightNode(pyCodeStr));
     root.append(pyCode);
   }

@@ -1,14 +1,12 @@
 "use client";
 
 import { Combobox } from "@/components/ui/combo-box";
-import { $isCodeNode, getCodeLanguages, getLanguageFriendlyName } from "@lexical/code";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { $isCodeNode, CODE_LANGUAGE_FRIENDLY_NAME_MAP, getCodeLanguages, getLanguageFriendlyName } from "@lexical/code";
 import { Label } from "@radix-ui/react-label";
 import { $getSelection, $isRangeSelection, LexicalEditor } from "lexical";
-import { getSelectedNode } from "../../utils";
+import { getNodeBeforeRoot, getSelectedNode } from "../../utils";
 import React, { useCallback, useEffect, useState } from "react";
 import { mergeRegister } from "@lexical/utils";
-import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
@@ -22,12 +20,19 @@ function CodeDropdown({
 }:
   CodeDropdownProps
 ) {
-  const languages = getCodeLanguages().map((language) => {
-    return {
-      value: language,
-      label: getLanguageFriendlyName(language),
-    };
-  });
+  const getUniqueLanguages = () => {
+    const options = [];
+  
+    for (const [lang, friendlyName] of Object.entries(
+      CODE_LANGUAGE_FRIENDLY_NAME_MAP,
+    )) {
+      options.push({value: lang, label: friendlyName});
+    }
+  
+    return options;
+  }
+
+  const uniqueLanguages = getUniqueLanguages();
 
   const [codeLanguage, setCodeLanguage] = useState<undefined | string>(undefined);
 
@@ -38,25 +43,10 @@ function CodeDropdown({
       return;
     }
 
-    let node = getSelectedNode(selection);
-    let codeNode = null;
+    const node = getSelectedNode(selection);
+    const codeNode = getNodeBeforeRoot(node);
 
-    // Get all nodes up to the parent
-    while (node !== null) {
-
-      if ($isCodeNode(node)) {
-        codeNode = node;
-        break;
-      }
-
-      if (node.getParent() === null) {
-        break;
-      } else {
-        node = node.getParent()!;
-      }
-    }
-
-    if (codeNode === null) {
+    if (!$isCodeNode(codeNode)) {
       return;
     }
 
@@ -81,7 +71,6 @@ function CodeDropdown({
   }, [editor, updateDropdown]);
 
   const onSelectLanguage = (language: string) => {
-
     editor.update(() => {
       const selection = $getSelection();
 
@@ -89,25 +78,10 @@ function CodeDropdown({
         return;
       }
 
-      let node = getSelectedNode(selection);
-      let codeNode = null;
-
-      // Get all nodes up to the parent
-      while (node !== null) {
-
-        if ($isCodeNode(node)) {
-          codeNode = node;
-          break;
-        }
-
-        if (node.getParent() === null) {
-          break;
-        } else {
-          node = node.getParent()!;
-        }
-      }
-
-      if (codeNode === null) {
+      const node = getSelectedNode(selection);
+      const codeNode = getNodeBeforeRoot(node);
+  
+      if (!$isCodeNode(codeNode)) {
         return;
       }
 
@@ -127,7 +101,7 @@ function CodeDropdown({
     >
       <Label className="my-auto text-sm">Language: </Label>
       <Combobox
-        options={languages}
+        options={uniqueLanguages}
         defaultSelect={codeLanguage}
         onSelect={onSelectLanguage}
         type="language"

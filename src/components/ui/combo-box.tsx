@@ -47,9 +47,6 @@ export function Combobox({
 }: 
   ComboboxProps
 ) {
-
-
-
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState(defaultSelect ?? "")
 
@@ -58,10 +55,10 @@ export function Combobox({
   React.useEffect(() => {
     if (defaultSelect) {
       setValue(defaultSelect)
+    } else {
+      setValue("")
     }
   }, [defaultSelect]);
-
-
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
