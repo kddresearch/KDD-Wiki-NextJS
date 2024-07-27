@@ -12,7 +12,15 @@ import { AdapterUser } from "next-auth/adapters";
 import type { Provider } from "next-auth/providers"
 
 const providers: Provider[] = [
-    Auth0,
+    Auth0({
+        authorization: {
+            params: {
+                prompt: "login",
+                access_type: "offline",
+                response_type: "code"
+            }
+        }
+    }),
     {
         id: "ksu",
         name: "K-State",

@@ -1,5 +1,4 @@
 import { signOut } from "@/auth";
-import { ArrowUpRight } from "lucide-react";
 
 import {
   AlertDialog,
@@ -33,25 +32,19 @@ export function SignOut({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Stay logged in</AlertDialogCancel>
-          <AlertDialogAction>Log Out</AlertDialogAction>
+          <AlertDialogAction asChild>
+            <form action={async (formData) => {
+                "use server"
+                await signOut()
+              }}
+            >
+              <Button type="submit" variant={"default"}>
+                Log Out
+              </Button>
+            </form>
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-    // <form
-    //   action={async () => {
-    //     "use server";
-    //     await signOut();
-    //   }}
-    // >
-    //   <button
-    //     className="align-middle h-8 min-w-max text-bold hover:underline"
-    //     {...props}
-    //   >
-    //     Log Out
-    //     <span className="inline-block pl-1 align-middle text-bold">
-    //       <ArrowUpRight />
-    //     </span>
-    //   </button>
-    // </form>
   );
 }
