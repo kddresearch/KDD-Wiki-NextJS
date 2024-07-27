@@ -8,7 +8,7 @@ import { ArrowUpRight } from "react-bootstrap-icons";
 const SIGNIN_ERROR_URL = "/NotAuthorized";
 
 export function SignIn({
-  provider = "Auth0",
+  provider = "auth0",
   ...props
 }: { provider?: string } & React.HTMLAttributes<HTMLButtonElement>) {
   return (
