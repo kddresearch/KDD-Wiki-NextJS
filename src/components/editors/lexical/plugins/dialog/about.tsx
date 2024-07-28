@@ -10,7 +10,9 @@ import RenderMarkdownStringClient from "@/components/markdown/markdown-client";
 
 function AboutDialog({
   ...props
-}: DialogProps) {
+}:
+  DialogProps
+) {
   
   const githubLink = "https://github.com/kddresearch/KDD-Wiki-NextJS/tree/main/src/components/editors/lexical";
 

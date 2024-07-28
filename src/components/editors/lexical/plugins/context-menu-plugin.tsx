@@ -30,10 +30,12 @@ import {
   LexicalNode,
   REDO_COMMAND,
   SELECTION_CHANGE_COMMAND,
-  UNDO_COMMAND
+  UNDO_COMMAND,
+  $isTextNode
 } from "lexical";
 import { getNodeBeforeRoot } from "../utils";
 import { $isCodeNode } from "@lexical/code";
+import LinkDialog from "./dialog/link";
 
 // Still no clue what this is for
 const LowPriority = 1;
@@ -53,9 +55,10 @@ function ContextMenuPlugin({
   const [isStrikethrough, setIsStrikethrough] = useState(false);
 
   const [stylingDisabled, setStylingDisabled] = useState(false);
+  const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
+  const [selectedText, setSelectedText] = useState<string | undefined>(undefined);
 
-
-  const [currentNode, setCurrentNode] = useState<LexicalNode | null>(null);
+  const [currentNode, setCurrentNode] = useState<LexicalNode | undefined>(undefined);
 
   const updateCommandBar = useCallback(() => {
     const lexicalSelection = $getSelection();
@@ -80,6 +83,37 @@ function ContextMenuPlugin({
 
     setStylingDisabled(isCode);
   }, []);
+
+  const handleInsertLink = () => {
+    editor.update(() => {
+      const selection = $getSelection();
+      if (!selection) {
+        return;
+      }
+
+      if ($isRangeSelection(selection)) {
+        // get text from selection
+        const text = selection.getNodes().map((node) => {
+          if ($isCodeNode(node)) {
+            return "";
+          }
+
+          if ($isTextNode(node)) {
+            return node.getTextContent();
+          }
+        }).join("");
+
+        setSelectedText(text);
+
+        console.log("selectedText:", text);
+      }
+    });
+    setIsLinkDialogOpen(true);
+  };
+
+  const handleLinkDialogClose = () => {
+    setIsLinkDialogOpen(false);
+  };
 
   useEffect(() => {
     return mergeRegister(
@@ -127,7 +161,6 @@ function ContextMenuPlugin({
 
       if ($isRangeSelection(selection)) {
         node = selection.focus.getNode();
-
         node = getNodeBeforeRoot(node);
       }
 
@@ -141,13 +174,11 @@ function ContextMenuPlugin({
   }, [editor])
 
   const onOpenChange = useCallback((isOpen: boolean) => {
-
     if (!isOpen) {
       return;
     }
 
     getCurrentNode();
-
   }, [getCurrentNode]);
 
   const currentNodeToText = useCallback(() => {
@@ -235,7 +266,7 @@ function ContextMenuPlugin({
 
         {/* Elements */}
         <ContextMenuSeparator />
-        <ContextMenuItem inset>
+        <ContextMenuItem inset onClick={handleInsertLink}>
           Insert Link
           <ContextMenuShortcut>⌘R</ContextMenuShortcut>
         </ContextMenuItem>
@@ -262,6 +293,12 @@ function ContextMenuPlugin({
         </ContextMenuItem>
 
       </ContextMenuContent>
+      <LinkDialog
+        open={isLinkDialogOpen}
+        onOpenChange={handleLinkDialogClose}
+        defaultText={selectedText}
+        // You can pass additional props to the LinkDialog component if needed
+      />
     </ContextMenu>
   )
 }

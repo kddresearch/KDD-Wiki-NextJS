@@ -37,7 +37,7 @@ import InsertElementDropdown from "./toolbar-plugin/insert-dropdown";
 import CodeDropdown from "./toolbar-plugin/code-dropdown";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useSettings } from "./settings-context-plugin";
-import AboutDialog from "./toolbar-plugin/about-dialog";
+import AboutDialog from "./dialog/about";
 
 // No clue what this is for
 const LowPriority = 1;
