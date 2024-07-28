@@ -1,8 +1,9 @@
 // utils/selection-utils.js
 import { $getSelection, $isRangeSelection, LexicalEditor, RangeSelection } from "lexical";
-import { getNodeBeforeRoot } from ".";
+import { containsNode, getNodeBeforeRoot } from ".";
 import { $isCodeNode } from "@lexical/code";
 import { $createHeadingNode, $isHeadingNode } from "@lexical/rich-text";
+import { $isLinkNode } from "@lexical/link";
 
 
 
@@ -17,7 +18,6 @@ function isH1InSelection(lexicalSelection: RangeSelection) {
   return lexicalSelection.getNodes().some((node) => {
     const topNode = getNodeBeforeRoot(node);
     if ($isHeadingNode(topNode)) {
-      console.log(topNode.getTag());
       return topNode.getTag() === 'h1';
     }
     return false;
@@ -29,6 +29,10 @@ function isQuoteInSelection(lexicalSelection: RangeSelection) {
     const topNode = getNodeBeforeRoot(node);
     return topNode.getType() === 'quote';
   });
+}
+
+function isLinkInSelection(lexicalSelection: RangeSelection) {
+  return containsNode(lexicalSelection, $isLinkNode);
 }
 
 
@@ -53,15 +57,6 @@ export function getItalicStyling(lexicalSelection: RangeSelection) {
   return {
     isItalic: lexicalSelection.hasFormat("italic") || isQuote,
     isDisabled: isCode || isQuote || isH1,
-  };
-}
-
-export function getUnderlineStyling(lexicalSelection: RangeSelection) {
-  const isCode = isCodeInSelection(lexicalSelection);
-
-  return {
-    isUnderline: lexicalSelection.hasFormat("underline"),
-    isDisabled: isCode,
   };
 }
 

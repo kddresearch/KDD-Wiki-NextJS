@@ -40,7 +40,6 @@ import {
   getBoldStyling,
   getItalicStyling,
   getStrikethroughStyling,
-  getUnderlineStyling
 } from "../utils/styles";
 
 // Still no clue what this is for
@@ -62,9 +61,6 @@ function ContextMenuPlugin({
   // Italic
   const [isItalic, setIsItalic] = useState(false);
   const [isItalicDisabled, setIsItalicDisabled] = useState(false);
-  // Underline
-  const [isUnderline, setIsUnderline] = useState(false);
-  const [isUnderlineDisabled, setIsUnderlineDisabled] = useState(false);
   // Strikethrough
   const [isStrikethrough, setIsStrikethrough] = useState(false);
   const [isStrikethroughDisabled, setIsStrikethroughDisabled] = useState(false);
@@ -93,10 +89,6 @@ function ContextMenuPlugin({
     const italicStyling = getItalicStyling(lexicalSelection);
     setIsItalic(italicStyling.isItalic);
     setIsItalicDisabled(italicStyling.isDisabled);
-
-    const underlineStyling = getUnderlineStyling(lexicalSelection);
-    setIsUnderline(underlineStyling.isUnderline);
-    setIsUnderlineDisabled(underlineStyling.isDisabled);
 
     const strikethroughStyling = getStrikethroughStyling(lexicalSelection);
     setIsStrikethrough(strikethroughStyling.isStrikethrough);
@@ -265,17 +257,6 @@ function ContextMenuPlugin({
         >
           Italic
           <ContextMenuShortcut>⌘I</ContextMenuShortcut>
-        </ContextMenuCheckboxItem>
-        <ContextMenuCheckboxItem
-          checked={isUnderline}
-          disabled={isUnderlineDisabled}
-          persistMenu={true}
-          onCheckedChange={(checked) => {
-            editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
-          }}
-        >
-          Underline
-          <ContextMenuShortcut>⌘U</ContextMenuShortcut>
         </ContextMenuCheckboxItem>
         <ContextMenuCheckboxItem
           checked={isStrikethrough}

@@ -124,3 +124,19 @@ export function getNodeBeforeRoot(node: LexicalNode): LexicalNode {
   }
   return currentNode;
 }
+
+export function containsNode(
+  selection: RangeSelection,
+  nodePredicate: (node: LexicalNode) => boolean
+): boolean {
+  const nodes = selection.getNodes();
+
+  return selection.getNodes().some((node) => {
+    let currentNode = node;
+    while (currentNode.getParent() && !$isRootNode(currentNode.getParent())) {
+      if (nodePredicate(currentNode)) return true;
+      currentNode = currentNode.getParent()!;
+    }
+    return nodePredicate(currentNode);
+  });
+}

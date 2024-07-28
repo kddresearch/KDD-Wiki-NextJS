@@ -42,7 +42,6 @@ import {
   getBoldStyling,
   getItalicStyling,
   getStrikethroughStyling,
-  getUnderlineStyling,
   isCodeInSelection
 } from "../utils/styles";
 import { is } from "drizzle-orm";
@@ -62,9 +61,6 @@ export default function ToolbarPlugin() {
   // Italic
   const [isItalic, setIsItalic] = useState(false);
   const [isItalicDisabled, setIsItalicDisabled] = useState(false);
-  // Underline
-  const [isUnderline, setIsUnderline] = useState(false);
-  const [isUnderlineDisabled, setIsUnderlineDisabled] = useState(false);
   // Strikethrough
   const [isStrikethrough, setIsStrikethrough] = useState(false);
   const [isStrikethroughDisabled, setIsStrikethroughDisabled] = useState(false);
@@ -75,7 +71,6 @@ export default function ToolbarPlugin() {
     const values = [];
     if (isBold) values.push("bold");
     if (isItalic) values.push("italic");
-    if (isUnderline) values.push("underline");
     if (isStrikethrough) values.push("strikethrough");
     return values;
   };
@@ -109,10 +104,6 @@ export default function ToolbarPlugin() {
     const italicStyling = getItalicStyling(lexicalSelection);
     setIsItalic(italicStyling.isItalic);
     setIsItalicDisabled(italicStyling.isDisabled);
-
-    const underlineStyling = getUnderlineStyling(lexicalSelection);
-    setIsUnderline(underlineStyling.isUnderline);
-    setIsUnderlineDisabled(underlineStyling.isDisabled);
 
     const strikethroughStyling = getStrikethroughStyling(lexicalSelection);
     setIsStrikethrough(strikethroughStyling.isStrikethrough);
@@ -217,16 +208,6 @@ export default function ToolbarPlugin() {
             disabled={isItalicDisabled}
           >
             <Italic className="h-4 w-4" />
-          </ToggleGroupItem>
-          <ToggleGroupItem 
-            value="underline" 
-            aria-label="Toggle underline"
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
-            }}
-            disabled={isUnderlineDisabled}
-          >
-            <Underline className="h-4 w-4" />
           </ToggleGroupItem>
           <ToggleGroupItem
             value="strikethrough"
