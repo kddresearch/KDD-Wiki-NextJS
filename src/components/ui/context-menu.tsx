@@ -74,9 +74,10 @@ ContextMenuContent.displayName = ContextMenuPrimitive.Content.displayName
 const ContextMenuItem = React.forwardRef<
   React.ElementRef<typeof ContextMenuPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Item> & {
-    inset?: boolean
+    inset?: boolean;
+    persistMenu?: boolean;
   }
->(({ className, inset, ...props }, ref) => (
+>(({ className, inset, persistMenu, ...props }, ref) => (
   <ContextMenuPrimitive.Item
     ref={ref}
     className={cn(
@@ -84,6 +85,11 @@ const ContextMenuItem = React.forwardRef<
       inset && "pl-8",
       className
     )}
+    onSelect={(event) => {
+      if (persistMenu) {
+        event.preventDefault();
+      }
+    }}
     {...props}
   />
 ))
@@ -91,8 +97,10 @@ ContextMenuItem.displayName = ContextMenuPrimitive.Item.displayName
 
 const ContextMenuCheckboxItem = React.forwardRef<
   React.ElementRef<typeof ContextMenuPrimitive.CheckboxItem>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.CheckboxItem>
->(({ className, children, checked, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.CheckboxItem> & {
+    persistMenu?: boolean;
+  }
+>(({ className, children, checked, persistMenu, ...props }, ref) => (  
   <ContextMenuPrimitive.CheckboxItem
     ref={ref}
     className={cn(
@@ -100,6 +108,11 @@ const ContextMenuCheckboxItem = React.forwardRef<
       className
     )}
     checked={checked}
+    onSelect={(event) => {
+      if (persistMenu) {
+        event.preventDefault();
+      }
+    }}
     {...props}
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">

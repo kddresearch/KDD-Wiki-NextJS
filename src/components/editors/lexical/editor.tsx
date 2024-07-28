@@ -32,13 +32,7 @@ import TreeViewPlugin from './plugins/tree-view-plugin';
 import { SettingsContext, useSettings } from './plugins/settings-context-plugin';
 import SelectionToolbarPlugin from './plugins/selection-toolbar-plugin';
 
-function onError(error: Error) {
-  console.error(error);
-}
-
-
 function Editor() {
-
   const {
     setOption,
     settings: {

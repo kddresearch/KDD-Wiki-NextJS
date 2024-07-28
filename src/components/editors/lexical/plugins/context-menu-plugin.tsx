@@ -200,6 +200,7 @@ function ContextMenuPlugin({
         <ContextMenuItem
           inset
           disabled={!canUndo}
+          persistMenu={true}
           onMouseUp={() => {
             editor.dispatchCommand(UNDO_COMMAND, undefined);
           }}
@@ -212,6 +213,7 @@ function ContextMenuPlugin({
         <ContextMenuItem
           inset
           disabled={!canRedo}
+          persistMenu={true}
           onMouseUp={() => {
             editor.dispatchCommand(REDO_COMMAND, undefined);
           }}
@@ -226,6 +228,7 @@ function ContextMenuPlugin({
         <ContextMenuCheckboxItem
           checked={isBold}
           disabled={stylingDisabled}
+          persistMenu={true}
           onCheckedChange={(checked) => {
             editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
           }}
@@ -236,6 +239,7 @@ function ContextMenuPlugin({
         <ContextMenuCheckboxItem
           checked={isItalic}
           disabled={stylingDisabled}
+          persistMenu={true}
           onCheckedChange={(checked) => {
             editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
           }}
@@ -246,6 +250,7 @@ function ContextMenuPlugin({
         <ContextMenuCheckboxItem
           checked={isUnderline}
           disabled={stylingDisabled}
+          persistMenu={true}
           onCheckedChange={(checked) => {
             editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
           }}
@@ -256,6 +261,7 @@ function ContextMenuPlugin({
         <ContextMenuCheckboxItem
           checked={isStrikethrough}
           disabled={stylingDisabled}
+          persistMenu={true}
           onCheckedChange={(checked) => {
             editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
           }}
