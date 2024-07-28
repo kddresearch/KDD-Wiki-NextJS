@@ -36,6 +36,12 @@ import {
 import { getNodeBeforeRoot } from "../utils";
 import { $isCodeNode } from "@lexical/code";
 import LinkDialog from "./dialog/link";
+import {
+  getBoldStyling,
+  getItalicStyling,
+  getStrikethroughStyling,
+  getUnderlineStyling
+} from "../utils/styles";
 
 // Still no clue what this is for
 const LowPriority = 1;
@@ -49,10 +55,19 @@ function ContextMenuPlugin({
 
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
+
+  // Bold
   const [isBold, setIsBold] = useState(false);
+  const [isBoldDisabled, setIsBoldDisabled] = useState(false);
+  // Italic
   const [isItalic, setIsItalic] = useState(false);
+  const [isItalicDisabled, setIsItalicDisabled] = useState(false);
+  // Underline
   const [isUnderline, setIsUnderline] = useState(false);
+  const [isUnderlineDisabled, setIsUnderlineDisabled] = useState(false);
+  // Strikethrough
   const [isStrikethrough, setIsStrikethrough] = useState(false);
+  const [isStrikethroughDisabled, setIsStrikethroughDisabled] = useState(false);
 
   const [stylingDisabled, setStylingDisabled] = useState(false);
   const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
@@ -67,21 +82,25 @@ function ContextMenuPlugin({
       return;
     }
 
-    if ($isRangeSelection(lexicalSelection)) {
-      setIsBold(lexicalSelection.hasFormat("bold"));
-      setIsItalic(lexicalSelection.hasFormat("italic"));
-      setIsUnderline(lexicalSelection.hasFormat("underline"));
-      setIsStrikethrough(lexicalSelection.hasFormat("strikethrough"));
+    if (!$isRangeSelection(lexicalSelection)) {
+      return;
     }
 
-    const isCode = lexicalSelection.getNodes().some((node) => {
-      const topNode = getNodeBeforeRoot(node);
-      if ($isCodeNode(topNode)) {
-        return true;
-      }
-    });
+    const boldStyling = getBoldStyling(lexicalSelection);
+    setIsBold(boldStyling.isBold);
+    setIsBoldDisabled(boldStyling.isDisabled);
 
-    setStylingDisabled(isCode);
+    const italicStyling = getItalicStyling(lexicalSelection);
+    setIsItalic(italicStyling.isItalic);
+    setIsItalicDisabled(italicStyling.isDisabled);
+
+    const underlineStyling = getUnderlineStyling(lexicalSelection);
+    setIsUnderline(underlineStyling.isUnderline);
+    setIsUnderlineDisabled(underlineStyling.isDisabled);
+
+    const strikethroughStyling = getStrikethroughStyling(lexicalSelection);
+    setIsStrikethrough(strikethroughStyling.isStrikethrough);
+    setIsStrikethroughDisabled(strikethroughStyling.isDisabled);    
   }, []);
 
   const handleInsertLink = () => {
@@ -227,7 +246,7 @@ function ContextMenuPlugin({
         {/* Styling */}
         <ContextMenuCheckboxItem
           checked={isBold}
-          disabled={stylingDisabled}
+          disabled={isBoldDisabled}
           persistMenu={true}
           onCheckedChange={(checked) => {
             editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
@@ -238,7 +257,7 @@ function ContextMenuPlugin({
         </ContextMenuCheckboxItem>
         <ContextMenuCheckboxItem
           checked={isItalic}
-          disabled={stylingDisabled}
+          disabled={isItalicDisabled}
           persistMenu={true}
           onCheckedChange={(checked) => {
             editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
@@ -249,7 +268,7 @@ function ContextMenuPlugin({
         </ContextMenuCheckboxItem>
         <ContextMenuCheckboxItem
           checked={isUnderline}
-          disabled={stylingDisabled}
+          disabled={isUnderlineDisabled}
           persistMenu={true}
           onCheckedChange={(checked) => {
             editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
@@ -260,7 +279,7 @@ function ContextMenuPlugin({
         </ContextMenuCheckboxItem>
         <ContextMenuCheckboxItem
           checked={isStrikethrough}
-          disabled={stylingDisabled}
+          disabled={isStrikethroughDisabled}
           persistMenu={true}
           onCheckedChange={(checked) => {
             editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");

@@ -38,6 +38,14 @@ import CodeDropdown from "./toolbar-plugin/code-dropdown";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useSettings } from "./settings-context-plugin";
 import AboutDialog from "./dialog/about";
+import {
+  getBoldStyling,
+  getItalicStyling,
+  getStrikethroughStyling,
+  getUnderlineStyling,
+  isCodeInSelection
+} from "../utils/styles";
+import { is } from "drizzle-orm";
 
 // No clue what this is for
 const LowPriority = 1;
@@ -48,14 +56,18 @@ export default function ToolbarPlugin() {
 
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
+  // Bold
   const [isBold, setIsBold] = useState(false);
+  const [isBoldDisabled, setIsBoldDisabled] = useState(false);
+  // Italic
   const [isItalic, setIsItalic] = useState(false);
+  const [isItalicDisabled, setIsItalicDisabled] = useState(false);
+  // Underline
   const [isUnderline, setIsUnderline] = useState(false);
+  const [isUnderlineDisabled, setIsUnderlineDisabled] = useState(false);
+  // Strikethrough
   const [isStrikethrough, setIsStrikethrough] = useState(false);
-
-  const [stylingDisabled, setStylingDisabled] = useState(false);
-
-  const [currentElementEditor, setCurrentElementEditor] = useState();
+  const [isStrikethroughDisabled, setIsStrikethroughDisabled] = useState(false);
 
   const [showAboutDialog, setShowAboutDialog] = React.useState(false)
 
@@ -76,32 +88,37 @@ export default function ToolbarPlugin() {
     },
   } = useSettings();
 
-  // Blocks
-  const [currentNode, setCurrentNode] = useState<TextNode | ElementNode | null>(null);
-
   const [isCode, setIsCode] = useState(false);
-
   const [keyboardShortcutsOpen, setKeyboardShortcutsOpen] = useState(false);
 
   const updateToolbar = useCallback(() => {
     const lexicalSelection = $getSelection();
-    if ($isRangeSelection(lexicalSelection)) {
-      // Update text format
-      setIsBold(lexicalSelection.hasFormat("bold"));
-      setIsItalic(lexicalSelection.hasFormat("italic"));
-      setIsUnderline(lexicalSelection.hasFormat("underline"));
-      setIsStrikethrough(lexicalSelection.hasFormat("strikethrough"));
 
-      const isCode = lexicalSelection.getNodes().some((node) => {
-        const topNode = getNodeBeforeRoot(node);
-        if ($isCodeNode(topNode)) {
-          return true;
-        }
-      });
-
-      setIsCode(isCode);
-      setStylingDisabled(isCode);
+    if (!lexicalSelection) {
+      return;
     }
+
+    if (!$isRangeSelection(lexicalSelection)) {
+      return;
+    }
+
+    const boldStyling = getBoldStyling(lexicalSelection);
+    setIsBold(boldStyling.isBold);
+    setIsBoldDisabled(boldStyling.isDisabled);
+
+    const italicStyling = getItalicStyling(lexicalSelection);
+    setIsItalic(italicStyling.isItalic);
+    setIsItalicDisabled(italicStyling.isDisabled);
+
+    const underlineStyling = getUnderlineStyling(lexicalSelection);
+    setIsUnderline(underlineStyling.isUnderline);
+    setIsUnderlineDisabled(underlineStyling.isDisabled);
+
+    const strikethroughStyling = getStrikethroughStyling(lexicalSelection);
+    setIsStrikethrough(strikethroughStyling.isStrikethrough);
+    setIsStrikethroughDisabled(strikethroughStyling.isDisabled);
+
+    setIsCode(isCodeInSelection(lexicalSelection));
   }, []);
 
   useEffect(() => {
@@ -180,7 +197,6 @@ export default function ToolbarPlugin() {
           size={"sm"} 
           type="multiple"
           value={getValue()}
-          // className="mx-1"
         >
           <ToggleGroupItem 
             value="bold"
@@ -188,7 +204,7 @@ export default function ToolbarPlugin() {
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
             }}
-            disabled={stylingDisabled}
+            disabled={isBoldDisabled}
           >
             <Bold className="h-4 w-4" />
           </ToggleGroupItem>
@@ -198,7 +214,7 @@ export default function ToolbarPlugin() {
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
             }}
-            disabled={stylingDisabled}
+            disabled={isItalicDisabled}
           >
             <Italic className="h-4 w-4" />
           </ToggleGroupItem>
@@ -208,7 +224,7 @@ export default function ToolbarPlugin() {
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
             }}
-            disabled={stylingDisabled}
+            disabled={isUnderlineDisabled}
           >
             <Underline className="h-4 w-4" />
           </ToggleGroupItem>
@@ -218,7 +234,7 @@ export default function ToolbarPlugin() {
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
             }}
-            disabled={stylingDisabled}
+            disabled={isStrikethroughDisabled}
           >
             <Strikethrough className="h-4 w-4" />
           </ToggleGroupItem>
