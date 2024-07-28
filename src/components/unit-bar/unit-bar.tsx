@@ -1,7 +1,6 @@
 import KddUser from "@/models/kdd_user";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
 import { Search } from "react-bootstrap-icons";
 import { SignIn } from "../auth/signin";
 import { SignOut } from "../auth/signout";

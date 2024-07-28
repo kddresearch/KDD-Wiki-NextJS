@@ -25,14 +25,12 @@ function SelectionToolbarPlugin() {
   // format states
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
-  const [isUnderline, setIsUnderline] = useState(false);
   const [isStrikethrough, setIsStrikethrough] = useState(false);
 
   const getValue = () => {
     const values = [];
     if (isBold) values.push("bold");
     if (isItalic) values.push("italic");
-    if (isUnderline) values.push("underline");
     if (isStrikethrough) values.push("strikethrough");
     return values;
   };
@@ -169,7 +167,6 @@ function SelectionToolbarPlugin() {
       // Update text format
       setIsBold(lexicalSelection.hasFormat('bold'));
       setIsItalic(lexicalSelection.hasFormat('italic'));
-      setIsUnderline(lexicalSelection.hasFormat('underline'));
       setIsStrikethrough(lexicalSelection.hasFormat('strikethrough'));
       // setIsSubscript(lexicalSelection.hasFormat('subscript'));
       // setIsSuperscript(lexicalSelection.hasFormat('superscript'));
@@ -295,15 +292,6 @@ function SelectionToolbarPlugin() {
             }}
           >
             <Italic className="h-4 w-4" />
-          </ToggleGroupItem>
-          <ToggleGroupItem 
-            value="underline" 
-            aria-label="Toggle underline"
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
-            }}
-          >
-            <Underline className="h-4 w-4" />
           </ToggleGroupItem>
           <ToggleGroupItem
             value="strikethrough"

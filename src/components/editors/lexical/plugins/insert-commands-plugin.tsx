@@ -86,20 +86,14 @@ function InsertCommandsPlugin() {
   }, [editor]);
 
   useEffect(() => {
-    console.log("InsertCommandsPlugin");
-
     const registeredCommands = (Object.keys(COMMANDS) as InsertCommandType[]).map((command_key) => {
       const command = COMMANDS[command_key];
-
-      console.log("Registering command", command_key);
 
       return editor.registerCommand(command, (payload) => {
         const selection = $getSelection();
         if (!$isRangeSelection(selection)) {
           return false;
         }
-
-        console.log("payload:", payload);
 
         const nodeTypeKey = command_key.replace('INSERT_', '') as NodeType;
 

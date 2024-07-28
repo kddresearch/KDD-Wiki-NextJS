@@ -35,15 +35,23 @@ function LinkDialog({
   LinkDialogProps
 ) {
 
+  console.log("defultText", defaultText);
+  console.log("typeof defaultText", typeof defaultText);
+
+  if (typeof defaultText !== "string") {
+    defaultText = "";
+    console.log("defaultText is not a string");
+  }
+
   const textDisabled = defaultText ? true : false;
 
   const form = useForm<z.infer<typeof linkFormSchema>>({
     resolver: zodResolver(linkFormSchema),
     defaultValues: {
-      uri: "",
-      text: defaultText || "",
+      uri: "https://www.kddresearch.org",
+      text: defaultText,
     },
-  })  
+  })
 
   function onSubmit(values: z.infer<typeof linkFormSchema>) {
     console.log(values)
@@ -60,7 +68,7 @@ function LinkDialog({
             <FormField
               control={form.control}
               name="uri"
-              render={({ field }: { field: any }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>URL</FormLabel>
                   <FormControl>
@@ -76,7 +84,7 @@ function LinkDialog({
             <FormField
               control={form.control}
               name="text"
-              render={({ field }: { field: any }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Text</FormLabel>
                   <FormControl>

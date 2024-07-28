@@ -18,11 +18,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { mergeRegister } from "@lexical/utils";
 import {
-  ElementNode,
-  FORMAT_ELEMENT_COMMAND,
   FORMAT_TEXT_COMMAND,
-  TextNode,
-  $createTextNode,
   $getSelection,
   $isRangeSelection,
   CAN_REDO_COMMAND,
