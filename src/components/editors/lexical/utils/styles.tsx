@@ -47,11 +47,12 @@ export function getBoldStyling(lexicalSelection: RangeSelection) {
 
 export function getItalicStyling(lexicalSelection: RangeSelection) {
   const isCode = isCodeInSelection(lexicalSelection);
+  const isH1 = isH1InSelection(lexicalSelection);
   const isQuote = isQuoteInSelection(lexicalSelection);
 
   return {
     isItalic: lexicalSelection.hasFormat("italic") || isQuote,
-    isDisabled: isCode || isQuote,
+    isDisabled: isCode || isQuote || isH1,
   };
 }
 
