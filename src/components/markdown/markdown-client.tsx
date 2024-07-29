@@ -51,7 +51,6 @@ function RenderMarkdownStringClient({
     const fetchCompiledMarkdown = async () => {
       try {
         const result = await renderMarkdownString(markdown);
-        console.log(result);
         setMDXSource(result);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('An error occurred'));
