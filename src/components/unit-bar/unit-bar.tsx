@@ -8,10 +8,8 @@ import { auth } from "@/auth";
 
 export default async function UnitBar({
   title,
-  kdduser,
 }: {
   title: string;
-  kdduser: any;
 }) {
   const session = await auth();
   const isSignedIn = session ? true : false;
