@@ -39,6 +39,7 @@ const theme = {
     url: 'text-token-operator',
     variable: 'text-token-variable',
   },
+  alert: 'bg-black',
   // heading: {
   //     h1: '',
   //     h2: '',
@@ -92,10 +93,16 @@ function Placeholder() {
 import { $createTextNode, $getRoot, $getSelection, EditorState } from 'lexical';
 import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
 import { $createCodeNode, $createCodeHighlightNode } from '@lexical/code';
+import { $createAlertNode } from './nodes/alert';
 
 function prePopulate() {
   const root = $getRoot();
   if (root.getFirstChild() === null) {
+
+    const alert = $createAlertNode('Known Issues:', 'This is a develpment page. Please do not use it for production. what the helllll', 'destructive');
+    // alert.append($createTextNode('This is an informational alert!'));
+    root.append(alert);
+
     const heading = $createHeadingNode('h1');
     heading.append($createTextNode('Welcome to the KDD Text Editor!'));
     root.append(heading);

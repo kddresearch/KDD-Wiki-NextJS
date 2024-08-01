@@ -26,6 +26,7 @@ const editorNodes: Array<Klass<LexicalNode>> = [
   TableCellNode,
   TableNode,
   TableRowNode,
+  AlertNode,
 ];
 
 export default editorNodes;
@@ -50,6 +51,7 @@ enum Category {
 }
 
 import { COMMANDS } from '../plugins/insert-commands-plugin';
+import { AlertNode } from './alert';
 
 const nodeKeyboardShortcuts = [
   {

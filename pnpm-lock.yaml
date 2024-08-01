@@ -173,6 +173,9 @@ importers:
       drizzle-orm:
         specifier: ^0.30.10
         version: 0.30.10(@opentelemetry/api@1.9.0)(@types/pg@8.11.6)(@types/react@18.3.3)(pg@8.12.0)(react@18.3.1)
+      fast-xml-parser:
+        specifier: '>=4.4.1'
+        version: 4.4.1
       joi:
         specifier: ^17.13.3
         version: 17.13.3
@@ -189,7 +192,7 @@ importers:
         specifier: ^0.407.0
         version: 0.407.0(react@18.3.1)
       next:
-        specifier: 14.2.5
+        specifier: ^14.2.4
         version: 14.2.5(@babel/core@7.24.7)(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       next-auth:
         specifier: 5.0.0-beta.19
@@ -207,13 +210,13 @@ importers:
         specifier: ^1.29.0
         version: 1.29.0
       react:
-        specifier: 18.3.1
+        specifier: ^18.3.1
         version: 18.3.1
       react-bootstrap-icons:
         specifier: ^1.11.4
         version: 1.11.4(react@18.3.1)
       react-dom:
-        specifier: 18.3.1
+        specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-hook-form:
         specifier: ^7.52.1
@@ -3467,8 +3470,8 @@ packages:
   fast-levenshtein@2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
 
-  fast-xml-parser@4.4.0:
-    resolution: {integrity: sha512-kLY3jFlwIYwBNDojclKsNAC12sfD6NwW74QB2CoNGPvtVxjliYehVunB3HYyNi+n4Tt1dAcgwYvmKF/Z18flqg==}
+  fast-xml-parser@4.4.1:
+    resolution: {integrity: sha512-xkjOecfnKGkSsOwtZ5Pz7Us/T6mrbPQrq0nh+aCO5V9nk5NLWmasAHumTKjiPJPWANe+kAZ84Jc8ooJkzZ88Sw==}
     hasBin: true
 
   fastq@1.17.1:
@@ -6107,7 +6110,7 @@ snapshots:
 
   '@azure/core-xml@1.4.2':
     dependencies:
-      fast-xml-parser: 4.4.0
+      fast-xml-parser: 4.4.1
       tslib: 2.6.3
 
   '@azure/identity@4.3.0':
@@ -9392,7 +9395,7 @@ snapshots:
 
   fast-levenshtein@2.0.6: {}
 
-  fast-xml-parser@4.4.0:
+  fast-xml-parser@4.4.1:
     dependencies:
       strnum: 1.0.5
 
