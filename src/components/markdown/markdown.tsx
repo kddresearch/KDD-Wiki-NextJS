@@ -1,4 +1,4 @@
-import fs from 'fs';
+import 'server-only';
 import React from 'react';
 import classNames from 'classnames';
 import { MDXRemote } from 'next-mdx-remote/rsc';
@@ -22,16 +22,4 @@ async function RenderMarkdownString({
     </div>
   );
 }
-
-function RenderMarkdownFile({ 
-  filePath, 
-  ...props 
-}: { 
-  filePath: string } & 
-  React.HTMLAttributes<HTMLDivElement>
-) {
-  const fileContent = fs.readFileSync(filePath, 'utf8');
-  return <RenderMarkdownString markdown={fileContent} {...props} />;
-}
-
-export { RenderMarkdownFile, RenderMarkdownString };
+export { RenderMarkdownString };

@@ -29,16 +29,16 @@ async function editPage({
     return notFound();
 
   // let pageAuthorization = page.is_private ? AccessLevel.Member : AccessLevel.ReadOnly;
-  let pageAuthorization = AccessLevel.Admin;
-  let user = await checkAuth(pageAuthorization);
+  // let pageAuthorization = AccessLevel.Admin;
+  // let user = await checkAuth(pageAuthorization);
 
-  const generateRedirectUrl = (message: string) => {
-    const path = `/notauthorized/?message=${encodeURIComponent(message)}&callback=/page/${params.id}/edit`;
-    return path;
-  };
+  // const generateRedirectUrl = (message: string) => {
+  //   const path = `/notauthorized/?message=${encodeURIComponent(message)}&callback=/page/${params.id}/edit`;
+  //   return path;
+  // };
 
-  if (user == null)
-    return redirect(generateRedirectUrl("You must be an admin to edit pages"));
+  // if (user == null)
+  //   return redirect(generateRedirectUrl("You must be an admin to edit pages"));
 
   return (
     <StripeBackDrop>
