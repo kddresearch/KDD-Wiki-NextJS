@@ -63,39 +63,56 @@ export function $alertNodeTransform(
       }
 
       currentNode.getChildren().forEach((child) => {
+
+        if ($isAlertDescriptionNode(child)) {
+          // look for \u200B and remove it
+          const textContent = child.getTextContent();
+
+          console.log("textContent:", textContent.includes('\u200B'));
+
+          textContent.replace(/\u200B/g, '');
+          child.setTextContent(textContent);
+        }
+
         if (
-          !$isAlertDescriptionNode(child) && 
-          !$isAlertTitleNode(child) &&
-          $isTextNode(child) && 
+          child.getType() === 'text' &&
           $isAlertDescriptionNode(child.getPreviousSibling())
         ) {
-          child.replace($createAlertDescriptionNode(child.getTextContent()));
+          console.log("This is running");
+          
+          const updatedChild = child.replace($createAlertDescriptionNode(child.getTextContent()));
+
+          console.log("updatedChild:", updatedChild);
+
+          updatedChild.getLatest().select(0, 0);
         } else if (
           !$isAlertDescriptionNode(child) && 
           !$isAlertTitleNode(child) &&
           $isTextNode(child) && 
           $isAlertTitleNode(child.getPreviousSibling())
         ) {
-          child.replace($createAlertDescriptionNode(child.getTextContent()));
-          const nextSibling = child.getNextSibling();
+          console.log("This is running 22");
+          const updatedChild = child.replace($createAlertDescriptionNode(child.getTextContent()));
+          const nextSibling = updatedChild.getNextSibling();
 
           if (!$isTextNode(nextSibling)) {
             return;
           }
 
           nextSibling.replace($createAlertDescriptionNode(nextSibling.getTextContent()));
+          nextSibling.select(0, 0);
         }
       });
 
-      const alertTitleRef = currentNode.getLatest().getChildAtIndex(0);
+      // const alertTitleRef = currentNode.getLatest().getChildAtIndex(0);
 
-      if (!$isAlertTitleNode(alertTitleRef)) {
-        console.warn('Alert Plugin: AlertTitleNode not found, selection not retained. Please report this issue.');
-        return false;
-      }
+      // if (!$isAlertTitleNode(alertTitleRef)) {
+      //   console.warn('Alert Plugin: AlertTitleNode not found, selection not retained. Please report this issue.');
+      //   return false;
+      // }
 
-      alertTitleRef.select(alertTitleRef.getTextContentSize(), alertTitleRef.getTextContentSize());
-      console.log("selection After:", selection.anchor.offset, selection.focus.offset);
+      // alertTitleRef.select(alertTitleRef.getTextContentSize(), alertTitleRef.getTextContentSize());
+      // console.log("selection After:", selection.anchor.offset, selection.focus.offset);
 
       return false;
     },

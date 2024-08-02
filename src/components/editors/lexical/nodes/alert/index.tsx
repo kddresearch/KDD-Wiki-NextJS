@@ -1,4 +1,14 @@
-import { $applyNodeReplacement, $createLineBreakNode, $createParagraphNode, $createTextNode, $isTextNode, DecoratorNode, ElementNode, SerializedLexicalNode, TextNode } from "lexical";
+import {
+  $applyNodeReplacement,
+  $createLineBreakNode,
+  $createParagraphNode,
+  $createTextNode,
+  $isTextNode,
+  DecoratorNode,
+  ElementNode,
+  SerializedLexicalNode,
+  TextNode
+} from "lexical";
 import { ReactNode } from "react";
 import type {
   DOMConversionMap,
@@ -20,7 +30,7 @@ import { InfoIcon, Terminal } from "lucide-react";
 
 import { alertVariants } from "@/components/ui/alert";
 import { VariantProps } from "class-variance-authority";
-import { $createAlertDescriptionNode } from "./description";
+import { $createAlertDescriptionNode, $isAlertDescriptionNode } from "./description";
 import { $createAlertTitleNode } from "./title";
 
 
@@ -105,8 +115,6 @@ export class AlertNode extends ElementNode {
     const children = latestNode.getChildren()
     const childrenLength = children.length;
 
-    console.log('Inserting after');
-
     if (
       childrenLength >= 2 &&
       selection.isCollapsed() &&
@@ -122,14 +130,12 @@ export class AlertNode extends ElementNode {
 
     if (childrenLength === 0) {
       // Create a new AlertDescriptionNode with a default text
-      const newElement = $createAlertTitleNode('New alert Title');
+      const newElement = $createAlertTitleNode('\u200B');
       this.append(newElement);
       return null;
     }
   
     const {anchor, focus} = selection;
-
-    console.log(anchor, focus);
 
     const firstPoint = anchor.isBefore(focus) ? anchor : focus;
     const firstSelectionNode = firstPoint.getNode();
@@ -137,13 +143,33 @@ export class AlertNode extends ElementNode {
     if (!$isTextNode(firstSelectionNode)) {
       return null;
     }
-    this.append($createAlertDescriptionNode(' '));
 
-    if ($isAlertNode(firstSelectionNode)) {
-      const {offset} = selection.anchor;
-      firstSelectionNode.splice(offset, 0, [$createLineBreakNode()]);
-      firstSelectionNode.select(offset + 1, offset + 1);
+    const nextSibling = firstSelectionNode.getNextSibling();
+
+    if (
+      (
+        firstSelectionNode.getTextContentSize() === anchor.offset &&
+        selection.isCollapsed() &&
+        ($isAlertNode(nextSibling) || $isAlertDescriptionNode(nextSibling))
+      ) ||
+        !nextSibling
+    ) {
+      console.log('Inserting after 2');
+      console.log('Content:', firstSelectionNode.getTextContent());
+      console.log('more Content:', firstSelectionNode.getNextSibling());
+
+      const newElement = $createAlertDescriptionNode('\u200B');
+
+      firstSelectionNode.insertAfter(newElement);
+
+      newElement.select(1, 1);
     }
+
+    // if ($isAlertNode(firstSelectionNode)) {
+    //   const {offset} = selection.anchor;
+    //   firstSelectionNode.splice(offset, 0, [$createLineBreakNode()]);
+    //   firstSelectionNode.select(offset + 1, offset + 1);
+    // }
     // const newAlertDescriptionNode = $createAlertDescriptionNode('wtf');
     // this.append(newAlertDescriptionNode);
     // this.insertAfter(newAlertDescriptionNode, restoreSelection);
