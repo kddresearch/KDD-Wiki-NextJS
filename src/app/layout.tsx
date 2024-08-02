@@ -20,7 +20,6 @@ export const metadata: Metadata = {
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import Script from "next/script";
-import Head from "next/head";
 
 export default function RootLayout({
   children,
@@ -29,10 +28,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <Head>
-        {/* <link rel="stylesheet" href="https://use.typekit.net/bxx1cgw.css"></link> */}
-        <link rel="stylesheet" href="https://use.typekit.net/qra4olf.css" />
-      </Head>
       <body className={`font-ksu-fonts flex flex-col h-screen`}>
         <Script type="text/javascript" id="MS Clarity">
           {`
