@@ -1,50 +1,70 @@
-import { DecoratorNode, ElementNode, SerializedLexicalNode, TextNode } from "lexical";
-import { ReactNode } from "react";
+import {
+  $createParagraphNode,
+  $createTextNode,
+  ElementNode,
+  TextNode
+} from "lexical";
 import type {
-  DOMConversionMap,
-  DOMConversionOutput,
-  DOMExportOutput,
   EditorConfig,
   LexicalEditor,
   LexicalNode,
   NodeKey,
-  ParagraphNode,
   RangeSelection,
   SerializedElementNode,
   SerializedTextNode,
-  Spread,
-  TabNode,
 } from 'lexical';
-import { $createAlertNode, $isAlertNode } from ".";
+import {
+  $createAlertNode,
+  $isAlertNode
+} from ".";
+import { nullable } from "zod";
+import { $createAlertTitleNode } from "./title";
 
-export type SerializedAlertNode = SerializedTextNode;
-
-export class AlertDescriptionNode extends TextNode {
-
+export class AlertDescriptionNode extends ElementNode {
   static getType(): string {
     return 'alert-description';
   }
 
   static clone(node: AlertDescriptionNode): AlertDescriptionNode {
-    return new AlertDescriptionNode(node.__text);
+    return new AlertDescriptionNode(node.__key);
   }
 
-  static importJSON(serializedNode: SerializedAlertNode): AlertDescriptionNode {
-    const node = $createAlertDescriptionNode(serializedNode.text);
+  static importJSON(serializedNode: SerializedElementNode): AlertDescriptionNode {
+    const node = $createAlertDescriptionNode();
     return node;
   }
 
-  constructor(text: string, key?: NodeKey,) {
-    super(text, key);
+  static transform(): ((node: LexicalNode) => void) | null {
+    return (node: LexicalNode) => {
+      if (!$isAlertDescriptionNode(node)) {
+        node.replace($createTextNode(node.getTextContent()));
+        return;
+      }
+
+      // Outside of AlertNode
+      const parent = node.getParent();
+      if (!$isAlertNode(parent)) {
+        node.replace($createTextNode(node.getTextContent()));
+        return;
+      }
+
+      if (node.getIndexWithinParent() === 0) {
+        const titleNode = node.replace($createAlertTitleNode(node.getTextContent()));
+        titleNode.getLatest().selectStart();
+        return;
+      }
+    };
+  }
+
+  constructor(key?: NodeKey,) {
+    super(key);
   }
 
   // View
-  createDOM(config: EditorConfig): HTMLElement {
-    const element = super.createDOM(config);
+  createDOM(config: EditorConfig, editor: LexicalEditor): HTMLElement {
 
     const dom = document.createElement('div');
     dom.className = "text-sm [&_p]:leading-relaxed";
-    dom.appendChild(element);
 
     return dom;
   }
@@ -54,34 +74,71 @@ export class AlertDescriptionNode extends TextNode {
     dom: HTMLElement,
     config: EditorConfig,
   ): boolean {
-    const innerDOM = dom.firstElementChild as HTMLElement;
-    const update = super.updateDOM(prevNode, innerDOM, config);
-
-    // parent Must be an alert node
-    const parent = this.getParent();
-
-    if (!parent || !$isAlertNode(parent)) {
-      console.warn('Alert Plugin: AlertNode not found, selection not retained. Please report this issue.');
-      return update;
-    }
+    const update = (prevNode.__key !== this.__key) || 
+      (this.getChildrenSize() === 0)
+    ;
 
     return update;
   }
 
-  exportJSON(): SerializedTextNode {
+  insertNewAfter(
+    selection?: RangeSelection,
+    restoreSelection = true,
+  ): null | LexicalNode {
+
+    if (!selection) {
+      return null;
+    }
+
+    const newElement = $createAlertDescriptionNode();
+
+    const alertNode = this.getParentOrThrow();
+
+    if (!$isAlertNode(alertNode)) {
+      console.warn('AlertDescriptionNode: AlertNode not found, selection not retained. Please report this issue.');
+
+      return null;
+    }
+
+    const canBreakout = alertNode.canBreakout(selection);
+
+    // const direction = this.getDirection();
+    // newElement.setDirection(direction);
+    if (canBreakout) {
+      const paragraph = $createParagraphNode();
+      alertNode.insertAfter(paragraph, restoreSelection);
+
+      const latestNode = alertNode.getLatest();
+      let currentNode = latestNode.getLastChild()!;
+      while (true) {
+        const previousSibling = currentNode.getPreviousSibling();
+
+        currentNode.remove();
+
+        if (!previousSibling) {
+          break;
+        }
+
+        if (previousSibling.getTextContentSize() != 0) {
+          break;
+        }
+        currentNode = previousSibling;
+      }
+
+      paragraph.getLatest().select();
+      return null;
+    }
+
+    this.insertAfter(newElement, restoreSelection);
+    return newElement;
+  }
+
+  exportJSON(): SerializedElementNode {
     return {
       ...super.exportJSON(),
       type: this.getType(),
       version: 1,
     }
-  }
-
-  canHaveFormat(): boolean {
-    return false;
-  }
-  
-  setFormat(format: number): this {
-    return this;
   }
 
   isParentRequired(): true {
@@ -93,8 +150,13 @@ export class AlertDescriptionNode extends TextNode {
   }
 }
 
-export function $createAlertDescriptionNode(text: string): AlertDescriptionNode {
-  return new AlertDescriptionNode(text);
+export function $createAlertDescriptionNode(text?: string): AlertDescriptionNode {
+
+  if (text === undefined) {
+    return new AlertDescriptionNode();
+  }
+
+  return new AlertDescriptionNode().append($createTextNode(text));
 }
 
 export function $isAlertDescriptionNode(

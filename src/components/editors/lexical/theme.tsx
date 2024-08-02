@@ -90,7 +90,7 @@ function Placeholder() {
   </div>;
 }
 
-import { $createTextNode, $getRoot, $getSelection, EditorState } from 'lexical';
+import { $createParagraphNode, $createTextNode, $getRoot, $getSelection, EditorState } from 'lexical';
 import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
 import { $createCodeNode, $createCodeHighlightNode } from '@lexical/code';
 import { $createAlertNode } from './nodes/alert';
@@ -101,18 +101,22 @@ function prePopulate() {
   const root = $getRoot();
   if (root.getFirstChild() === null) {
 
-    const alert = $createAlertNode('destructive');
+    const paragraph = $createParagraphNode();
+    paragraph.append($createTextNode('Hello, world!'));
+    root.append(paragraph);
+
+    const alert = $createAlertNode('Known Issues:', 'destructive');
     // alert.append($createAlertTitleNode('Known Issues:'));
     // alert.append($createAlertDescriptionNode('This is a development page. Please do not use it for production.'));
     root.append(alert);
 
-    const default_alert = $createAlertNode('default');
-    default_alert.append($createAlertTitleNode('Note:'));
-    default_alert.append($createAlertDescriptionNode('Starting in .NET 9, a build warning is emitted if your project targets .NET Standard 1.x.\n\nFor more information, see Warning emitted for .NET Standard 1.x targets.'));
+    const default_alert = $createAlertNode('Note:', 'default');
+    default_alert.append($createAlertDescriptionNode('Starting in .NET 9, a build warning is emitted if your project targets .NET Standard 1.x.'));
+    default_alert.append($createAlertDescriptionNode());
+    default_alert.append($createAlertDescriptionNode('For more information, see Warning emitted for .NET Standard 1.x targets.'));
     root.append(default_alert);
 
-    const primary_alert = $createAlertNode('primary');
-    primary_alert.append($createAlertTitleNode('Known Issues:'));
+    const primary_alert = $createAlertNode('Known Issues:', 'primary');
     primary_alert.append($createAlertDescriptionNode('This is a development page. Please do not use it for production.'));
     root.append(primary_alert);
 

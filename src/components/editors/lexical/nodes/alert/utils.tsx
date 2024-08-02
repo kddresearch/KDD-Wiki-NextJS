@@ -1,29 +1,28 @@
-import { $createTextNode, $getNodeByKey, $getSelection, $isLineBreakNode, $isRangeSelection, $isTextNode, LexicalEditor, LexicalNode, NodeKey, TextNode } from "lexical";
-import { $isAlertNode, AlertNode } from ".";
-import { $createAlertTitleNode, $isAlertTitleNode, AlertTitleNode } from "./title";
-import { $createAlertDescriptionNode, $isAlertDescriptionNode, AlertDescriptionNode } from "./description";
-import { mergeRegister } from "@lexical/utils";
-
-export function registerAlertNodeTransforms(editor: LexicalEditor) {
-  if (!editor.hasNodes([AlertNode, AlertTitleNode, AlertDescriptionNode])) {
-    throw new Error(
-      'Alert Plugin: AlertNode, AlertTitleNode, or AlertDescriptionNode not registered on the editor',
-    );
-  }
-
-  return mergeRegister(
-    editor.registerNodeTransform(TextNode, (node) => {
-      // $textNodeTransform(node, editor);
-      $textNodeTransform(node);
-    })
-  )
-}
+import {
+  $createTextNode,
+  $getNodeByKey,
+  $getSelection,
+  $isElementNode,
+  $isRangeSelection,
+  $isTextNode,
+  TextNode
+} from "lexical";
+import {
+  $isAlertNode,
+  AlertNode
+} from ".";
+import {
+  $createAlertTitleNode,
+  $isAlertTitleNode,
+} from "./title";
+import {
+  $createAlertDescriptionNode,
+  $isAlertDescriptionNode,
+} from "./description";
 
 export function $alertNodeTransform(
   node: AlertNode,
 ) {
-  console.log("This is running the alert node transform");
-
   const nodeKey = node.getKey();
 
   const selection = $getSelection();
@@ -36,37 +35,51 @@ export function $alertNodeTransform(
     return;
   }
 
-  const alertContext = currentNode.getTextContent();
-  const children = currentNode.getChildren();
+  const firstChild = currentNode.getFirstChild();
 
+  if (
+    firstChild &&
+    !$isElementNode(firstChild) &&
+    !$isAlertTitleNode(firstChild)
+  ) {
+    const context = firstChild.getTextContent().replace(/\n/g, '');
+    firstChild.replace($createAlertTitleNode(context));
 
-  if (children.length >= 1 && children[0].getType() === 'text') {
-    node.splice(0, node.getChildren().length, [
-      $createAlertTitleNode(alertContext),
-    ]);
-
-    const alertTitleRef = currentNode.getLatest().getChildAtIndex(0);
-
-    if (!$isAlertTitleNode(alertTitleRef)) {
+    if (!$isAlertTitleNode(firstChild.getLatest())) {
       console.warn('Alert Plugin: AlertTitleNode not found, selection not retained. Please report this issue.');
       return;
     }
 
-    alertTitleRef.select(alertTitleRef.getTextContentSize(), alertTitleRef.getTextContentSize());
+    firstChild.getLatest().selectStart();
 
     return;
   }
 
-  children.forEach((child) => {
+  const children = currentNode.getLatest().getChildren();
+
+  children.forEach((child, index) => {
+
     child = child.getLatest();
+
+    if ($isAlertTitleNode(child) && index >= 1) {
+      child.replace($createAlertDescriptionNode(child.getTextContent()));
+    }
+
+    child = child.getLatest();
+
     const textContent = child.getTextContent();
-    const previousSibling = child.getPreviousSibling();
 
     if ($isAlertDescriptionNode(child) && textContent.length >= 1) {
       // look for \u200B and remove it
 
-      textContent.replace(/\u200B/g, '');
-      child.setTextContent(textContent);
+      const textNode = child.getChildAtIndex(0);
+
+      if ($isTextNode(textNode)) {
+        const textContent = textNode.getTextContent().replace(/\u200B/g, '');
+        textNode.setTextContent(textContent);
+      } else {
+        console.warn('Alert Plugin: TextNode not found, text not changed. Please report this issue.');
+      }
     }
 
     if (child.getType() != 'text') {
@@ -74,24 +87,8 @@ export function $alertNodeTransform(
     }
 
     const updatedChild = child.replace($createAlertDescriptionNode(child.getTextContent())).getLatest();
-    const nextSibling = updatedChild.getNextSibling();
-
     // Do not lose selection
-    updatedChild.selectEnd();
-
-    if (!nextSibling) {
-      return;
-    }
-
-    nextSibling.selectStart();
-
-    if ($isAlertTitleNode(child) && previousSibling) {
-      console.log("This is running 22");
-
-      if (!(child.getType() != 'text')) {
-        return;
-      }
-    }
+    updatedChild.selectStart();
   });
   return;
 }
@@ -103,6 +100,6 @@ export function $textNodeTransform(
   if ($isAlertNode(parent)) {
     $alertNodeTransform(parent);
   } else if ($isAlertTitleNode(parent) || $isAlertDescriptionNode(parent)) {
-    node.replace($createTextNode(node.__text));
+    node.replace($createTextNode(node.getTextContent()));
   }
 }

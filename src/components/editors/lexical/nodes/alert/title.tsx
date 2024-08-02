@@ -1,52 +1,97 @@
-import { DecoratorNode, ElementNode, SerializedLexicalNode, TextNode } from "lexical";
-import { ReactNode } from "react";
+import {
+  $createParagraphNode,
+  $createTextNode,
+  $getSelection,
+  $isRangeSelection,
+  ElementNode,
+  TextNode
+} from "lexical";
 import type {
-  DOMConversionMap,
-  DOMConversionOutput,
-  DOMExportOutput,
   EditorConfig,
   LexicalEditor,
   LexicalNode,
   NodeKey,
-  ParagraphNode,
   RangeSelection,
   SerializedElementNode,
-  SerializedTextNode,
-  Spread,
-  TabNode,
+  SerializedTextNode
 } from 'lexical';
-import { $createAlertNode } from ".";
+import { $createAlertNode, $isAlertNode } from ".";
+import { $createAlertDescriptionNode } from "./description";
 
-export type SerializedAlertTitleNode = SerializedTextNode;
-
-export class AlertTitleNode extends TextNode {
-  
-  static getType(): string {
+export class AlertTitleNode extends ElementNode {
+  static getType(): 'alert-title' {
     return 'alert-title';
   }
 
   static clone(node: AlertTitleNode): AlertTitleNode {
-    return new AlertTitleNode(node.__text);
+    return new AlertTitleNode(node.__key);
   }
 
-  static importJSON(serializedNode: SerializedAlertTitleNode): AlertTitleNode {
-    const node = $createAlertTitleNode(serializedNode.text);
+  static importJSON(serializedNode: SerializedElementNode): AlertTitleNode {
+    const node = $createAlertTitleNode();
     return node;
   }
 
-  constructor(text: string, key?: NodeKey,) {
-    super(text, key);
+  static transform(): ((node: LexicalNode) => void) | null {
+    return (node: LexicalNode) => {
+
+      // console.log("running Title Transform");
+
+      const parent = node.getParentOrThrow();
+
+      if ($isAlertNode(parent)) {
+        return;
+      }
+
+      if (node.isAttached()) {
+        return;
+      }
+
+      node.replace($createTextNode(node.getTextContent()));
+    };
+  }
+
+  collapseAtStart(): true {
+    const selection = $getSelection();
+
+    console.log("running Title Collapse");
+
+    const newElement = !this.isEmpty()
+      ? $createAlertTitleNode()
+      : $createParagraphNode();
+    const children = this.getChildren();
+    const parent = this.getParent();
+
+    if (!$isRangeSelection(selection)) {
+      return true;
+    }
+
+    if (!$isAlertNode(parent)) {
+      return true;
+    }
+
+    const [x, y] = selection.getStartEndPoints()?.map((point) => point.offset) ?? [0, 0];
+
+    if (x !== 0 || y !== 0) {
+      return true;
+    }
+
+    children.forEach((child) => newElement.append(child));
+    const updatedParent = parent.replace(newElement);
+    updatedParent.selectStart();
+    return true;
+  }
+
+  constructor(key?: NodeKey) {
+    super(key);
   }
 
   // View
-  createDOM(config: EditorConfig): HTMLElement {
-    const element = super.createDOM(config);
+  createDOM(config: EditorConfig, editor: LexicalEditor): HTMLElement {
+    const dom = document.createElement('h5');
+    dom.className = "mb-1 font-semibold leading-none tracking-tight text-lg";
 
-    const wrapper = document.createElement('h5');
-    wrapper.className = "mb-1 font-semibold leading-none tracking-tight text-lg";
-    wrapper.appendChild(element);
-
-    return wrapper;
+    return dom;
   }
 
   updateDOM(
@@ -54,13 +99,29 @@ export class AlertTitleNode extends TextNode {
     dom: HTMLElement,
     config: EditorConfig,
   ): boolean {
-    const innerDOM = dom.firstElementChild as HTMLElement;
-    const update = super.updateDOM(prevNode, innerDOM, config);
+    const update = (prevNode.__key !== this.__key) || 
+      (this.getChildrenSize() === 0)
+    ;
 
     return update;
   }
 
-  exportJSON(): SerializedAlertTitleNode {
+  insertNewAfter(
+    selection?: RangeSelection,
+    restoreSelection = true,
+  ): null | LexicalNode {
+    
+    const anchorOffet = selection ? selection.anchor.offset : 0;
+    const newElement = $createAlertDescriptionNode();
+
+    const direction = this.getDirection();
+    newElement.setDirection(direction);
+    this.insertAfter(newElement, restoreSelection);
+
+    return newElement;
+  }
+
+  exportJSON(): SerializedElementNode {
     return {
       ...super.exportJSON(),
       type: this.getType(),
@@ -68,12 +129,9 @@ export class AlertTitleNode extends TextNode {
     }
   }
 
-  canHaveFormat(): boolean {
-    return false;
-  }
-  
-  setFormat(format: number): this {
-    return this;
+  getTextContent(): string {
+    const children = this.getChildren();
+    return children.reduce((acc, child) => acc + child.getTextContent() + '\n', '');
   }
 
   isParentRequired(): true {
@@ -85,8 +143,12 @@ export class AlertTitleNode extends TextNode {
   }
 }
 
-export function $createAlertTitleNode(text: string): AlertTitleNode {
-  return new AlertTitleNode(text);
+export function $createAlertTitleNode(text?: string): AlertTitleNode {
+  if (text === undefined) {
+    return new AlertTitleNode();
+  }
+
+  return new AlertTitleNode().append($createTextNode(text));
 }
 
 export function $isAlertTitleNode(

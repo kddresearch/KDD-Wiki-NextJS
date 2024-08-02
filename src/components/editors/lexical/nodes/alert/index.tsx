@@ -1,39 +1,24 @@
 import {
   $applyNodeReplacement,
-  $createLineBreakNode,
   $createParagraphNode,
   $createTextNode,
+  $isRootNode,
   $isTextNode,
-  DecoratorNode,
   ElementNode,
-  SerializedLexicalNode,
-  TextNode
 } from "lexical";
-import { ReactNode } from "react";
 import type {
-  DOMConversionMap,
-  DOMConversionOutput,
-  DOMExportOutput,
   EditorConfig,
-  LexicalEditor,
   LexicalNode,
   NodeKey,
-  ParagraphNode,
   RangeSelection,
   SerializedElementNode,
   Spread,
-  TabNode,
 } from 'lexical';
-
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { InfoIcon, Terminal } from "lucide-react";
-
 import { alertVariants } from "@/components/ui/alert";
 import { VariantProps } from "class-variance-authority";
 import { $createAlertDescriptionNode, $isAlertDescriptionNode } from "./description";
+import { $alertNodeTransform } from "./utils";
 import { $createAlertTitleNode } from "./title";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { $alertNodeTransform, $textNodeTransform } from "./utils";
 
 
 export type variant = VariantProps<typeof alertVariants>["variant"];
@@ -57,12 +42,41 @@ export class AlertNode extends ElementNode {
   }
 
   static importJSON(serializedNode: SerializedAlertNode): AlertNode {
-    const node = $createAlertNode(serializedNode.variant);
+
+    const aleartTitle = serializedNode.children.map((child) => {
+      if (child.type === 'alert-title') {
+        return $createAlertTitleNode();
+      }
+      return null;
+    })[0];
+
+    if (!aleartTitle) {
+      return $createAlertNode();
+      // throw new Error("AlertNode must have an AlertTitleNode");
+    }
+
+    const node = $createAlertNode(aleartTitle.getTextContent(), serializedNode.variant);
     return node;
   }
 
   static transform(): ((node: LexicalNode) => void) | null {
     return (node: LexicalNode) => {
+      if (!$isAlertNode(node)) {
+        return;
+      }
+
+      const parent = node.getParentOrThrow();
+
+      if (parent === null) {
+        const paragraphNode = $createParagraphNode();
+        node.replace(paragraphNode);
+        return;
+      }
+
+      if (!$isRootNode(parent)) {
+        return;
+      }
+
       if (!$isAlertNode(node)) {
         return;
       }
@@ -120,21 +134,62 @@ export class AlertNode extends ElementNode {
     dom: HTMLElement,
     config: EditorConfig,
   ): boolean {
-    return true;
+    // Update the DOM element here
+    const update = (prevNode.getVariant() !== this.getVariant()) || 
+      (prevNode.__key !== this.__key) || 
+      (this.getChildrenSize() === 0)
+    ;
+
+    return update;
+  }
+
+  canBreakout(selection: RangeSelection): boolean {
+    const latestNode = this.getLatest();
+    const childrenLength = latestNode.getChildrenSize();
+    const lastChild = latestNode.getLastChild();
+
+    if (!lastChild) {
+      return false;
+    }
+
+    const secondLastChild = lastChild.getPreviousSibling();
+
+    if (!secondLastChild) {
+      return false;
+    }
+
+    const arePast2ChildrenEmpty =
+      lastChild.getTextContentSize() === 0 &&
+      secondLastChild.getTextContentSize() === 0
+    ;
+
+    return childrenLength >= 2 && selection.isCollapsed() && arePast2ChildrenEmpty;
   }
 
   insertNewAfter(selection: RangeSelection, restoreSelection?: boolean): null | LexicalNode {
     // Create a new AlertDescriptionNode with a default text
     const latestNode = this.getLatest();
-    const children = latestNode.getChildren()
-    const childrenLength = children.length;
 
-    if (
-      childrenLength >= 2 &&
-      selection.isCollapsed() &&
-      selection.anchor.key === this.__key
-    ) {
+    console.log("checking Breakout");
+
+    if (this.canBreakout(selection)) {
       // Breakout of the AlertNode
+
+      let currentNode = latestNode.getLastChild()!;
+      while (true) {
+        currentNode.remove();
+
+        const previousSibling = currentNode.getPreviousSibling();
+
+        if (!previousSibling) {
+          break;
+        }
+
+        if (previousSibling.getTextContentSize() != 0) {
+          break;
+        }
+        currentNode = previousSibling;
+      }
 
       const newElement = $createParagraphNode();
       this.insertAfter(newElement, restoreSelection);
@@ -142,13 +197,6 @@ export class AlertNode extends ElementNode {
       return newElement;
     }
 
-    if (childrenLength === 0) {
-      // Create a new AlertDescriptionNode with a default text
-      const newElement = $createAlertTitleNode('\u200B');
-      this.append(newElement);
-      return null;
-    }
-  
     const {anchor, focus} = selection;
 
     const firstPoint = anchor.isBefore(focus) ? anchor : focus;
@@ -178,20 +226,18 @@ export class AlertNode extends ElementNode {
 
       newElement.select(1, 1);
     }
-
-    // if ($isAlertNode(firstSelectionNode)) {
-    //   const {offset} = selection.anchor;
-    //   firstSelectionNode.splice(offset, 0, [$createLineBreakNode()]);
-    //   firstSelectionNode.select(offset + 1, offset + 1);
-    // }
-    // const newAlertDescriptionNode = $createAlertDescriptionNode('wtf');
-    // this.append(newAlertDescriptionNode);
-    // this.insertAfter(newAlertDescriptionNode, restoreSelection);
     return null;
   }
 
+  getVariant(): variant {
+    return this.__variant;
+  }
+
   collapseAtStart(): boolean {
-    return false;
+
+    console.log("running Alert Collapse");
+
+    return true;
   }
 
   exportJSON(): SerializedAlertNode {
@@ -202,13 +248,28 @@ export class AlertNode extends ElementNode {
       version: 1,
     };
   }
+
+  getTextContent(): string {
+    const children = this.getChildren();
+    return children.reduce((acc, child) => acc + child.getTextContent() + '\n', '');
+  }
+
+  getTextContentSize(): number {
+    const children = this.getChildren();
+    return children.reduce((acc, child) => acc + child.getTextContentSize(), 0);
+  }
 }
 
+export function $createAlertNode(title?: string, variant?: variant): AlertNode {
 
+  if (title === undefined) {
+    title = 'Note:';
+  }
 
-
-export function $createAlertNode(variant?: variant): AlertNode {
-  return $applyNodeReplacement(new AlertNode(variant));
+  return $applyNodeReplacement(
+    (new AlertNode(variant))
+      .append($createAlertTitleNode(title))
+  );
 }
 
 export function $isAlertNode(
@@ -216,11 +277,3 @@ export function $isAlertNode(
 ): node is AlertNode {
   return node instanceof AlertNode;
 }
-
-// export function $createAlertNode(title: string): AlertNode {
-//   return new AlertNode();
-// }
-
-// export function $isAlertNode(node: LexicalNode | null | undefined): node is AlertNode {
-//   return node instanceof AlertNode;
-// }
