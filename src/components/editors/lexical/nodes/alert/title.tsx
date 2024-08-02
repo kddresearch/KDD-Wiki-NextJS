@@ -4,7 +4,6 @@ import {
   $getSelection,
   $isRangeSelection,
   ElementNode,
-  TextNode
 } from "lexical";
 import type {
   EditorConfig,
@@ -13,9 +12,11 @@ import type {
   NodeKey,
   RangeSelection,
   SerializedElementNode,
-  SerializedTextNode
 } from 'lexical';
-import { $createAlertNode, $isAlertNode } from ".";
+import {
+  $createAlertNode,
+  $isAlertNode
+} from "./root";
 import { $createAlertDescriptionNode } from "./description";
 
 export class AlertTitleNode extends ElementNode {
@@ -34,9 +35,6 @@ export class AlertTitleNode extends ElementNode {
 
   static transform(): ((node: LexicalNode) => void) | null {
     return (node: LexicalNode) => {
-
-      // console.log("running Title Transform");
-
       const parent = node.getParentOrThrow();
 
       if ($isAlertNode(parent)) {

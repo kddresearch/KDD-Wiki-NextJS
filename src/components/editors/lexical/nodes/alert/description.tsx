@@ -1,8 +1,7 @@
 import {
   $createParagraphNode,
   $createTextNode,
-  ElementNode,
-  TextNode
+  ElementNode
 } from "lexical";
 import type {
   EditorConfig,
@@ -10,14 +9,12 @@ import type {
   LexicalNode,
   NodeKey,
   RangeSelection,
-  SerializedElementNode,
-  SerializedTextNode,
+  SerializedElementNode
 } from 'lexical';
 import {
   $createAlertNode,
   $isAlertNode
-} from ".";
-import { nullable } from "zod";
+} from "./root";
 import { $createAlertTitleNode } from "./title";
 
 export class AlertDescriptionNode extends ElementNode {
