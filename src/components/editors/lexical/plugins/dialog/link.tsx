@@ -35,12 +35,12 @@ function LinkDialog({
   LinkDialogProps
 ) {
 
-  console.log("defultText", defaultText);
-  console.log("typeof defaultText", typeof defaultText);
+  // console.log("defultText", defaultText);
+  // console.log("typeof defaultText", typeof defaultText);
 
   if (typeof defaultText !== "string") {
     defaultText = "";
-    console.log("defaultText is not a string");
+    // console.log("defaultText is not a string");
   }
 
   const textDisabled = defaultText ? true : false;

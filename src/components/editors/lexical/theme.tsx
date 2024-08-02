@@ -102,8 +102,8 @@ function prePopulate() {
   if (root.getFirstChild() === null) {
 
     const alert = $createAlertNode('destructive');
-    alert.append($createAlertTitleNode('Known Issues:'));
-    alert.append($createAlertDescriptionNode('This is a development page. Please do not use it for production.'));
+    // alert.append($createAlertTitleNode('Known Issues:'));
+    // alert.append($createAlertDescriptionNode('This is a development page. Please do not use it for production.'));
     root.append(alert);
 
     const default_alert = $createAlertNode('default');

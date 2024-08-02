@@ -31,6 +31,7 @@ import InsertCommandsPlugin from './plugins/insert-commands-plugin';
 import TreeViewPlugin from './plugins/tree-view-plugin';
 import { SettingsContext, useSettings } from './plugins/settings-context-plugin';
 import SelectionToolbarPlugin from './plugins/selection-toolbar-plugin';
+import AlertPlugin from './plugins/alert-plugin';
 
 function Editor() {
   const {
@@ -61,6 +62,7 @@ function Editor() {
         <InsertCommandsPlugin />
         <CodeHighlightPlugin />
         <LinkPlugin />
+        <AlertPlugin />
         {useSelectionToolbar && <SelectionToolbarPlugin />}
         {isDebug && <TreeViewPlugin />}
         {isDebug && <MarkdownPlugin />}
