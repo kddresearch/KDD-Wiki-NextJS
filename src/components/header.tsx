@@ -26,15 +26,15 @@ export default async function Header() {
     <header className="bg-white">
       <div className="w-full h-8 bg-lightgray text-purple">  
         <div className="flex flex-row justify-between h-full container">
-          <Link className="my-auto" href={"https://k-state.edu"}>
-            <h1 className="text-xs h-4">Kansas State University</h1>
+          <Link className="text-sm h-4 my-auto leading-4 hover:underline" href={"https://k-state.edu"}>
+            Kansas State University
           </Link>
           <div className="grow"></div>
           {session ? (
             <AccountMenu user={user}/>
           ) : (
-            <Link className="my-auto" href={"/"}>
-              <h1 className="text-xs h-4">KDD Research Lab</h1>
+            <Link className="text-black text-sm h-4 my-auto leading-4" href={"/"}>
+              KDD Research Lab
             </Link>
           )}
         </div>

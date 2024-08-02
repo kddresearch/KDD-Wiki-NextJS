@@ -20,11 +20,11 @@ const config = {
     extend: {
       fontFamily: {
         "ksu-fonts": [
-          'Myriad Pro',
-          'Open Sans',
-          'Helvetica',
-          'Arial',
-          'sans-serif'
+          'myriad-pro',
+          // 'Open Sans',
+          // 'Helvetica',
+          // 'Arial',
+          // 'sans-serif'
         ],
       },
       backgroundImage: {

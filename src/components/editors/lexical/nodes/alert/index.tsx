@@ -1,69 +1,28 @@
-import { DecoratorNode, EditorConfig, ElementNode, LexicalNode, NodeKey, SerializedElementNode, SerializedLexicalNode, TextNode } from "lexical";
+import { DecoratorNode, ElementNode, SerializedLexicalNode, TextNode } from "lexical";
 import { ReactNode } from "react";
-import type {Spread} from 'lexical';
+import type {
+  DOMConversionMap,
+  DOMConversionOutput,
+  DOMExportOutput,
+  EditorConfig,
+  LexicalEditor,
+  LexicalNode,
+  NodeKey,
+  ParagraphNode,
+  RangeSelection,
+  SerializedElementNode,
+  Spread,
+  TabNode,
+} from 'lexical';
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { InfoIcon, Terminal } from "lucide-react";
 
-// export class AlertNode extends ElementNode {
-//   // __title: string;
-//   // __description: string;
-//   // __type: string;
-  
-//   // constructor(title: string, key?: NodeKey) {
-//   //   super(title, key);
-//   //   this.__title = title;
-//   //   this.__description = '';
-//   //   this.__type = 'info';
-//   // }
-  
-//   // static getType(): string {
-//   //   return 'alert-node';
-//   // }
-  
-//   // static clone(node: AlertNode): AlertNode {
-//   //   return new AlertNode(node.__title, node.__key);
-//   // }
+import { alertVariants } from "@/components/ui/alert";
+import { VariantProps } from "class-variance-authority";
 
-//   // createDOM(config: EditorConfig): HTMLElement {
-//   //   const element = super.createDOM(config);
 
-//   //   console.log(element);
-//   //   return element;
-//   // }
-  
-//   // setTitle(title: string) {
-//   //   const self = this.getWritable();
-//   //   self.__title = title;
-//   // }
-
-//   // getTitle(): string {
-//   //   const self = this.getLatest();
-//   //   return self.__title;
-//   // }
-
-//   static getType(): string {
-//     return 'alert';
-//   }
-
-//   static clone(node: AlertNode): AlertNode {
-//     return new AlertNode(node.__key);
-//   }
-
-//   createDOM(): HTMLElement {
-//     // Define the DOM element here
-//     const dom = document.createElement('p');
-//     return dom;
-//   }
-
-//   updateDOM(prevNode: AlertNode, dom: HTMLElement): boolean {
-//     // Returning false tells Lexical that this node does not need its
-//     // DOM element replacing with a new copy from createDOM.
-//     return false;
-//   }
-// }
-
-export type variant = "default" | "destructive" | null | undefined;
+export type variant = VariantProps<typeof alertVariants>["variant"];
 
 export type SerializedAlertNode = Spread<
   {
@@ -74,64 +33,80 @@ export type SerializedAlertNode = Spread<
   SerializedElementNode
 >;
 
-export class AlertNode extends DecoratorNode<ReactNode> {
-  __title: string;
-  __description: string;
+export class AlertNode extends ElementNode {
   __variant: variant;
-
+  
   static getType(): string {
     return 'alert';
   }
 
   static clone(node: AlertNode): AlertNode {
-    return new AlertNode(node.__title, node.__description, node.__variant, node.__key);
+    return new AlertNode(node.__variant, node.__key);
   }
 
-  constructor(title: string, description: string, variant?: variant, key?: NodeKey) {
+  constructor(variant?: variant, key?: NodeKey) {
     super(key);
-    this.__title = title;
-    this.__description =  description;
-    this.__variant = variant ?? 'destructive';
+    this.__variant = variant || 'default';
   }
 
+  // View
   createDOM(): HTMLElement {
-    return document.createElement('div');
+    // Define the DOM element here
+    const dom = document.createElement('div');
+    dom.className = alertVariants({ variant: this.__variant });
+    dom.role = "alert";
+    dom.dir = "ltr";
+
+    // add svg icon
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute('xmlns', "http://www.w3.org/2000/svg");
+      svg.setAttribute('width', '24');
+      svg.setAttribute('height', '24');
+      svg.setAttribute('viewBox', '0 0 24 24');
+      svg.setAttribute('fill', 'none');
+      svg.setAttribute('stroke', 'currentColor');
+      svg.setAttribute('stroke-width', '2');
+      svg.setAttribute('stroke-linecap', 'round');
+      svg.setAttribute('stroke-linejoin', 'round');
+      svg.setAttribute('class', 'lucide lucide-info h-4 w-4');
+
+    var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute('cx', '12');
+      circle.setAttribute('cy', '12');
+      circle.setAttribute('r', '10');
+    svg.appendChild(circle);
+
+    var path1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path1.setAttribute('d', 'M12 16v-4');
+    svg.appendChild(path1);
+
+    var path2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      path2.setAttribute('d', 'M12 8h.01');
+    svg.appendChild(path2);
+
+    dom.appendChild(svg);
+
+    return dom;
   }
 
-  updateDOM(): false {
-    return false;
+  updateDOM(
+    prevNode: AlertNode,
+    dom: HTMLElement,
+    config: EditorConfig,
+  ): boolean {
+    return true;
   }
 
-  exportJSON(): SerializedAlertNode {
-    return {
-      ...super.exportJSON(),
-      type: AlertNode.getType(),
-      title: this.__title,
-      description: this.__description,
-      variant: this.__variant,
-      version: 1,
-      children: [], // Add this
-      direction: null, // Add this
-      format: '', // Add this
-      indent: 0, // Add this
-    };
-  }
+  insertNewAfter(selection: RangeSelection, restoreSelection?: boolean): null | LexicalNode {
 
-  decorate(): ReactNode {
-    return (
-      <Alert variant={this.__variant}>
-        <InfoIcon className="h-4 w-4" />
-        <AlertTitle>{this.__title}</AlertTitle>
-        <AlertDescription>
-          {this.__description}
-        </AlertDescription>
-      </Alert>
-    );
+    
+
+    return null;
   }
 }
 
-export function $createAlertNode(title: string, description: string, variant?: variant): AlertNode {
-  return new AlertNode(title, description, variant);
+export function $createAlertNode(variant?: variant): AlertNode {
+  return new AlertNode(variant);
 }
 
 export function $isAlertNode(

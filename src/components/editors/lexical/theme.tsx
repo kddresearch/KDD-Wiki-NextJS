@@ -94,14 +94,27 @@ import { $createTextNode, $getRoot, $getSelection, EditorState } from 'lexical';
 import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
 import { $createCodeNode, $createCodeHighlightNode } from '@lexical/code';
 import { $createAlertNode } from './nodes/alert';
+import { $createAlertTitleNode } from './nodes/alert/title';
+import { $createAlertDescriptionNode } from './nodes/alert/description';
 
 function prePopulate() {
   const root = $getRoot();
   if (root.getFirstChild() === null) {
 
-    const alert = $createAlertNode('Known Issues:', 'This is a develpment page. Please do not use it for production. what the helllll', 'destructive');
-    // alert.append($createTextNode('This is an informational alert!'));
+    const alert = $createAlertNode('destructive');
+    alert.append($createAlertTitleNode('Known Issues:'));
+    alert.append($createAlertDescriptionNode('This is a development page. Please do not use it for production.'));
     root.append(alert);
+
+    const default_alert = $createAlertNode('default');
+    default_alert.append($createAlertTitleNode('Known Issues:'));
+    default_alert.append($createAlertDescriptionNode('This is a development page. Please do not use it for production.'));
+    root.append(default_alert);
+
+    const primary_alert = $createAlertNode('primary');
+    primary_alert.append($createAlertTitleNode('Known Issues:'));
+    primary_alert.append($createAlertDescriptionNode('This is a development page. Please do not use it for production.'));
+    root.append(primary_alert);
 
     const heading = $createHeadingNode('h1');
     heading.append($createTextNode('Welcome to the KDD Text Editor!'));

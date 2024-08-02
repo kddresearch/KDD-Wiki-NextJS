@@ -29,10 +29,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <Head>
+      {/* <Head> */}
         {/* <link rel="stylesheet" href="https://use.typekit.net/bxx1cgw.css"></link> */}
-        <link rel="stylesheet" href="https://use.typekit.net/qra4olf.css" />
-      </Head>
+        {/* <link rel="stylesheet" href="https://use.typekit.net/qra4olf.css" /> */}
+      {/* </Head> */}
       <body className={`font-ksu-fonts flex flex-col h-screen`}>
         <Script type="text/javascript" id="MS Clarity">
           {`
