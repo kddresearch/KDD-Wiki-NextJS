@@ -107,8 +107,8 @@ function prePopulate() {
     root.append(alert);
 
     const default_alert = $createAlertNode('default');
-    default_alert.append($createAlertTitleNode('Known Issues:'));
-    default_alert.append($createAlertDescriptionNode('This is a development page. Please do not use it for production.'));
+    default_alert.append($createAlertTitleNode('Note:'));
+    default_alert.append($createAlertDescriptionNode('Starting in .NET 9, a build warning is emitted if your project targets .NET Standard 1.x.\n\nFor more information, see Warning emitted for .NET Standard 1.x targets.'));
     root.append(default_alert);
 
     const primary_alert = $createAlertNode('primary');

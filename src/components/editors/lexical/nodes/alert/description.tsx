@@ -11,26 +11,13 @@ import type {
   ParagraphNode,
   RangeSelection,
   SerializedElementNode,
+  SerializedTextNode,
   Spread,
   TabNode,
 } from 'lexical';
+import { $createAlertNode, $isAlertNode } from ".";
 
-import { InfoIcon, Terminal } from "lucide-react";
-
-import { alertVariants } from "@/components/ui/alert";
-import { $createAlertNode } from ".";
-
-
-export type variant = "default" | "destructive" | null | undefined;
-
-export type SerializedAlertNode = Spread<
-  {
-    title: string;
-    description: string;
-    variant: variant;
-  },
-  SerializedElementNode
->;
+export type SerializedAlertNode = SerializedTextNode;
 
 export class AlertDescriptionNode extends TextNode {
 
@@ -42,14 +29,17 @@ export class AlertDescriptionNode extends TextNode {
     return new AlertDescriptionNode(node.__text);
   }
 
-  constructor(description: string) {
-    super(description);
+  static importJSON(serializedNode: SerializedAlertNode): AlertDescriptionNode {
+    const node = $createAlertDescriptionNode(serializedNode.text);
+    return node;
+  }
+
+  constructor(text: string, key?: NodeKey,) {
+    super(text, key);
   }
 
   // View
   createDOM(config: EditorConfig): HTMLElement {
-    // Define the DOM element here
-
     const element = super.createDOM(config);
 
     const dom = document.createElement('div');
@@ -67,7 +57,23 @@ export class AlertDescriptionNode extends TextNode {
     const innerDOM = dom.firstElementChild as HTMLElement;
     const update = super.updateDOM(prevNode, innerDOM, config);
 
+    // parent Must be an alert node
+    const parent = this.getParent();
+
+    if (!parent || !$isAlertNode(parent)) {
+      console.warn('Alert Plugin: AlertNode not found, selection not retained. Please report this issue.');
+      return update;
+    }
+
     return update;
+  }
+
+  exportJSON(): SerializedTextNode {
+    return {
+      ...super.exportJSON(),
+      type: this.getType(),
+      version: 1,
+    }
   }
 
   canHaveFormat(): boolean {
@@ -87,8 +93,8 @@ export class AlertDescriptionNode extends TextNode {
   }
 }
 
-export function $createAlertDescriptionNode(description: string): AlertDescriptionNode {
-  return new AlertDescriptionNode(description);
+export function $createAlertDescriptionNode(text: string): AlertDescriptionNode {
+  return new AlertDescriptionNode(text);
 }
 
 export function $isAlertDescriptionNode(

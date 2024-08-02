@@ -11,21 +11,13 @@ import type {
   ParagraphNode,
   RangeSelection,
   SerializedElementNode,
+  SerializedTextNode,
   Spread,
   TabNode,
 } from 'lexical';
 import { $createAlertNode } from ".";
 
-export type variant = "default" | "destructive" | null | undefined;
-
-export type SerializedAlertNode = Spread<
-  {
-    title: string;
-    description: string;
-    variant: variant;
-  },
-  SerializedElementNode
->;
+export type SerializedAlertTitleNode = SerializedTextNode;
 
 export class AlertTitleNode extends TextNode {
   
@@ -34,19 +26,19 @@ export class AlertTitleNode extends TextNode {
   }
 
   static clone(node: AlertTitleNode): AlertTitleNode {
-    return new AlertTitleNode(
-      node.__text
-    );
+    return new AlertTitleNode(node.__text);
+  }
+
+  static importJSON(serializedNode: SerializedAlertTitleNode): AlertTitleNode {
+    const node = $createAlertTitleNode(serializedNode.text);
+    return node;
   }
 
   constructor(text: string, key?: NodeKey,) {
     super(text, key);
   }
 
-  canHaveFormat(): boolean {
-    return false;
-  }
-
+  // View
   createDOM(config: EditorConfig): HTMLElement {
     const element = super.createDOM(config);
 
@@ -66,6 +58,18 @@ export class AlertTitleNode extends TextNode {
     const update = super.updateDOM(prevNode, innerDOM, config);
 
     return update;
+  }
+
+  exportJSON(): SerializedAlertTitleNode {
+    return {
+      ...super.exportJSON(),
+      type: this.getType(),
+      version: 1,
+    }
+  }
+
+  canHaveFormat(): boolean {
+    return false;
   }
   
   setFormat(format: number): this {

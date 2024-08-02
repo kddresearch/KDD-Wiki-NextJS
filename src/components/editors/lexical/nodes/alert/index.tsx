@@ -32,14 +32,14 @@ import { alertVariants } from "@/components/ui/alert";
 import { VariantProps } from "class-variance-authority";
 import { $createAlertDescriptionNode, $isAlertDescriptionNode } from "./description";
 import { $createAlertTitleNode } from "./title";
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { $alertNodeTransform, $textNodeTransform } from "./utils";
 
 
 export type variant = VariantProps<typeof alertVariants>["variant"];
 
 export type SerializedAlertNode = Spread<
   {
-    title: string;
-    description: string;
     variant: variant;
   },
   SerializedElementNode
@@ -54,6 +54,20 @@ export class AlertNode extends ElementNode {
 
   static clone(node: AlertNode): AlertNode {
     return new AlertNode(node.__variant, node.__key);
+  }
+
+  static importJSON(serializedNode: SerializedAlertNode): AlertNode {
+    const node = $createAlertNode(serializedNode.variant);
+    return node;
+  }
+
+  static transform(): ((node: LexicalNode) => void) | null {
+    return (node: LexicalNode) => {
+      if (!$isAlertNode(node)) {
+        return;
+      }
+      $alertNodeTransform(node);
+    };
   }
 
   constructor(variant?: variant, key?: NodeKey) {
@@ -177,13 +191,16 @@ export class AlertNode extends ElementNode {
   }
 
   collapseAtStart(): boolean {
-    // const paragraph = $createParagraphNode();
-    // const children = this.getChildren();
-    // children.forEach((child) => paragraph.append(child));
-    // this.replace(paragraph);
-    // return true;
-
     return false;
+  }
+
+  exportJSON(): SerializedAlertNode {
+    return {
+      ...super.exportJSON(),
+      variant: this.__variant,
+      type: this.getType(),
+      version: 1,
+    };
   }
 }
 
