@@ -108,13 +108,11 @@ function TextEditor({
   };
 
   const initialConfig = {
-    editorState: usePrePopulated ? // TODO: Fix this freaking ternary mess
-        prePopulate // true
-      :
-        disableMarkdown ? // false
-          () => populatePlainText(markdown ?? '') // true
-        :
-          () => $convertFromMarkdownString(markdown ?? '', KDD_TRANSFORMERS), // false
+    editorState: usePrePopulated
+      ? prePopulate
+      : disableMarkdown
+        ? () => populatePlainText(markdown ?? '')
+        : () => $convertFromMarkdownString(markdown ?? '', KDD_TRANSFORMERS),
     namespace: 'KDD-MD-Editor',
     nodes: [...editorNodes],
     theme: theme,

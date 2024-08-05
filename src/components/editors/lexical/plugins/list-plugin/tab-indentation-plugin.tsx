@@ -24,7 +24,7 @@ import {
 } from 'lexical';
 import {useEffect} from 'react';
 
-function $indentOverTab(selection: RangeSelection): boolean {
+function $canIndent(selection: RangeSelection): boolean {
   // const handled = new Set();
   const nodes = selection.getNodes();
   const canIndentBlockNodes = $filter(nodes, (node) => {
@@ -73,7 +73,7 @@ export function registerTabIndentation(editor: LexicalEditor) {
       }
 
       event.preventDefault();
-      const command: LexicalCommand<void> = $indentOverTab(selection)
+      const command: LexicalCommand<void> = $canIndent(selection)
         ? event.shiftKey
           ? OUTDENT_CONTENT_COMMAND
           : INDENT_CONTENT_COMMAND
