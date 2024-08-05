@@ -64,7 +64,7 @@ export function sanitizeURL(url: string): string {
 }
 
 import {$isAtNodeEnd} from '@lexical/selection';
-import {$isRootNode, ElementNode, LexicalNode, RangeSelection, TextNode} from 'lexical';
+import {$isRootNode, ElementNode, Klass, KlassConstructor, LexicalNode, RangeSelection, TextNode} from 'lexical';
 
 export function getSelectedNode(
   selection: RangeSelection,
@@ -115,14 +115,19 @@ export function useDebounce<T extends (...args: never[]) => void>(
       ),
     [ms, maxWait],
   );
-}
+};
 
-export function getNodeBeforeRoot(node: LexicalNode): LexicalNode {
+export function getNodeBeforeRoot<T extends LexicalNode>(node: LexicalNode, klass?: Klass<T>): T {
   let currentNode = node;
   while (currentNode.getParent() && !$isRootNode(currentNode.getParent())) {
     currentNode = currentNode.getParent()!;
   }
-  return currentNode;
+
+  if (klass && !(currentNode instanceof klass)) {
+    throw new Error(`Expected node to be of type ${klass.name}`);
+  }
+
+  return currentNode as T;
 }
 
 export function containsNode(

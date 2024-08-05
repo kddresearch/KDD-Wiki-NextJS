@@ -28,6 +28,7 @@ import { SettingsContext, useSettings } from './plugins/settings-context-plugin'
 import SelectionToolbarPlugin from './plugins/selection-toolbar-plugin';
 import DebugToolbar from './plugins/debug-toolbar-plugin';
 import { KDD_TRANSFORMERS } from './plugins/markdown-plugin/transform';
+import KeyboardCommandsPlugin from './plugins/keyboard-commands-plugin';
 
 interface MarkdownEditorProps {
   onMardownContentChange?: (newMarkdownContent: string) => void;
@@ -70,6 +71,7 @@ function Editor({
         <InsertCommandsPlugin />
         <CodeHighlightPlugin />
         <LinkPlugin />
+        <KeyboardCommandsPlugin />
         <MarkdownPlugin useMarkdownShortcuts={useMarkdownShortcuts} onMardownContentChange={onMardownContentChange} />
         {useSelectionToolbar && <SelectionToolbarPlugin />}
         {isDebug && <DebugToolbar />}
