@@ -112,11 +112,43 @@ import {
 } from 'react';
 
 function Placeholder() {
-  const message = 'Start writing with markdown...';
+  const [baseMessage, setBaseMessage] = useState('');
+  const [message, setMessage] = useState('');
+  const [hasPlayed, setHasPlayed] = useState(false);
+
+  useEffect(() => {
+    const messages = [
+      'Start writing in markdown...',
+      'Write something...',
+      'Type to start writing...',
+      'Compose your thoughts...',
+      'Markdown magic happens here...'
+    ];
+
+    if (!baseMessage) {
+      setBaseMessage(messages[Math.floor(Math.random() * messages.length)]);
+    }
+  }, [baseMessage]);
+
+  useEffect(() => {
+    if (hasPlayed) return;
+
+    const interval = setInterval(() => {
+      setMessage((prev) => {
+        if (prev.length === baseMessage.length) {
+          setHasPlayed(true);
+          return baseMessage;
+        }
+        return baseMessage.slice(0, prev.length + 1);
+      });
+    }, 125);
+
+    return () => clearInterval(interval);
+  }, [hasPlayed, baseMessage]);
 
   return (
     <div className='text-gray overflow-hidden absolute text-ellipsis top-[-20px] left-[14px] text-normal select-none inline-block pointer-events-none p-5'>
-      <span className="gradient-text font-semibold">{message}</span>
+      <span className="gradient-text font-semibold opacity-65">{message}</span>
       <span
         className="absolute top-0 left-0 p-5 text-transparent gradient-shadow font-semibold opacity-20"
         style={{
@@ -135,6 +167,14 @@ import { $createCodeNode, $createCodeHighlightNode } from '@lexical/code';
 import { $createAlertNode } from './nodes/alert';
 import { $createAlertTitleNode } from './nodes/alert/title';
 import { $createAlertDescriptionNode } from './nodes/alert/description';
+
+function populatePlainText(text: string) {
+  const root = $getRoot();
+  
+  const paragraph = $createParagraphNode();
+  paragraph.append($createTextNode(text));
+  root.append(paragraph);
+}
 
 function prePopulate() {
   const root = $getRoot();
@@ -203,5 +243,6 @@ export default theme;
 
 export {
   Placeholder,
-  prePopulate
+  prePopulate,
+  populatePlainText
 };

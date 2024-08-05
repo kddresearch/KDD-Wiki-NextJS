@@ -18,12 +18,19 @@ export default function DebugToolbar() {
     throw new Error("Failed to parse Markdown");
   }
 
+  const throwLexicalError = () => {
+    editor.update(() => {
+      throw new Error("Failed to parse Markdown");
+    });
+  }
+
   return (
     <>
       <div className="border-t border-gray mx-1">
         <div className="flex bg-white py-1 rounded-t-lg align-middle text-darkgray h-12 gap-1" >
           <Button onClick={handleConvertToMarkdown} variant={"outline"}>Convert to Markdown</Button>
           <Button onClick={throwError} variant={"destructive"}>Throw Error</Button>
+          <Button onClick={throwLexicalError} variant={"destructive"}>Throw Lexical Error</Button>
         </div>
       </div>
 

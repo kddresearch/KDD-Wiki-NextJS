@@ -263,12 +263,15 @@ export class AlertNode extends ElementNode {
   }
 }
 
-export function $createAlertNode(title: string = 'Note:', content: string = '', variant: AlertVariant = 'default'): AlertNode {
-  return $applyNodeReplacement(
-    new AlertNode(variant)
-      .append($createAlertTitleNode(title))
-      .append($createAlertDescriptionNode(content))
-  );
+export function $createAlertNode(title: string = 'Note:', content?: string, variant: AlertVariant = 'default'): AlertNode {
+
+  const alertNode = new AlertNode(variant);
+  alertNode.append($createAlertTitleNode(title));
+  if (content) {
+    alertNode.append($createAlertDescriptionNode(content));
+  }
+
+  return $applyNodeReplacement(alertNode);
 }
 
 export function $isAlertNode(

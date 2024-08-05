@@ -27,8 +27,5 @@ export default function NotFound() {
         </Link>
       </Card>
     </StripeBackDrop>
-    // <div>
-    //   hello world
-    // </div>
   );
 }
