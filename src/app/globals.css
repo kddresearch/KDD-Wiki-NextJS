@@ -84,3 +84,20 @@
     background-position: 0% 50%;
   }
 }
+
+.gradient-shadow {
+  animation: shadow-animation 10s ease infinite;
+}
+
+@keyframes shadow-animation {
+  0% {
+    text-shadow: 0 0 10px #7A288A, 0 0 20px #3498db, 0 0 30px #7A288A;
+  }
+  50% {
+    text-shadow: 0 0 10px #3498db, 0 0 20px #7A288A, 0 0 30px #3498db;
+  }
+  100% {
+    text-shadow: 0 0 10px #7A288A, 0 0 20px #3498db, 0 0 30px #7A288A;
+  }
+}
+

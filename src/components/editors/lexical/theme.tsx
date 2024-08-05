@@ -144,9 +144,17 @@ function Placeholder() {
       // className={`text-gray overflow-hidden absolute text-ellipsis top-[0px] left-[34px] text-normal select-none inline-block pointer-events-none ${
       //   animate ? 'animate-out' : 'animate-in'
       // }`}
-      className='text-gray overflow-hidden absolute text-ellipsis top-[0px] left-[34px] text-normal select-none inline-block pointer-events-none blur opacity-25'
+      className='text-gray overflow-hidden absolute text-ellipsis top-[-20px] left-[14px] text-normal select-none inline-block pointer-events-none p-5'
     >
       <span className="gradient-text font-semibold">{message}</span>
+      <span
+        className="absolute top-0 left-0 p-5 text-transparent gradient-shadow font-semibold opacity-25"
+        style={{
+          filter: 'blur(2px)',
+        }}
+      >
+        {message}
+      </span>
     </div>
   );
 }
