@@ -112,43 +112,13 @@ import {
 } from 'react';
 
 function Placeholder() {
-  // const messages = useMemo(() => [
-  //   'Start writing in markdown...',
-  //   'Write something...',
-  //   'Type to start writing...',
-  //   'Compose your thoughts...',
-  //   'Markdown magic happens here...',
-  // ], []);
-
-  // const [message, setMessage] = useState(messages[0]);
-  // const [index, setIndex] = useState(0);
-  // const [animate, setAnimate] = useState(false);
-
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     setAnimate(true);
-  //     setTimeout(() => {
-  //       setIndex((prevIndex) => (prevIndex + 1) % messages.length);
-  //       setMessage(messages[index]);
-  //       setAnimate(false);
-  //     }, 500); // wait for animation to finish
-  //   }, 4000); // rotate every 4 seconds
-
-  //   return () => clearInterval(intervalId);
-  // }, [index, messages]);
-
-  const message = 'Start writing in markdown...';
+  const message = 'Start writing with markdown...';
 
   return (
-    <div
-      // className={`text-gray overflow-hidden absolute text-ellipsis top-[0px] left-[34px] text-normal select-none inline-block pointer-events-none ${
-      //   animate ? 'animate-out' : 'animate-in'
-      // }`}
-      className='text-gray overflow-hidden absolute text-ellipsis top-[-20px] left-[14px] text-normal select-none inline-block pointer-events-none p-5'
-    >
+    <div className='text-gray overflow-hidden absolute text-ellipsis top-[-20px] left-[14px] text-normal select-none inline-block pointer-events-none p-5'>
       <span className="gradient-text font-semibold">{message}</span>
       <span
-        className="absolute top-0 left-0 p-5 text-transparent gradient-shadow font-semibold opacity-25"
+        className="absolute top-0 left-0 p-5 text-transparent gradient-shadow font-semibold opacity-20"
         style={{
           filter: 'blur(2px)',
         }}
