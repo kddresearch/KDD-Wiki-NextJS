@@ -261,6 +261,10 @@ export class AlertNode extends ElementNode {
     const children = this.getChildren();
     return children.reduce((acc, child) => acc + child.getTextContentSize(), 0);
   }
+
+  canIndent(): false {
+    return false;
+  }
 }
 
 export function $createAlertNode(title: string = 'Note:', content?: string, variant: AlertVariant = 'default'): AlertNode {

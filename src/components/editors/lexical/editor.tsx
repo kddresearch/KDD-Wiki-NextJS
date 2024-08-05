@@ -17,6 +17,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { $convertFromMarkdownString } from '@lexical/markdown';
 
 import editorNodes from './nodes';
+import { ListPlugin } from './plugins/list-plugin';
 
 import { Placeholder, prePopulate } from './theme';
 import CodeHighlightPlugin from './plugins/code-highlighting-plugin';
@@ -65,6 +66,7 @@ function Editor({
         />
         <HistoryPlugin />
         <AutoFocusPlugin />
+        <ListPlugin />
         <InsertCommandsPlugin />
         <CodeHighlightPlugin />
         <LinkPlugin />
@@ -104,8 +106,6 @@ function TextEditor({
       description: error.message,
     });
   };
-
-
 
   const initialConfig = {
     editorState: usePrePopulated ? // TODO: Fix this freaking ternary mess

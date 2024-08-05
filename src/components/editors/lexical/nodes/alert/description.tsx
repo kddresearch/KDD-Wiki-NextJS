@@ -145,6 +145,10 @@ export class AlertDescriptionNode extends ElementNode {
   createParentElementNode(): ElementNode {
     return $createAlertNode();
   }
+
+  canIndent(): false {
+    return false;
+  }
 }
 
 export function $createAlertDescriptionNode(text?: string): AlertDescriptionNode {

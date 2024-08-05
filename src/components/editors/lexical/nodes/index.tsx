@@ -9,9 +9,7 @@ import { OverflowNode } from '@lexical/overflow';
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
-import { AlertNode } from './alert';
-import { AlertTitleNode } from './alert/title';
-import { AlertDescriptionNode } from './alert/description';
+import { AlertNode, AlertTitleNode, AlertDescriptionNode } from './alert';
 
 const editorNodes: Array<Klass<LexicalNode>> = [
   CodeHighlightNode,
