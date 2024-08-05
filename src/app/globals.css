@@ -63,3 +63,24 @@
   background-color: rgba(81, 40, 136, .9); /* Set the selection background color to purple */
   color: white; /* Set the text color to white */
 }
+
+.gradient-text {
+  background: linear-gradient(90deg, var(--primary), #3498db);
+  background-size: 400% 100%;
+  animation: gradient-animation 10s ease infinite;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

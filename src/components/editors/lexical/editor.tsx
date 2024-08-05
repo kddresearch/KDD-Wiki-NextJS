@@ -1,7 +1,7 @@
 "use client";
 
-import {useEffect, useState} from 'react';
-import theme from "./theme";
+import {Suspense, useEffect, useState} from 'react';
+import theme, { Disclaimer } from "./theme";
 
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
@@ -14,6 +14,7 @@ import ToolbarPlugin from './plugins/toolbar-plugin';
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { TreeView } from '@lexical/react/LexicalTreeView';
+import { useToast } from "@/components/ui/use-toast"
 
 import {
   $convertFromMarkdownString,
@@ -31,6 +32,7 @@ import InsertCommandsPlugin from './plugins/insert-commands-plugin';
 import TreeViewPlugin from './plugins/tree-view-plugin';
 import { SettingsContext, useSettings } from './plugins/settings-context-plugin';
 import SelectionToolbarPlugin from './plugins/selection-toolbar-plugin';
+import DebugToolbar from './plugins/debug-toolbar-plugin';
 
 function Editor() {
   const {
@@ -57,51 +59,58 @@ function Editor() {
         />
         <HistoryPlugin />
         <AutoFocusPlugin />
-        <MarkdownShortcutPlugin />
         <InsertCommandsPlugin />
         <CodeHighlightPlugin />
         <LinkPlugin />
+        <MarkdownPlugin />
         {useSelectionToolbar && <SelectionToolbarPlugin />}
-        {isDebug && <TreeViewPlugin />}
-        {isDebug && <MarkdownPlugin />}
+        {isDebug && <DebugToolbar />}
       </ContextMenuPlugin>
     </div>
   );
 };
 
+function Loading() {
+  return <div>Loading editor... (enable javascript)</div>;
+}
+
 function TextEditor({
   markdown,
+  onMardownContentChange,
+  usePrePopulated,
+  showDisclaimer = true,
 }: {
   markdown?: string;
-  // onContentChange: (newContent: string) => void;
+  onMardownContentChange?: (newMarkdownContent: string) => void;
+  usePrePopulated?: boolean;
+  showDisclaimer?: boolean;
 }) {
-
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, [setIsClient]);
+  const { toast } = useToast();
 
   const initialConfig = {
-    editorState: markdown ? () => $convertFromMarkdownString(markdown) : prePopulate,
+    editorState: usePrePopulated ? prePopulate : () => $convertFromMarkdownString(markdown ?? ''),
     namespace: 'KDD-MD-Editor',
     nodes: [...editorNodes],
     theme: theme,
     onError: (error: Error) => {
-      throw error;
+      console.error('Lexical Error:', error);
+
+      toast({
+        title: 'An error occurred with the editor',
+        description: error.message,
+      });
     },
   };
 
   return (
-    isClient ? (
+    <Suspense fallback={<Loading />}>
+      {showDisclaimer && <Disclaimer />}
       <LexicalComposer initialConfig={initialConfig}>
         <SettingsContext>
           <Editor/>
         </SettingsContext>
       </LexicalComposer>
-    ) : (
-      <div>Loading editor... (enable javascript)</div>
-    )
+    </Suspense>
   )
 }
 

@@ -153,7 +153,17 @@ export function $createAlertDescriptionNode(text?: string): AlertDescriptionNode
     return new AlertDescriptionNode();
   }
 
-  return new AlertDescriptionNode().append($createTextNode(text));
+  // split text by new line
+  const lines = text.split('\n');
+  const result = lines.reduce((acc, line, index) => {
+    if (index === 0) {
+      return acc.append($createTextNode(line));
+    }
+
+    return acc.append($createParagraphNode().append($createTextNode(line)));
+  }, new AlertDescriptionNode());
+
+  return result;
 }
 
 export function $isAlertDescriptionNode(
