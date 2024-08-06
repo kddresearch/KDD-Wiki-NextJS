@@ -3,54 +3,6 @@ import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext
 import { getNodeBeforeRoot, hasSiblings, onlyChildIsListNode, listItemContainsListNode } from "../../utils";
 import { $getNearestBlockElementAncestorOrThrow } from "@lexical/utils";
 
-function verifyIndent(node: ListItemNode, indent: number): boolean {
-  let latestNode = node.getLatest();
-  // console.log(`begin node ${latestNode.getKey()} | ${latestNode.getIndent()}`);
-
-  const listNode = latestNode.getChildren().find($isListNode);
-  const currentIndent = hasSiblings(latestNode) ? indent + 1 : indent;
-
-  if (listNode) {
-    const result = listNode.getChildren()
-      .filter($isListItemNode)
-      .sort(sortListItemsByListNodes)
-      .every((child) => {
-
-      // console.log(`node ${child.getKey()} has a list node | siblings: ${hasSiblings(child)} | indent: ${currentIndent}`);
-      return verifyIndent(child, currentIndent);
-    });
-    return result;
-  } else {
-    // console.log(`end   node ${latestNode.getKey()} | ${indent}`);
-
-    if (latestNode.getIndent() !== indent) {
-      console.log(`node ${latestNode.getKey()} has an incorrect indent | expected: ${indent} | actual: ${latestNode.getIndent()}`);
-      latestNode.setIndent(indent);
-    }
-
-    return true;
-  }
-
-  // Recursive Case
-
-  // Default Case
-  if (!listItemContainsListNode(latestNode)) {
-    // console.log(`node ${latestNode.getKey()} is a leaf node`);
-    console.log(`end   node ${latestNode.getKey()} | ${indent}`);
-    return true;
-  }
-
-
-  // Error Case
-  if (!listNode) {
-    console.warn('list node not found, please report this issue to the developers');
-    return false;
-  }
-
-  console.log(`node ${latestNode.getKey()} has a list node | siblings: ${hasSiblings(latestNode)} | indent: ${currentIndent}`);
-
-}
-
 function sortListItemsByListNodes(a: ListItemNode, b: ListItemNode): number {
   return listItemContainsListNode(a) ?
     listItemContainsListNode(b) ? 0
@@ -59,20 +11,45 @@ function sortListItemsByListNodes(a: ListItemNode, b: ListItemNode): number {
     : 1
 }
 
-export function PreventOrphanedIndentsPlugin() {
+function verifyIndent(node: ListItemNode, indent: number, maxDepth: number): boolean {
+  const latestNode = node.getLatest();
+  const listNode = latestNode.getChildren().find($isListNode);
+  const currentIndent = hasSiblings(latestNode) ? indent + 1 : indent;
+
+  if (listNode) {
+    const result = listNode.getChildren()
+      .filter($isListItemNode)
+      .sort(sortListItemsByListNodes)
+      .every((child) => {
+        return verifyIndent(child, currentIndent, maxDepth);
+      });
+    return result;
+  } else {
+    if (indent > maxDepth) {
+      console.warn(`node ${latestNode.getKey()} has an indent greater than ${maxDepth} | indent: ${indent}`);
+      indent = maxDepth;
+    }
+
+    if (latestNode.getIndent() !== indent) {
+      latestNode.setIndent(indent);
+    }
+
+    return true;
+  }
+}
+
+
+export function PreventOrphanedIndentsPlugin({
+  maxDepth = 7
+}: {
+  maxDepth?: number;
+}) {
   const [editor] = useLexicalComposerContext();
 
   editor.registerNodeTransform(ListNode, (node) => {
     const rootListNode = getNodeBeforeRoot<ListNode>(node, ListNode);
-
-    // if (rootListNode.getKey() !== node.getKey()) {
-    //   return;
-    // }
-
     const childrenSize = rootListNode.getChildrenSize();
     const children = rootListNode.getChildren();
-
-    console.log("root list", rootListNode.getKey());
 
     if (childrenSize === 0) {
       return;
@@ -82,7 +59,7 @@ export function PreventOrphanedIndentsPlugin() {
       .sort(sortListItemsByListNodes)
       .every((child) => {
         const indent = 0;
-        return verifyIndent(child, indent);
+        return verifyIndent(child, indent, maxDepth);
       });
 
     if (!result) {

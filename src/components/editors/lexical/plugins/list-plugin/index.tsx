@@ -4,12 +4,14 @@ import ListMaxIndentLevelPlugin from './max-indent-plugin';
 import { PreventOrphanedIndentsPlugin } from './prevent-orphaned-indents-plugin';
 
 export function ListPlugin() {
+  const maxDepth = 7;
+
   return (
     <>
       <LexicalListPlugin />
       <KeyIndentationPlugin />
-      <ListMaxIndentLevelPlugin maxDepth={7} />
-      <PreventOrphanedIndentsPlugin />
+      <ListMaxIndentLevelPlugin maxDepth={maxDepth} />
+      <PreventOrphanedIndentsPlugin maxDepth={maxDepth}/>
     </>
   );
 }

@@ -50,7 +50,7 @@ const theme = {
   // image: 'editor-image',
   // link: 'text-purple underline',
   list: {
-    listitem: 'mx-8 my-2',
+    listitem: 'ml-8 my-2',
     nested: {
       listitem: 'list-none',
     },
