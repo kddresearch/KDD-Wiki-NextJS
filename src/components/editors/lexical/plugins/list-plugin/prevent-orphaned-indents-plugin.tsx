@@ -5,15 +5,41 @@ import { $getNearestBlockElementAncestorOrThrow } from "@lexical/utils";
 
 function verifyIndent(node: ListItemNode, indent: number): boolean {
   let latestNode = node.getLatest();
+  // console.log(`begin node ${latestNode.getKey()} | ${latestNode.getIndent()}`);
 
-  // Default Case
-  if (!listItemContainsListNode(latestNode)) {
-    latestNode.setIndent(indent);
-    // console.log(`node ${latestNode.getKey()} is a leaf node`);
+  const listNode = latestNode.getChildren().find($isListNode);
+  const currentIndent = hasSiblings(latestNode) ? indent + 1 : indent;
+
+  if (listNode) {
+    const result = listNode.getChildren()
+      .filter($isListItemNode)
+      .sort(sortListItemsByListNodes)
+      .every((child) => {
+
+      // console.log(`node ${child.getKey()} has a list node | siblings: ${hasSiblings(child)} | indent: ${currentIndent}`);
+      return verifyIndent(child, currentIndent);
+    });
+    return result;
+  } else {
+    // console.log(`end   node ${latestNode.getKey()} | ${indent}`);
+
+    if (latestNode.getIndent() !== indent) {
+      console.log(`node ${latestNode.getKey()} has an incorrect indent | expected: ${indent} | actual: ${latestNode.getIndent()}`);
+      latestNode.setIndent(indent);
+    }
+
     return true;
   }
 
-  const listNode = latestNode.getChildren().find($isListNode);
+  // Recursive Case
+
+  // Default Case
+  if (!listItemContainsListNode(latestNode)) {
+    // console.log(`node ${latestNode.getKey()} is a leaf node`);
+    console.log(`end   node ${latestNode.getKey()} | ${indent}`);
+    return true;
+  }
+
 
   // Error Case
   if (!listNode) {
@@ -21,17 +47,16 @@ function verifyIndent(node: ListItemNode, indent: number): boolean {
     return false;
   }
 
-  const currentIndent = hasSiblings(latestNode) ? indent + 1 : indent;
-  console.log(`node ${latestNode.getKey()} has a list node`);
-  console.log(`siblings: ${hasSiblings(latestNode)}`);
-  console.log(`current indent: ${currentIndent}`);
-  console.log();
+  console.log(`node ${latestNode.getKey()} has a list node | siblings: ${hasSiblings(latestNode)} | indent: ${currentIndent}`);
 
-  // Recursive Case
-  return listNode.getChildren().filter($isListItemNode).every((child) => {
-    const result = verifyIndent(child, currentIndent);
-    return result;
-  });
+}
+
+function sortListItemsByListNodes(a: ListItemNode, b: ListItemNode): number {
+  return listItemContainsListNode(a) ?
+    listItemContainsListNode(b) ? 0
+    : -1
+  : listItemContainsListNode(b) ? 1
+    : 1
 }
 
 export function PreventOrphanedIndentsPlugin() {
@@ -39,6 +64,10 @@ export function PreventOrphanedIndentsPlugin() {
 
   editor.registerNodeTransform(ListNode, (node) => {
     const rootListNode = getNodeBeforeRoot<ListNode>(node, ListNode);
+
+    // if (rootListNode.getKey() !== node.getKey()) {
+    //   return;
+    // }
 
     const childrenSize = rootListNode.getChildrenSize();
     const children = rootListNode.getChildren();
@@ -49,16 +78,12 @@ export function PreventOrphanedIndentsPlugin() {
       return;
     }
 
-    const result = children.every((child) => {
-      const indent = 0;
-
-      if ($isListItemNode(child)) {
-        const result = verifyIndent(child, indent);
-        return result;
-      } else {
-        console.warn('child is not a ListItemNode, please report this issue to the developers');
-      }
-    });
+    const result = children.filter($isListItemNode)
+      .sort(sortListItemsByListNodes)
+      .every((child) => {
+        const indent = 0;
+        return verifyIndent(child, indent);
+      });
 
     if (!result) {
       console.warn('Something went wrong when verifying the indent of the list items');
