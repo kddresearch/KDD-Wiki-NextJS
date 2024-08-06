@@ -44,6 +44,8 @@ import {
   isCodeInSelection
 } from "../../utils/styles";
 import { is } from "drizzle-orm";
+import { FaMarkdown } from "react-icons/fa6";
+import { TOGGLE_DIRECT_MARKDOWN_COMMAND } from "../markdown-plugin";
 
 // No clue what this is for
 const LowPriority = 1;
@@ -77,7 +79,8 @@ export default function ToolbarPlugin() {
     setOption,
     settings: {
       isDebug,
-      useSelectionToolbar
+      useSelectionToolbar,
+      editInMarkdown
     },
   } = useSettings();
 
@@ -265,6 +268,17 @@ export default function ToolbarPlugin() {
             >
               <Bug className="mr-2 h-4 w-4" />
               <span>Debug</span>
+            </DropdownMenuCheckboxItem>
+
+            <DropdownMenuCheckboxItem
+              checked={editInMarkdown}
+              onCheckedChange={() => {
+                setOption("editInMarkdown", !editInMarkdown)
+                editor.dispatchCommand(TOGGLE_DIRECT_MARKDOWN_COMMAND, undefined);
+              }}
+            >
+              <FaMarkdown className="mr-2 h-4 w-4" />
+              <span>Edit in Markdown</span>
             </DropdownMenuCheckboxItem>
 
             <DropdownMenuSeparator />

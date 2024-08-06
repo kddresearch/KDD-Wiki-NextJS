@@ -38,7 +38,6 @@ import {
   getStrikethroughStyling,
 } from "../utils/styles";
 
-// Still no clue what this is for
 const LowPriority = 1;
 
 function ContextMenuPlugin({

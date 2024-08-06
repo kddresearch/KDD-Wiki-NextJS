@@ -1,8 +1,11 @@
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { TreeView } from "@lexical/react/LexicalTreeView";
 import { KDD_TRANSFORMERS } from "./markdown-plugin/transform";
-import { $convertToMarkdownString } from "@lexical/markdown";
+import { $convertFromMarkdownString, $convertToMarkdownString } from "@lexical/markdown";
 import { Button } from "@/components/ui/button";
+import { $createTextNode, $getRoot } from "lexical";
+import { $createCodeNode, $isCodeNode } from "@lexical/code";
+import { TOGGLE_DIRECT_MARKDOWN_COMMAND } from "./markdown-plugin";
 
 export default function DebugToolbar() {
   const [editor] = useLexicalComposerContext();
@@ -24,6 +27,10 @@ export default function DebugToolbar() {
     });
   }
 
+  const handleMarkdownToggle = () => {
+    editor.dispatchCommand(TOGGLE_DIRECT_MARKDOWN_COMMAND, undefined);
+  }
+
   return (
     <>
       <div className="border-t border-gray mx-1">
@@ -31,6 +38,7 @@ export default function DebugToolbar() {
           <Button onClick={handleConvertToMarkdown} variant={"outline"}>Convert to Markdown</Button>
           <Button onClick={throwError} variant={"destructive"}>Throw Error</Button>
           <Button onClick={throwLexicalError} variant={"destructive"}>Throw Lexical Error</Button>
+          <Button onClick={handleMarkdownToggle} variant={"outline"}>Convert to Markdown and Replace</Button>
         </div>
       </div>
 

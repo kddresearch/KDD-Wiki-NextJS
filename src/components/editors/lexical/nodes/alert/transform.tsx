@@ -28,7 +28,7 @@ export const ALERT: ElementTransformer = {
     );
   },
   // regExp: /^>[ \t]*\[!(\w+):(?:\|(\w+))?\]\s*\n((?:>.*(?:\n|$))*)/gm, // TODO: Add support for multiple lines in Lexical
-  regExp: /^>[ \t]*\[!(\w+):(?:\|(\w+))?\]/,
+  regExp: /^>[ \t]*\[!([a-zA-Z\s]+):(?:\|(\w+))?\]/,
   replace: (parentNode, children, _match, isImport) => {
     const variant = isAlertVariant(_match[2]) ? _match[2] : undefined;
     const node = $createAlertNode(_match[1] + ':', undefined, variant);

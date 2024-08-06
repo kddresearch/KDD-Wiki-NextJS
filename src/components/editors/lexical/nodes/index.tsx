@@ -10,6 +10,7 @@ import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { AlertNode, AlertTitleNode, AlertDescriptionNode } from './alert';
+import { MakrdownEditorCodeNode } from './markdown';
 
 const editorNodes: Array<Klass<LexicalNode>> = [
   CodeHighlightNode,
@@ -29,7 +30,8 @@ const editorNodes: Array<Klass<LexicalNode>> = [
   TableRowNode,
   AlertNode,
   AlertTitleNode,
-  AlertDescriptionNode
+  AlertDescriptionNode,
+  MakrdownEditorCodeNode
 ];
 
 export default editorNodes;
