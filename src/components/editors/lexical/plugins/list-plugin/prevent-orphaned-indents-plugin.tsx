@@ -1,38 +1,37 @@
 import { $isListItemNode, $isListNode, ListItemNode, ListNode } from "@lexical/list";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { getNodeBeforeRoot } from "../../utils";
+import { getNodeBeforeRoot, hasSiblings, onlyChildIsListNode, listItemContainsListNode } from "../../utils";
+import { $getNearestBlockElementAncestorOrThrow } from "@lexical/utils";
 
 function verifyIndent(node: ListItemNode, indent: number): boolean {
-  const children = node.getChildren();
-  const isOnlyListChildren = children.every($isListNode);
+  let latestNode = node.getLatest();
 
-  const listChildren = node.getChildren().filter($isListNode);
-  const childrenSize = node.getChildrenSize();
-  const currentIndent = node.getIndent();
-
-  console.log('indent', indent);
-  console.log('currentIndent', currentIndent);
-
-  if (currentIndent > indent) {
-    node.setIndent(indent);
-  }
-
-  // const nextIndent = isOnlyListChildren ? indent : indent + 1;
-  const nextIndent = indent + 1;
-
-  if (childrenSize === 0) {
-    // Base Case
+  // Default Case
+  if (!listItemContainsListNode(latestNode)) {
+    latestNode.setIndent(indent);
+    // console.log(`node ${latestNode.getKey()} is a leaf node`);
     return true;
   }
 
-  listChildren.forEach((listChild) => {
-    const children = listChild.getChildren().filter($isListItemNode);
-    children.forEach((child) => {
-      verifyIndent(child, nextIndent);
-    });
-  })
+  const listNode = latestNode.getChildren().find($isListNode);
 
-  return true;
+  // Error Case
+  if (!listNode) {
+    console.warn('list node not found, please report this issue to the developers');
+    return false;
+  }
+
+  const currentIndent = hasSiblings(latestNode) ? indent + 1 : indent;
+  console.log(`node ${latestNode.getKey()} has a list node`);
+  console.log(`siblings: ${hasSiblings(latestNode)}`);
+  console.log(`current indent: ${currentIndent}`);
+  console.log();
+
+  // Recursive Case
+  return listNode.getChildren().filter($isListItemNode).every((child) => {
+    const result = verifyIndent(child, currentIndent);
+    return result;
+  });
 }
 
 export function PreventOrphanedIndentsPlugin() {
@@ -50,7 +49,7 @@ export function PreventOrphanedIndentsPlugin() {
       return;
     }
 
-    children.forEach((child, index) => {
+    const result = children.every((child) => {
       const indent = 0;
 
       if ($isListItemNode(child)) {
@@ -60,6 +59,13 @@ export function PreventOrphanedIndentsPlugin() {
         console.warn('child is not a ListItemNode, please report this issue to the developers');
       }
     });
+
+    if (!result) {
+      console.warn('Something went wrong when verifying the indent of the list items');
+      return;
+    }
+
+    return;
   })
 
   return (

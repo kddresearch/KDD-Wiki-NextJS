@@ -24,10 +24,12 @@ import {
 } from 'lexical';
 import {useEffect} from 'react';
 import { $isListItemNode } from '@lexical/list';
-import { KEY_LEFT_BRACKET_COMMAND, KEY_RIGHT_BRACKET_COMMAND } from '../keyboard-commands-plugin';
+import {
+  KEY_LEFT_BRACKET_COMMAND,
+  KEY_RIGHT_BRACKET_COMMAND
+} from '../keyboard-commands-plugin';
 
 function $canIndent(selection: RangeSelection): boolean {
-
   const anchor = selection.anchor;
   const focus = selection.focus;
   const first = focus.isBefore(anchor) ? focus : anchor;

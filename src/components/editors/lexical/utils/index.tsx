@@ -145,3 +145,35 @@ export function containsNode(
     return nodePredicate(currentNode);
   });
 }
+
+import { $isListItemNode, $isListNode, ListItemNode, ListNode } from '@lexical/list';
+
+export function hasSiblings(node: LexicalNode): boolean {
+  const parent = node.getParent();
+
+  if (!parent) {
+    return false;
+  }
+
+  return (parent && parent.getChildren().length > 1);
+};
+
+export function listItemContainsListNode(node: ListItemNode): boolean {
+  return node.getChildren().some((child) => $isListNode(child));
+}
+
+export function onlyChildIsListNode(node: ListNode): boolean {
+  const childrenSize = node.getChildrenSize();
+
+  if (childrenSize === 0) {
+    return false;
+  }
+
+  const listItemChildren = node.getChildren().filter($isListItemNode);
+
+  if (listItemChildren.length === 0 || listItemChildren.length > 1) {
+    return false;
+  }
+
+  return listItemContainsListNode(listItemChildren[0]);
+}

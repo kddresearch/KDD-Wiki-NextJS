@@ -31,7 +31,7 @@ export const ALERT: ElementTransformer = {
   regExp: /^>[ \t]*\[!(\w+):(?:\|(\w+))?\]/,
   replace: (parentNode, children, _match, isImport) => {
     const variant = isAlertVariant(_match[2]) ? _match[2] : undefined;
-    const node = $createAlertNode(_match[1], undefined, variant);
+    const node = $createAlertNode(_match[1] + ':', undefined, variant);
     node.append(...children);
     parentNode.replace(node);
     node.select(0, 0);

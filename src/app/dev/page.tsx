@@ -39,10 +39,19 @@ const Dev = () => {
 
 > I hope that quotes still work too... lol
 
-- HELLO
-- WORLD
-    - TESTING
-        - INDENTING
+### This list is fine
+
+- HELLO 1
+- WORLD 1
+    - TESTING 2
+        - INDENTING 3
+
+### This list is weird
+
+- HELLO 1
+- WORLD 1
+- TESTING 2
+        - INDENTING 3
 `.trim();
 
   return (
