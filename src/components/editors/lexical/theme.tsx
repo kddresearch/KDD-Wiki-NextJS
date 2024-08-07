@@ -95,11 +95,17 @@ import { InfoIcon } from "lucide-react";
 
 export function Disclaimer() {
   return (
-    <Alert variant={"primary"} className="mt-5">
+    <Alert variant={"primary"}>
       <InfoIcon className="h-4 w-4" />
-      <AlertTitle>Markdown Support is in Development</AlertTitle>
+      <AlertTitle>Edit in Markdown Enabled:</AlertTitle>
       <AlertDescription>
-        Please be aware that markdown support is still in development and may not work as expected.
+        <p>
+          Please be aware that markdown support is still in development and may not work as expected. Please report any issues you encounter.
+        </p>
+        <br />
+        <p>
+          <strong>Disable direct markdown editing</strong> by toggling the setting in the toolbar settings.
+        </p>
       </AlertDescription>
     </Alert>
   )

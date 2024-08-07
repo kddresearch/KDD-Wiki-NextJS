@@ -64,15 +64,9 @@ const Dev = () => {
         </Card>
         <Card title="Testing the markdown">
           <TextEditor
-            onMardownContentChange={onMarkdownContentChange}
-            useMarkdownShortcuts={false}
             markdown={defaultMarkdownContent}
             disableMarkdown={true}
           />
-          <Button onClick={() => setShowTranslation(!showTranslation)}>Translate to Markdown</Button>
-          {showTranslation && (
-            <TextEditor markdown={currentMarkdownContent} />
-          )}
         </Card>
         <Card title="hello testing">THIS IS THE NEW VERSION pushed from the azure registry</Card>
         <Card title="hello testing">dwa id</Card>

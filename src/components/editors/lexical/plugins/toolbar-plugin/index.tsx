@@ -46,6 +46,7 @@ import {
 import { is } from "drizzle-orm";
 import { FaMarkdown } from "react-icons/fa6";
 import { TOGGLE_DIRECT_MARKDOWN_COMMAND } from "../markdown-plugin";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 // No clue what this is for
 const LowPriority = 1;
@@ -222,6 +223,7 @@ export default function ToolbarPlugin() {
         <Separator orientation="vertical" />
 
         <InsertElementDropdown
+          disabled={editInMarkdown}
           editor={editor}
           openKeyboardShortcuts={setKeyboardShortcutsOpen}
         />
@@ -269,17 +271,30 @@ export default function ToolbarPlugin() {
               <Bug className="mr-2 h-4 w-4" />
               <span>Debug</span>
             </DropdownMenuCheckboxItem>
+            
+            {/* TODO: Fix the mouseover issue */}
+            <TooltipProvider delayDuration={250}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenuCheckboxItem
+                    checked={editInMarkdown}
+                    onCheckedChange={() => {
+                      const value = !editInMarkdown;
+                      setOption("editInMarkdown", value)
+                      editor.dispatchCommand(TOGGLE_DIRECT_MARKDOWN_COMMAND, value);
+                    }}
+                  >
+                    <FaMarkdown className="mr-2 h-4 w-4" />
+                    <span>Edit in Markdown</span>
+                  </DropdownMenuCheckboxItem>
+                </TooltipTrigger>
+                <TooltipContent side="left">
+                  <p>This will clear your current history</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
-            <DropdownMenuCheckboxItem
-              checked={editInMarkdown}
-              onCheckedChange={() => {
-                setOption("editInMarkdown", !editInMarkdown)
-                editor.dispatchCommand(TOGGLE_DIRECT_MARKDOWN_COMMAND, undefined);
-              }}
-            >
-              <FaMarkdown className="mr-2 h-4 w-4" />
-              <span>Edit in Markdown</span>
-            </DropdownMenuCheckboxItem>
+
 
             <DropdownMenuSeparator />
             <DropdownMenuLabel>Experimental</DropdownMenuLabel>

@@ -8,6 +8,7 @@ import {
   ALERT,
   QUOTE_OR_ALERT_DESCRIPTION
 } from "../../nodes/alert/transform";
+import { MARKDOWN_EDITOR } from "../../nodes/markdown/transform";
 import { QuoteNode } from "@lexical/rich-text";
 
 const TRANSFORMERS: Array<Transformer> = [
@@ -17,6 +18,7 @@ const TRANSFORMERS: Array<Transformer> = [
 ];
 
 export const KDD_TRANSFORMERS = [
+  MARKDOWN_EDITOR,
   ALERT,
   QUOTE_OR_ALERT_DESCRIPTION,
   ...TRANSFORMERS.filter((transformer) => { // TODO: PR to lexical to add a multiline transformer

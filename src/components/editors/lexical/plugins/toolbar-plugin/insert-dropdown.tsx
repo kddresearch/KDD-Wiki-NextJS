@@ -42,11 +42,13 @@ import {
 interface InsertElementDropdownProps extends DropdownMenuProps {
   openKeyboardShortcuts: (open: boolean) => void;
   editor: LexicalEditor;
+  disabled?: boolean;
 }
 
 function InsertElementDropdown({
   editor,
   openKeyboardShortcuts,
+  disabled,
   ...props
 }: 
   InsertElementDropdownProps
@@ -61,7 +63,10 @@ function InsertElementDropdown({
       {...props}
     >
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">
+        <Button
+          variant="outline"
+          disabled={disabled}
+        >
           <PlusCircle className="mr-2 h-4 w-4" />
           Insert Element
         </Button>

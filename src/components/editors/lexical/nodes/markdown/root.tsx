@@ -9,7 +9,7 @@ export type SerializedMakrdownEditorCodeNode = Spread<
 >;
 
 export class MakrdownEditorCodeNode extends CodeNode {
-  static getType(): string {
+  static getType(): 'markdown-editor' {
     return 'markdown-editor';
   }
 
@@ -113,6 +113,16 @@ export class MakrdownEditorCodeNode extends CodeNode {
     }
 
     return null;
+  }
+
+  setLanguage(language: string): void {
+    return;
+  }
+
+  exportJSON(): SerializedMakrdownEditorCodeNode {
+    return {
+      ...super.exportJSON(),
+    };
   }
 }
 

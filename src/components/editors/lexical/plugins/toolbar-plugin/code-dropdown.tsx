@@ -9,6 +9,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { mergeRegister } from "@lexical/utils";
 
 import { cn } from "@/lib/utils"
+import { $isMakrdownEditorCodeNode } from "../../nodes/markdown";
 
 interface CodeDropdownProps extends React.HTMLProps<HTMLDivElement> {
   editor: LexicalEditor;

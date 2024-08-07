@@ -9,9 +9,10 @@ import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPl
 import { TOGGLE_DIRECT_MARKDOWN_COMMAND } from './direct-editor';
 import { useEffect, useState } from 'react';
 import { mergeRegister } from '@lexical/utils';
-import { $createTextNode, $getRoot, $isRootNode, RootNode } from 'lexical';
+import { $createLineBreakNode, $createTextNode, $getRoot, $isRootNode, CLEAR_HISTORY_COMMAND, RootNode } from 'lexical';
 import { $createCodeNode, $isCodeNode } from '@lexical/code';
 import { $createMakrdownEditorCodeNode, $isMakrdownEditorCodeNode, MakrdownEditorCodeNode } from '../../nodes/markdown';
+import { useSettings } from '../settings-context-plugin';
 
 const LowPriority = 1;
 
@@ -31,8 +32,17 @@ export default function MarkdownPlugin({
   MarkdownEditorProps
 ): JSX.Element {
 
+  const {
+    setOption,
+    settings: {
+      isDebug,
+      useSelectionToolbar,
+      editInMarkdown
+    },
+  } = useSettings();
+
   const [editor] = useLexicalComposerContext();
-  const [isMarkdownEditor, setIsMarkdownEditor] = useState(false);
+  const [isMarkdownEditor, setIsMarkdownEditor] = useState(editInMarkdown);
 
   if (onMardownContentChange && !editor.isComposing()) {
     editor.registerTextContentListener(() => {
@@ -44,7 +54,6 @@ export default function MarkdownPlugin({
   }
 
   useEffect(() => {
-
     editor.registerNodeTransform(MakrdownEditorCodeNode, (node) => {
 
       if (!node.isAttached()) {
@@ -68,7 +77,14 @@ export default function MarkdownPlugin({
 
           console.log('appending new child', child.getTextContent());
 
-          node.append($createTextNode(child.getTextContent()));
+          if (child.getTextContent() === '') {
+            node.append($createLineBreakNode());
+          } else {
+            const textNode = $createTextNode(child.getTextContent());
+            textNode.selectEnd();
+            node.append(textNode);
+          }
+
           child.remove();
 
           if (child.isAttached()) {
@@ -85,21 +101,31 @@ export default function MarkdownPlugin({
         }
       }
     })
+  });
 
+  useEffect(() => {
     return mergeRegister(
       editor.registerCommand(
         TOGGLE_DIRECT_MARKDOWN_COMMAND,
         (payload) => {
+          editor.dispatchCommand(CLEAR_HISTORY_COMMAND, undefined);
+
+          if (payload) {
+            setIsMarkdownEditor(true);
+          }
+
           editor.update(() => {
             const root = $getRoot();
             const firstChild = root.getFirstChild();
-            const isMarkdownEditor = $isMakrdownEditorCodeNode(firstChild);
+            // const isMarkdownEditor = $isMakrdownEditorCodeNode(firstChild);
+
+            console.log('toggling markdown editor')
 
             if (isMarkdownEditor) {
               setIsMarkdownEditor(false);
 
               $convertFromMarkdownString(
-                firstChild.getTextContent(),
+                firstChild!.getTextContent(),
                 KDD_TRANSFORMERS,
                 undefined,
                 false

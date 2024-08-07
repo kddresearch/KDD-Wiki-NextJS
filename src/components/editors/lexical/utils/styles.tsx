@@ -4,10 +4,24 @@ import { containsNode, getNodeBeforeRoot } from ".";
 import { $isCodeNode } from "@lexical/code";
 import { $createHeadingNode, $isHeadingNode } from "@lexical/rich-text";
 import { $isLinkNode } from "@lexical/link";
+import { $isMakrdownEditorCodeNode } from "../nodes/markdown";
 
 
+
+export function isMarkdownEditorCodeInSelection(lexicalSelection: RangeSelection) {
+  return lexicalSelection.getNodes().some((node) => {
+    const topNode = getNodeBeforeRoot(node);
+    return $isMakrdownEditorCodeNode(topNode);
+  });
+}
 
 export function isCodeInSelection(lexicalSelection: RangeSelection) {
+  const result = isMarkdownEditorCodeInSelection(lexicalSelection);
+
+  if (result) {
+    return false;
+  }
+
   return lexicalSelection.getNodes().some((node) => {
     const topNode = getNodeBeforeRoot(node);
     return $isCodeNode(topNode);
@@ -38,10 +52,11 @@ function isLinkInSelection(lexicalSelection: RangeSelection) {
 
 
 export function getBoldStyling(lexicalSelection: RangeSelection) {
+  const isMarkdownEditor = isMarkdownEditorCodeInSelection(lexicalSelection);
   const isCode = isCodeInSelection(lexicalSelection);
   const isH1 = isH1InSelection(lexicalSelection);
 
-  const isDisabled = isH1 || isCode;
+  const isDisabled = isH1 || isCode || isMarkdownEditor;
 
   return {
     isBold: lexicalSelection.hasFormat("bold") || isH1,
@@ -50,21 +65,23 @@ export function getBoldStyling(lexicalSelection: RangeSelection) {
 }
 
 export function getItalicStyling(lexicalSelection: RangeSelection) {
+  const isMarkdownEditor = isMarkdownEditorCodeInSelection(lexicalSelection);
   const isCode = isCodeInSelection(lexicalSelection);
   const isH1 = isH1InSelection(lexicalSelection);
   const isQuote = isQuoteInSelection(lexicalSelection);
 
   return {
     isItalic: lexicalSelection.hasFormat("italic") || isQuote,
-    isDisabled: isCode || isQuote || isH1,
+    isDisabled: isCode || isQuote || isH1 || isMarkdownEditor,
   };
 }
 
 export function getStrikethroughStyling(lexicalSelection: RangeSelection) {
+  const isMarkdownEditor = isMarkdownEditorCodeInSelection(lexicalSelection);
   const isCode = isCodeInSelection(lexicalSelection);
 
   return {
     isStrikethrough: lexicalSelection.hasFormat("strikethrough"),
-    isDisabled: isCode,
+    isDisabled: isCode || isMarkdownEditor,
   };
 }
