@@ -228,6 +228,8 @@ export default function ToolbarPlugin() {
           openKeyboardShortcuts={setKeyboardShortcutsOpen}
         />
 
+        <Separator orientation="vertical" />
+
         <CodeDropdown
           editor={editor}
           data-shown={isCode}

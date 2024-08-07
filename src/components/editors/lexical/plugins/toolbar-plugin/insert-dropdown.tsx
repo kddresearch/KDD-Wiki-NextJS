@@ -71,7 +71,9 @@ function InsertElementDropdown({
           Insert Element
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
+      <DropdownMenuContent className="w-56" onCloseAutoFocus={(event) => {
+        event.preventDefault();
+      }}>
         <DropdownMenuLabel>Insert Element</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>

@@ -27,7 +27,10 @@ import {
   REDO_COMMAND,
   SELECTION_CHANGE_COMMAND,
   UNDO_COMMAND,
-  $isTextNode
+  $isTextNode,
+  CUT_COMMAND,
+  COPY_COMMAND,
+  PASTE_COMMAND
 } from "lexical";
 import { getNodeBeforeRoot } from "../utils";
 import { $isCodeNode } from "@lexical/code";
@@ -37,6 +40,7 @@ import {
   getItalicStyling,
   getStrikethroughStyling,
 } from "../utils/styles";
+import { useToast } from "@/components/ui/use-toast";
 
 const LowPriority = 1;
 
@@ -46,9 +50,12 @@ function ContextMenuPlugin({
 ) {
   
   const [editor] = useLexicalComposerContext();
+  const { toast } = useToast();
 
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
+  const [canCut, setCanCut] = useState(false);
+  const [canCopy, setCanCopy] = useState(false);
 
   // Bold
   const [isBold, setIsBold] = useState(false);
@@ -76,6 +83,15 @@ function ContextMenuPlugin({
     if (!$isRangeSelection(lexicalSelection)) {
       return;
     }
+
+    if (lexicalSelection.isCollapsed()) {
+      setCanCut(false);
+      setCanCopy(false);
+    } else {
+      setCanCut(true);
+      setCanCopy(true);
+    }
+
 
     const boldStyling = getBoldStyling(lexicalSelection);
     setIsBold(boldStyling.isBold);
@@ -202,30 +218,105 @@ function ContextMenuPlugin({
       </ContextMenuTrigger>
       <ContextMenuContent className="w-64">
 
-        {/* Undo Button */}
+        {/* Copy Button */}
         <ContextMenuItem
           inset
-          disabled={!canUndo}
-          persistMenu={true}
-          onMouseUp={() => {
-            editor.dispatchCommand(UNDO_COMMAND, undefined);
+          disabled={!canCopy}
+          onClick={() => {
+            editor.dispatchCommand(COPY_COMMAND, null);
           }}
         >
-          Undo
-          <ContextMenuShortcut>⌘z</ContextMenuShortcut>
+          Copy
+          <ContextMenuShortcut>⌘c</ContextMenuShortcut>
         </ContextMenuItem>
 
-        {/* Redo Button */}
+        {/* Cut Button */}
         <ContextMenuItem
           inset
-          disabled={!canRedo}
-          persistMenu={true}
-          onMouseUp={() => {
-            editor.dispatchCommand(REDO_COMMAND, undefined);
+          disabled={!canCut}
+          onClick={() => {
+            editor.dispatchCommand(CUT_COMMAND, null);
           }}
         >
-          Redo
-          <ContextMenuShortcut>⌘y</ContextMenuShortcut>
+          Cut
+          <ContextMenuShortcut>⌘x</ContextMenuShortcut>
+        </ContextMenuItem>
+
+        {/* TODO: Implement global can paste */}
+
+        {/* Paste Button */}
+        <ContextMenuItem
+          inset
+          onClick={async () => {
+
+            const permission = await navigator.permissions.query({
+              // @ts-expect-error These types are incorrect.
+              name: 'clipboard-read',
+            });
+
+            if (permission.state === 'denied') {
+              toast({
+                title: 'Permission Denied',
+                description: 'Unable to read from the clipboard',
+              });
+              return;
+            }
+
+            navigator.clipboard.read().then(async function (...args) {
+              const data = new DataTransfer();
+
+              const items = await navigator.clipboard.read();
+              const item = items[0];
+
+              for (const type of item.types) {
+                const dataString = await (await item.getType(type)).text();
+                data.setData(type, dataString);
+              }
+
+              const event = new ClipboardEvent('paste', {
+                clipboardData: data,
+              });
+
+              editor.dispatchCommand(PASTE_COMMAND, event);
+            })
+          }}
+        >
+          Paste
+          <ContextMenuShortcut>⌘v</ContextMenuShortcut>
+        </ContextMenuItem>
+
+        {/* Paste Without Formatting Button */}
+        <ContextMenuItem
+          inset
+          onClick={async () => {
+
+            const permission = await navigator.permissions.query({
+              // @ts-expect-error These types are incorrect.
+              name: 'clipboard-read',
+            });
+
+            if (permission.state === 'denied') {
+              toast({
+                title: 'Permission Denied',
+                description: 'Unable to read from the clipboard',
+              });
+              return;
+            }
+
+            navigator.clipboard.read().then(async function (...args) {
+              const data = new DataTransfer();
+              const items = await navigator.clipboard.readText();
+              data.setData('text/plain', items);
+  
+              const event = new ClipboardEvent('paste', {
+                clipboardData: data,
+              });
+              editor.dispatchCommand(PASTE_COMMAND, event);
+            });
+          }}
+        >
+          Paste Without Formatting
+          <ContextMenuShortcut>⇧⌘v</ContextMenuShortcut>
         </ContextMenuItem>
 
         <ContextMenuSeparator />

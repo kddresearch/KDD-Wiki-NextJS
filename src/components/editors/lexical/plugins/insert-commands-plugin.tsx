@@ -10,17 +10,20 @@ import {
   mergeRegister
 } from "@lexical/utils";
 import {
+  $createTextNode,
   $getSelection,
+  $isElementNode,
   $isRangeSelection,
   COMMAND_PRIORITY_EDITOR,
   createCommand,
+  ElementNode,
   LexicalCommand,
   LexicalNode
 } from "lexical";
 import { useEffect, useMemo } from "react";
 
 interface NodeTypeProps {
-  create: (payload: string | undefined) => LexicalNode | null;
+  create: (payload: string | undefined) => ElementNode;
 }
 
 type NodeType =
@@ -78,12 +81,9 @@ function InsertCommandsPlugin() {
       CODE_BLOCK_MD: { create: (payload) => $createCodeNode("markdown") },
       CODE_BLOCK_BASH: { create: (payload) => $createCodeNode("bash") },
       LINK: { create: (payload) => {
+        if (!payload) throw new Error("You must provide a payload (url) to create a link node");
 
-        if (!payload) return null;
-
-        editor.dispatchCommand(TOGGLE_LINK_COMMAND, payload);
-
-        return null;
+        return $createLinkNode(payload);
       }},
     };
   }, [editor]);
@@ -93,32 +93,53 @@ function InsertCommandsPlugin() {
       const command = COMMANDS[command_key];
 
       return editor.registerCommand(command, (payload) => {
-        const selection = $getSelection();
-        if (!$isRangeSelection(selection)) {
+        const lexicalSelection = $getSelection();
+        if (!$isRangeSelection(lexicalSelection)) {
           return false;
         }
 
+        const anchor = lexicalSelection.anchor;
+        const focus = lexicalSelection.focus;
+        const focusFirst = focus.isBefore(anchor);
+        const first = focusFirst ? focus : anchor;
+        const last = focusFirst ? anchor : focus;
+        const firstNode = first.getNode();
+        const isCollapsed = lexicalSelection.isCollapsed();
+        const lastEndsNode = last.getNode().getTextContentSize() === last.offset;
+
         const nodeTypeKey = command_key.replace('INSERT_', '') as NodeType;
+        const newNode = NODE_TYPES[nodeTypeKey].create(payload);
 
-        const focusNode = selection.focus.getNode();
-        if (focusNode !== null) {
-          const newNode = NODE_TYPES[nodeTypeKey].create(payload);
-
-          if (newNode === null) {
-            return true;
-          }
-
-          const node = focusNode.getLatest();
-
-          console.log("offset:", selection.focus.offset, "content size:", node.getTextContentSize());
-
-          if (selection.focus.offset === node.getTextContentSize()) {
-            node.getParent()?.insertAfter(newNode, true);
-            return true;
-          }
-          
-          $insertNodeToNearestRoot(newNode);
+        if (lastEndsNode && isCollapsed) {
+          firstNode.getParent()?.insertAfter(newNode, true);
+          newNode.getLatest().selectStart();
+          return true;
         }
+
+        if (!isCollapsed) {
+          const latestNode = newNode.getLatest();
+          const textContent = lexicalSelection.getTextContent();
+          lexicalSelection.removeText();
+
+          console.log("textContent:", textContent);
+
+          const textNode = $createTextNode(textContent);
+          latestNode.append(textNode);
+
+          lastEndsNode ? firstNode.getParent()?.insertAfter(newNode, true) : $insertNodeToNearestRoot(newNode);
+
+          console.log('lastEndsNode', lastEndsNode);
+
+          const latestTextNode = textNode.getLatest();
+          const [start, end] = focusFirst ? [latestTextNode.getTextContentSize(), 0] : [0, latestTextNode.getTextContentSize()];
+
+          latestTextNode.select(start, end);
+          return true;
+        }
+
+        $insertNodeToNearestRoot(newNode);
+        const latestNode = newNode.getLatest();
+        latestNode.selectStart();
 
         return true;
       }, COMMAND_PRIORITY_EDITOR);
