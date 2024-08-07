@@ -29,6 +29,7 @@ const editorNodes: Array<Klass<LexicalNode>> = [
   TableCellNode,
   TableNode,
   TableRowNode,
+
   AlertNode,
   AlertTitleNode,
   AlertDescriptionNode
