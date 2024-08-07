@@ -62,9 +62,11 @@ function Editor({
   } = useSettings();
 
   const populateMarkdownEditor = useCallback((prePopulate?: () => void) => {
+    let markdownString;
+
     if (prePopulate) {
       prePopulate();
-      markdown = $convertToMarkdownString(KDD_TRANSFORMERS);
+      markdownString = $convertToMarkdownString(KDD_TRANSFORMERS);
     }
 
     if (!editInMarkdown) {
@@ -75,9 +77,9 @@ function Editor({
     root
       .clear()
       .append(
-        $createMakrdownEditorCodeNode(markdown ?? '')
+        $createMakrdownEditorCodeNode(markdownString ?? '')
       );
-  }, []);
+  }, [editInMarkdown, setOption]);
 
   console.log('editInMarkdown', editInMarkdown);
 
@@ -103,7 +105,7 @@ function Editor({
     <>
       {editInMarkdown && <Disclaimer />}
       <LexicalComposer initialConfig={initialConfig}>
-        <div id="hello" className="my-5 bg-white text-black relative leading-5 font-normal text-left rounded-lg border-gray border">
+        <div id="hello" className="bg-white text-black relative leading-5 font-normal text-left rounded-lg border-gray border">
           <ToolbarPlugin />
           <ContextMenuPlugin className="relative prose max-w-none prose-h1:text-purple prose-a:text-purple prose-a:underline">
             <RichTextPlugin

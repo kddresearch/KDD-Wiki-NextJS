@@ -65,7 +65,6 @@ const Dev = () => {
         <Card title="Testing the markdown">
           <TextEditor
             markdown={defaultMarkdownContent}
-            disableMarkdown={true}
           />
         </Card>
         <Card title="hello testing">THIS IS THE NEW VERSION pushed from the azure registry</Card>
