@@ -64,7 +64,7 @@ export function sanitizeURL(url: string): string {
 }
 
 import {$isAtNodeEnd} from '@lexical/selection';
-import {$isRootNode, ElementNode, LexicalNode, RangeSelection, TextNode} from 'lexical';
+import {$isRootNode, ElementNode, Klass, KlassConstructor, LexicalNode, RangeSelection, TextNode} from 'lexical';
 
 export function getSelectedNode(
   selection: RangeSelection,
@@ -115,14 +115,19 @@ export function useDebounce<T extends (...args: never[]) => void>(
       ),
     [ms, maxWait],
   );
-}
+};
 
-export function getNodeBeforeRoot(node: LexicalNode): LexicalNode {
+export function getNodeBeforeRoot<T extends LexicalNode>(node: LexicalNode, klass?: Klass<T>): T {
   let currentNode = node;
   while (currentNode.getParent() && !$isRootNode(currentNode.getParent())) {
     currentNode = currentNode.getParent()!;
   }
-  return currentNode;
+
+  if (klass && !(currentNode instanceof klass)) {
+    throw new Error(`Expected node to be of type ${klass.name}`);
+  }
+
+  return currentNode as T;
 }
 
 export function containsNode(
@@ -139,4 +144,36 @@ export function containsNode(
     }
     return nodePredicate(currentNode);
   });
+}
+
+import { $isListItemNode, $isListNode, ListItemNode, ListNode } from '@lexical/list';
+
+export function hasSiblings(node: LexicalNode): boolean {
+  const parent = node.getParent();
+
+  if (!parent) {
+    return false;
+  }
+
+  return (parent && parent.getChildren().length > 1);
+};
+
+export function listItemContainsListNode(node: ListItemNode): boolean {
+  return node.getChildren().some((child) => $isListNode(child));
+}
+
+export function onlyChildIsListNode(node: ListNode): boolean {
+  const childrenSize = node.getChildrenSize();
+
+  if (childrenSize === 0) {
+    return false;
+  }
+
+  const listItemChildren = node.getChildren().filter($isListItemNode);
+
+  if (listItemChildren.length === 0 || listItemChildren.length > 1) {
+    return false;
+  }
+
+  return listItemContainsListNode(listItemChildren[0]);
 }

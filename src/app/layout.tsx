@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import Script from "next/script";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function RootLayout({
   children,
@@ -41,6 +42,7 @@ export default function RootLayout({
         <Header />
         <div className="grow">{children}</div>
         <Footer />
+        <Toaster />
       </body>
     </html>
   );

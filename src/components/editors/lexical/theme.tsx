@@ -50,7 +50,7 @@ const theme = {
   // image: 'editor-image',
   // link: 'text-purple underline',
   list: {
-    listitem: 'mx-8 my-2',
+    listitem: 'ml-8 my-2',
     nested: {
       listitem: 'list-none',
     },
@@ -84,10 +84,81 @@ const theme = {
   },
 };
 
+
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle
+} from "@/components/ui/alert";
+import { InfoIcon } from "lucide-react";
+
+
+export function Disclaimer() {
+  return (
+    <Alert variant={"primary"} className="mt-5">
+      <InfoIcon className="h-4 w-4" />
+      <AlertTitle>Markdown Support is in Development</AlertTitle>
+      <AlertDescription>
+        Please be aware that markdown support is still in development and may not work as expected.
+      </AlertDescription>
+    </Alert>
+  )
+}
+
+import {
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
+
 function Placeholder() {
-  return <div className="text-gray overflow-hidden absolute text-ellipsis top-[0px] left-[38px] text-normal select-none inline-block pointer-events-none">
-    Enter some rich text...
-  </div>;
+  const [baseMessage, setBaseMessage] = useState('');
+  const [message, setMessage] = useState('');
+  const [hasPlayed, setHasPlayed] = useState(false);
+
+  useEffect(() => {
+    const messages = [
+      'Start writing in markdown...',
+      'Write something...',
+      'Type to start writing...',
+      'Compose your thoughts...',
+      'Markdown magic happens here...'
+    ];
+
+    if (!baseMessage) {
+      setBaseMessage(messages[Math.floor(Math.random() * messages.length)]);
+    }
+  }, [baseMessage]);
+
+  useEffect(() => {
+    if (hasPlayed) return;
+
+    const interval = setInterval(() => {
+      setMessage((prev) => {
+        if (prev.length === baseMessage.length) {
+          setHasPlayed(true);
+          return baseMessage;
+        }
+        return baseMessage.slice(0, prev.length + 1);
+      });
+    }, 125);
+
+    return () => clearInterval(interval);
+  }, [hasPlayed, baseMessage]);
+
+  return (
+    <div className='text-gray overflow-hidden absolute text-ellipsis top-[-20px] left-[14px] text-normal select-none inline-block pointer-events-none p-5'>
+      <span className="gradient-text font-semibold opacity-65">{message}</span>
+      <span
+        className="absolute top-0 left-0 p-5 text-transparent gradient-shadow font-semibold opacity-20"
+        style={{
+          filter: 'blur(2px)',
+        }}
+      >
+        {message}
+      </span>
+    </div>
+  );
 }
 
 import { $createParagraphNode, $createTextNode, $getRoot, $getSelection, EditorState } from 'lexical';
@@ -97,6 +168,14 @@ import { $createAlertNode } from './nodes/alert';
 import { $createAlertTitleNode } from './nodes/alert/title';
 import { $createAlertDescriptionNode } from './nodes/alert/description';
 
+function populatePlainText(text: string) {
+  const root = $getRoot();
+  
+  const paragraph = $createParagraphNode();
+  paragraph.append($createTextNode(text));
+  root.append(paragraph);
+}
+
 function prePopulate() {
   const root = $getRoot();
   if (root.getFirstChild() === null) {
@@ -105,19 +184,27 @@ function prePopulate() {
     paragraph.append($createTextNode('Hello, world!'));
     root.append(paragraph);
 
-    const alert = $createAlertNode('Known Issues:', 'destructive');
-    // alert.append($createAlertTitleNode('Known Issues:'));
-    // alert.append($createAlertDescriptionNode('This is a development page. Please do not use it for production.'));
+    const alert = $createAlertNode(
+      'Known Issues:',
+      'This is a development page. Please do not use it for production.',
+      'destructive'
+    );
     root.append(alert);
 
-    const default_alert = $createAlertNode('Note:', 'default');
-    default_alert.append($createAlertDescriptionNode('Starting in .NET 9, a build warning is emitted if your project targets .NET Standard 1.x.'));
+    const default_alert = $createAlertNode(
+      'Note:',
+      'Starting in .NET 9, a build warning is emitted if your project targets .NET Standard 1.x.',
+      'default'
+    );
     default_alert.append($createAlertDescriptionNode());
     default_alert.append($createAlertDescriptionNode('For more information, see Warning emitted for .NET Standard 1.x targets.'));
     root.append(default_alert);
 
-    const primary_alert = $createAlertNode('Known Issues:', 'primary');
-    primary_alert.append($createAlertDescriptionNode('This is a development page. Please do not use it for production.'));
+    const primary_alert = $createAlertNode(
+      'Known Issues:',
+      'This is a development page. Please do not use it for production.',
+      'primary'
+    );
     root.append(primary_alert);
 
     const heading = $createHeadingNode('h1');
@@ -156,5 +243,6 @@ export default theme;
 
 export {
   Placeholder,
-  prePopulate
+  prePopulate,
+  populatePlainText
 };

@@ -139,6 +139,10 @@ export class AlertTitleNode extends ElementNode {
   createParentElementNode(): ElementNode {
     return $createAlertNode();
   }
+
+  canIndent(): false {
+    return false;
+  }
 }
 
 export function $createAlertTitleNode(text?: string): AlertTitleNode {

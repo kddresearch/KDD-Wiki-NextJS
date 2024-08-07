@@ -19,20 +19,21 @@ import {
   $createAlertDescriptionNode,
   $isAlertDescriptionNode
 } from "./description";
-import { $createAlertTitleNode } from "./title";
+import { $createAlertTitleNode, $isAlertTitleNode } from "./title";
 
-
-export type variant = VariantProps<typeof alertVariants>["variant"];
+export type AlertVariant = VariantProps<typeof alertVariants>["variant"];
 
 export type SerializedAlertNode = Spread<
   {
-    variant: variant;
+    variant: AlertVariant;
+    title: string;
+    description: string;
   },
   SerializedElementNode
 >;
 
 export class AlertNode extends ElementNode {
-  __variant: variant;
+  __variant: AlertVariant;
   
   static getType(): string {
     return 'alert';
@@ -43,20 +44,7 @@ export class AlertNode extends ElementNode {
   }
 
   static importJSON(serializedNode: SerializedAlertNode): AlertNode {
-
-    const aleartTitle = serializedNode.children.map((child) => {
-      if (child.type === 'alert-title') {
-        return $createAlertTitleNode();
-      }
-      return null;
-    })[0];
-
-    if (!aleartTitle) {
-      return $createAlertNode();
-      // throw new Error("AlertNode must have an AlertTitleNode");
-    }
-
-    const node = $createAlertNode(aleartTitle.getTextContent(), serializedNode.variant);
+    const node = $createAlertNode(serializedNode.title, serializedNode.description, serializedNode.variant);
     return node;
   }
 
@@ -84,7 +72,7 @@ export class AlertNode extends ElementNode {
     };
   }
 
-  constructor(variant?: variant, key?: NodeKey) {
+  constructor(variant?: AlertVariant, key?: NodeKey) {
     super(key);
     this.__variant = variant || 'default';
   }
@@ -97,7 +85,7 @@ export class AlertNode extends ElementNode {
     dom.role = "alert";
     dom.dir = "ltr";
 
-    // add svg icon
+    // https://lucide.dev/icons/info
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
       svg.setAttribute('xmlns', "http://www.w3.org/2000/svg");
       svg.setAttribute('width', '24');
@@ -228,9 +216,22 @@ export class AlertNode extends ElementNode {
     }
     return null;
   }
-
-  getVariant(): variant {
+  
+  getVariant(): AlertVariant {
     return this.__variant;
+  }
+
+  getTitle(): string {
+    const titleNode = this.getChildren().find($isAlertTitleNode);
+    return titleNode ? titleNode.getTextContent() : '';
+  }
+
+  getDescription(): string {
+    const descriptionNodeText = this.getChildren()
+      .filter($isAlertDescriptionNode)
+      .map((node) => node.getTextContent())
+      .join('\n');
+    return descriptionNodeText ? descriptionNodeText : '';
   }
 
   collapseAtStart(): boolean {
@@ -244,6 +245,8 @@ export class AlertNode extends ElementNode {
     return {
       ...super.exportJSON(),
       variant: this.__variant,
+      title: this.getTitle(),
+      description: this.getDescription(),
       type: this.getType(),
       version: 1,
     };
@@ -258,18 +261,21 @@ export class AlertNode extends ElementNode {
     const children = this.getChildren();
     return children.reduce((acc, child) => acc + child.getTextContentSize(), 0);
   }
+
+  canIndent(): false {
+    return false;
+  }
 }
 
-export function $createAlertNode(title?: string, variant?: variant): AlertNode {
+export function $createAlertNode(title: string = 'Note:', content?: string, variant: AlertVariant = 'default'): AlertNode {
 
-  if (title === undefined) {
-    title = 'Note:';
+  const alertNode = new AlertNode(variant);
+  alertNode.append($createAlertTitleNode(title));
+  if (content) {
+    alertNode.append($createAlertDescriptionNode(content));
   }
 
-  return $applyNodeReplacement(
-    (new AlertNode(variant))
-      .append($createAlertTitleNode(title))
-  );
+  return $applyNodeReplacement(alertNode);
 }
 
 export function $isAlertNode(

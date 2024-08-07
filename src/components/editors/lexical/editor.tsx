@@ -1,7 +1,7 @@
 "use client";
 
-import {useEffect, useState} from 'react';
-import theme from "./theme";
+import {Suspense, useEffect, useState} from 'react';
+import theme, { Disclaimer, populatePlainText } from "./theme";
 
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
@@ -11,28 +11,38 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import MarkdownPlugin from "./plugins/markdown-plugin";
 import ToolbarPlugin from './plugins/toolbar-plugin';
-import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
-import { TreeView } from '@lexical/react/LexicalTreeView';
+import { useToast } from "@/components/ui/use-toast"
 
-import {
-  $convertFromMarkdownString,
-  $convertToMarkdownString,
-  TRANSFORMERS,
-} from '@lexical/markdown';
+import { $convertFromMarkdownString } from '@lexical/markdown';
 
 import editorNodes from './nodes';
+import { ListPlugin } from './plugins/list-plugin';
 
 import { Placeholder, prePopulate } from './theme';
 import CodeHighlightPlugin from './plugins/code-highlighting-plugin';
 import ContextMenuPlugin from './plugins/context-menu-plugin';
 import dynamic from 'next/dynamic';
 import InsertCommandsPlugin from './plugins/insert-commands-plugin';
-import TreeViewPlugin from './plugins/tree-view-plugin';
 import { SettingsContext, useSettings } from './plugins/settings-context-plugin';
 import SelectionToolbarPlugin from './plugins/selection-toolbar-plugin';
+import DebugToolbar from './plugins/debug-toolbar-plugin';
+import { KDD_TRANSFORMERS } from './plugins/markdown-plugin/transform';
+import KeyboardCommandsPlugin from './plugins/keyboard-commands-plugin';
 
-function Editor() {
+interface MarkdownEditorProps {
+  onMardownContentChange?: (newMarkdownContent: string) => void;
+  useMarkdownShortcuts?: boolean;
+  disableMarkdown?: boolean;
+}
+
+function Editor({
+  onMardownContentChange,
+  useMarkdownShortcuts = true,
+  disableMarkdown,
+}: 
+  MarkdownEditorProps  
+) {
   const {
     setOption,
     settings: {
@@ -57,51 +67,75 @@ function Editor() {
         />
         <HistoryPlugin />
         <AutoFocusPlugin />
-        <MarkdownShortcutPlugin />
+        <ListPlugin />
         <InsertCommandsPlugin />
         <CodeHighlightPlugin />
         <LinkPlugin />
+        <KeyboardCommandsPlugin />
+        <MarkdownPlugin useMarkdownShortcuts={useMarkdownShortcuts} onMardownContentChange={onMardownContentChange} />
         {useSelectionToolbar && <SelectionToolbarPlugin />}
-        {isDebug && <TreeViewPlugin />}
-        {isDebug && <MarkdownPlugin />}
+        {isDebug && <DebugToolbar />}
       </ContextMenuPlugin>
     </div>
   );
 };
 
+function Loading() {
+  return <div>Loading editor... (enable javascript)</div>;
+}
+
 function TextEditor({
   markdown,
+  onMardownContentChange,
+  usePrePopulated,
+  useMarkdownShortcuts,
+  showDisclaimer = true,
+  disableMarkdown = false,
 }: {
   markdown?: string;
-  // onContentChange: (newContent: string) => void;
+  onMardownContentChange?: (newMarkdownContent: string) => void;
+  usePrePopulated?: boolean;
+  useMarkdownShortcuts?: boolean;
+  showDisclaimer?: boolean;
+  disableMarkdown?: boolean;
 }) {
+  const { toast } = useToast();
 
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, [setIsClient]);
+  const onError = (error: Error) => {
+    console.error('Lexical Error:', error);
+    toast({
+      title: 'An unexpected error occurred in the editor',
+      description: error.message,
+    });
+  };
 
   const initialConfig = {
-    editorState: markdown ? () => $convertFromMarkdownString(markdown) : prePopulate,
+    editorState: usePrePopulated
+      ? prePopulate
+      : disableMarkdown
+        ? () => populatePlainText(markdown ?? '')
+        : () => $convertFromMarkdownString(markdown ?? '', KDD_TRANSFORMERS),
     namespace: 'KDD-MD-Editor',
     nodes: [...editorNodes],
     theme: theme,
-    onError: (error: Error) => {
-      throw error;
-    },
+    onError: onError
   };
 
   return (
-    isClient ? (
-      <LexicalComposer initialConfig={initialConfig}>
-        <SettingsContext>
-          <Editor/>
-        </SettingsContext>
-      </LexicalComposer>
-    ) : (
-      <div>Loading editor... (enable javascript)</div>
-    )
+    <Suspense fallback={<Loading />}>
+      {showDisclaimer && <Disclaimer />}
+      <LexicalErrorBoundary onError={onError}>
+        <LexicalComposer initialConfig={initialConfig}>
+          <SettingsContext>
+            <Editor
+              onMardownContentChange={onMardownContentChange}
+              useMarkdownShortcuts={useMarkdownShortcuts}
+              disableMarkdown={disableMarkdown}
+            />
+          </SettingsContext>
+        </LexicalComposer>
+      </LexicalErrorBoundary>
+    </Suspense>
   )
 }
 

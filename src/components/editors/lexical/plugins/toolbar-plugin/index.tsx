@@ -22,36 +22,36 @@ import {
 } from "@lexical/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as React from "react";
-import { getNodeBeforeRoot, getSelectedNode } from "../utils";
 import { $isCodeNode } from '@lexical/code';
 
-import { Bold, Italic, Underline, Strikethrough, Undo, Redo, Code, Link, User, CreditCard, Settings, Keyboard, Users, UserPlus, Mail, MessageSquare, PlusCircle, Plus, Github, LifeBuoy, Cloud, LogOut, Calendar, Smile, Calculator, Heading1Icon, Heading2Icon, Heading3Icon, Heading, Bug, PictureInPicture2, Info } from "lucide-react"
+import { Bold, Italic, Strikethrough, Undo, Redo, Settings, Bug, PictureInPicture2, Info } from "lucide-react"
 import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@/components/ui/toggle-group"
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import KeyboardShortcutMenu from "./toolbar-plugin/keyboard-shortcut-menu";
-import InsertElementDropdown from "./toolbar-plugin/insert-dropdown";
-import CodeDropdown from "./toolbar-plugin/code-dropdown";
+import KeyboardShortcutMenu from "./keyboard-shortcut-menu";
+import InsertElementDropdown from "./insert-dropdown";
+import CodeDropdown from "./code-dropdown";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { useSettings } from "./settings-context-plugin";
-import AboutDialog from "./dialog/about";
+import { useSettings } from "../settings-context-plugin";
+import AboutDialog from "../dialog/about";
 import {
   getBoldStyling,
   getItalicStyling,
   getStrikethroughStyling,
   isCodeInSelection
-} from "../utils/styles";
+} from "../../utils/styles";
 import { is } from "drizzle-orm";
+import { FaMarkdown } from "react-icons/fa6";
+import { TOGGLE_DIRECT_MARKDOWN_COMMAND } from "../markdown-plugin";
 
 // No clue what this is for
 const LowPriority = 1;
 
 export default function ToolbarPlugin() {
   const [editor] = useLexicalComposerContext();
-  const toolbarRef = useRef(null);
 
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
@@ -79,7 +79,8 @@ export default function ToolbarPlugin() {
     setOption,
     settings: {
       isDebug,
-      useSelectionToolbar
+      useSelectionToolbar,
+      editInMarkdown
     },
   } = useSettings();
 
@@ -147,11 +148,8 @@ export default function ToolbarPlugin() {
   }, [editor, updateToolbar]);
 
   return (
-    <div className="border-b border-gray">
-      <div
-        className="flex bg-white p-1 rounded-t-lg align-middle text-darkgray h-12 gap-1"
-        ref={toolbarRef}
-      >
+    <div className="border-b mx-1 border-gray">
+      <div className="flex bg-white py-1 rounded-t-lg align-middle text-darkgray h-12 gap-1">
 
         <KeyboardShortcutMenu
           open={keyboardShortcutsOpen}
@@ -270,6 +268,17 @@ export default function ToolbarPlugin() {
             >
               <Bug className="mr-2 h-4 w-4" />
               <span>Debug</span>
+            </DropdownMenuCheckboxItem>
+
+            <DropdownMenuCheckboxItem
+              checked={editInMarkdown}
+              onCheckedChange={() => {
+                setOption("editInMarkdown", !editInMarkdown)
+                editor.dispatchCommand(TOGGLE_DIRECT_MARKDOWN_COMMAND, undefined);
+              }}
+            >
+              <FaMarkdown className="mr-2 h-4 w-4" />
+              <span>Edit in Markdown</span>
             </DropdownMenuCheckboxItem>
 
             <DropdownMenuSeparator />
