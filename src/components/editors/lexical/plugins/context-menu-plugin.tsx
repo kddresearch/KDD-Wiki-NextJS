@@ -42,6 +42,7 @@ import {
 } from "../utils/styles";
 import { useToast } from "@/components/ui/use-toast";
 import { Clipboard, ClipboardType, Copy, Scissors } from "lucide-react";
+import { getWord, isWordMisspelled } from "../utils/spellcheck";
 
 const LowPriority = 1;
 
@@ -52,9 +53,8 @@ function ContextMenuPlugin({
   
   const [editor] = useLexicalComposerContext();
   const { toast } = useToast();
+  const [disabled, setDisabled] = useState(false);
 
-  const [canUndo, setCanUndo] = useState(false);
-  const [canRedo, setCanRedo] = useState(false);
   const [canCut, setCanCut] = useState(false);
   const [canCopy, setCanCopy] = useState(false);
 
@@ -83,6 +83,19 @@ function ContextMenuPlugin({
 
     if (!$isRangeSelection(lexicalSelection)) {
       return;
+    }
+
+    const word = getWord(lexicalSelection);
+
+    if (word) {
+      isWordMisspelled(word).then((result) => {
+        if (result) {
+          console.log("word:", word);
+          setDisabled(true);
+        }
+      });
+    } else {
+      setDisabled(false);
     }
 
     if (lexicalSelection.isCollapsed()) {
@@ -152,23 +165,7 @@ function ContextMenuPlugin({
           return false;
         },
         LowPriority,
-      ),
-      editor.registerCommand(
-        CAN_UNDO_COMMAND,
-        (payload) => {
-          setCanUndo(payload);
-          return false;
-        },
-        LowPriority,
-      ),
-      editor.registerCommand(
-        CAN_REDO_COMMAND,
-        (payload) => {
-          setCanRedo(payload);
-          return false;
-        },
-        LowPriority,
-      ),
+      )
     );
   }, [editor, updateCommandBar]);
 
@@ -214,7 +211,7 @@ function ContextMenuPlugin({
 
   return (
     <ContextMenu onOpenChange={onOpenChange}>
-      <ContextMenuTrigger {...props}>
+      <ContextMenuTrigger {...props} disabled={disabled}>
         {props.children}
       </ContextMenuTrigger>
       <ContextMenuContent className="w-64">

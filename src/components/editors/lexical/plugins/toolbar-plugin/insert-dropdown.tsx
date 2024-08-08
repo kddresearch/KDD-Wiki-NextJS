@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DropdownMenuProps } from "@radix-ui/react-dropdown-menu";
-import { Code, Heading, Heading1Icon, Heading2Icon, Heading3Icon, Keyboard, Link, PlusCircle, Settings } from "lucide-react";
+import { CircleAlert, Code, Heading, Heading1Icon, Heading2Icon, Heading3Icon, Info, Keyboard, Link, OctagonAlert, PlusCircle, Settings } from "lucide-react";
 
 import { $getSelection, $isRangeSelection, COMMAND_PRIORITY_EDITOR, createCommand, LexicalCommand, LexicalEditor } from "lexical";
 import { $insertNodeToNearestRoot, mergeRegister } from '@lexical/utils';
@@ -111,6 +111,7 @@ function InsertElementDropdown({
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
+
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
               <Code className="mr-2 h-4 w-4" />
@@ -154,12 +155,53 @@ function InsertElementDropdown({
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
-          <DropdownMenuItem
-            onClick={() => {
-              editor.dispatchCommand(COMMANDS.INSERT_CODE_BLOCK, undefined);
-            }}
-          >
-          </DropdownMenuItem>
+          
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <Info className="mr-2 h-4 w-4" />
+              <span>Alert</span>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem
+                  onClick={() => {
+                    editor.dispatchCommand(COMMANDS.INSERT_ALERT_DEFAULT, undefined);
+                  }}
+                >
+                  <Info className="mr-2 h-4 w-4" />
+                  <span>Default</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    editor.dispatchCommand(COMMANDS.INSERT_ALERT_PRIMARY, undefined);
+                  }}
+                >
+                  <CircleAlert className="mr-2 h-4 w-4" />
+                  <span>Primary</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    editor.dispatchCommand(COMMANDS.INSERT_ALERT_DESTRUCTIVE, undefined);
+                  }}
+                >
+                  <OctagonAlert className="mr-2 h-4 w-4" />
+                  <span>Destructive</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => {
+                    editor.dispatchCommand(COMMANDS.INSERT_CODE_BLOCK, undefined);
+                  }}
+                >
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  <span>Other...</span>
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
+
+          <DropdownMenuSeparator />
+
           <DropdownMenuItem
             onClick={() => {
               editor.dispatchCommand(COMMANDS.INSERT_LINK, "myPayload");

@@ -6,6 +6,7 @@ import {
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $createHeadingNode } from "@lexical/rich-text";
 import {
+  $getNearestBlockElementAncestorOrThrow,
   $insertNodeToNearestRoot,
   mergeRegister
 } from "@lexical/utils";
@@ -14,6 +15,7 @@ import {
   $getSelection,
   $isElementNode,
   $isRangeSelection,
+  $isRootNode,
   COMMAND_PRIORITY_EDITOR,
   createCommand,
   ElementNode,
@@ -21,6 +23,7 @@ import {
   LexicalNode
 } from "lexical";
 import { useEffect, useMemo } from "react";
+import { $createAlertNode } from "../nodes/alert";
 
 interface NodeTypeProps {
   create: (payload: string | undefined) => ElementNode;
@@ -38,6 +41,9 @@ type NodeType =
   | "CODE_BLOCK_PY"
   | "CODE_BLOCK_MD"
   | "CODE_BLOCK_BASH"
+  | "ALERT_DEFAULT"
+  | "ALERT_PRIMARY"
+  | "ALERT_DESTRUCTIVE"
   | "LINK";
 ;
 
@@ -57,7 +63,7 @@ export const COMMANDS: CommandNames = {} as CommandNames;
   COMMANDS[key] = createCommand();
 });
 
-const nodeTypes: NodeType[] = ["H1", "H2", "H3", "H4", "H5", "H6", "CODE_BLOCK", "CODE_BLOCK_TS", "CODE_BLOCK_PY", "CODE_BLOCK_MD", "CODE_BLOCK_BASH", "LINK"];
+const nodeTypes: NodeType[] = ["H1", "H2", "H3", "H4", "H5", "H6", "CODE_BLOCK", "CODE_BLOCK_TS", "CODE_BLOCK_PY", "CODE_BLOCK_MD", "CODE_BLOCK_BASH", "ALERT_DEFAULT", "ALERT_PRIMARY", "ALERT_DESTRUCTIVE", "LINK"];
 
 nodeTypes.forEach((nodeType) => {
   const commandKey = `INSERT_${nodeType}` as InsertCommandType;
@@ -80,6 +86,9 @@ function InsertCommandsPlugin() {
       CODE_BLOCK_PY: { create: (payload) => $createCodeNode("python") },
       CODE_BLOCK_MD: { create: (payload) => $createCodeNode("markdown") },
       CODE_BLOCK_BASH: { create: (payload) => $createCodeNode("bash") },
+      ALERT_DEFAULT: { create: (payload) => $createAlertNode("default") },
+      ALERT_PRIMARY: { create: (payload) => $createAlertNode("primary") },
+      ALERT_DESTRUCTIVE: { create: (payload) => $createAlertNode("destructive") },
       LINK: { create: (payload) => {
         if (!payload) throw new Error("You must provide a payload (url) to create a link node");
 
@@ -104,14 +113,20 @@ function InsertCommandsPlugin() {
         const first = focusFirst ? focus : anchor;
         const last = focusFirst ? anchor : focus;
         const firstNode = first.getNode();
+        const firstParent = firstNode.getParent();
+        const firstParentIsRoot = $isRootNode(firstParent);
+
         const isCollapsed = lexicalSelection.isCollapsed();
         const lastEndsNode = last.getNode().getTextContentSize() === last.offset;
 
         const nodeTypeKey = command_key.replace('INSERT_', '') as NodeType;
         const newNode = NODE_TYPES[nodeTypeKey].create(payload);
 
+        console.log('newNode', newNode);
+
         if (lastEndsNode && isCollapsed) {
-          firstNode.getParent()?.insertAfter(newNode, true);
+
+          $getNearestBlockElementAncestorOrThrow(firstNode).insertAfter(newNode, true);
           newNode.getLatest().selectStart();
           return true;
         }
@@ -126,7 +141,7 @@ function InsertCommandsPlugin() {
           const textNode = $createTextNode(textContent);
           latestNode.append(textNode);
 
-          lastEndsNode ? firstNode.getParent()?.insertAfter(newNode, true) : $insertNodeToNearestRoot(newNode);
+          lastEndsNode ? $getNearestBlockElementAncestorOrThrow(firstNode).insertAfter(newNode, true) : $insertNodeToNearestRoot(newNode);
 
           console.log('lastEndsNode', lastEndsNode);
 

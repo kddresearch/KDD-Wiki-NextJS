@@ -57,19 +57,37 @@ export class AlertNode extends ElementNode {
 
       const parent = node.getParentOrThrow();
 
-      if (parent === null) {
+      if (!$isRootNode(parent)) {
         const paragraphNode = $createParagraphNode();
         node.replace(paragraphNode);
         return;
       }
 
-      if (!$isRootNode(parent)) {
-        return;
-      }
+      const children = node.getChildren();
+      const childrenSize = node.getChildrenSize();
 
-      if (!$isAlertNode(node)) {
-        return;
-      }
+      children.forEach((child, index) => {
+        if ($isAlertTitleNode(child)) {
+          return;
+        }
+
+        if ($isAlertDescriptionNode(child)) {
+          return;
+        }
+
+        if ($isTextNode(child) && index === 0) {
+          const titleNode = $createAlertTitleNode();
+          titleNode.append(child);
+
+          if (childrenSize > 1) {
+            node.splice(0, 1, [titleNode]);
+            return;
+          }
+
+          node.append(titleNode);
+          return;
+        }
+      });
     };
   }
 
