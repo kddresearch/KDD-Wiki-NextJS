@@ -2,11 +2,19 @@
 import { $getSelection, $isRangeSelection, LexicalEditor, RangeSelection } from "lexical";
 import { containsNode, getNodeBeforeRoot } from ".";
 import { $isCodeNode } from "@lexical/code";
-import { $createHeadingNode, $isHeadingNode } from "@lexical/rich-text";
+import { $isHeadingNode } from "@lexical/rich-text";
 import { $isLinkNode } from "@lexical/link";
 import { $isMakrdownEditorCodeNode } from "../nodes/markdown";
+import { $getNearestBlockElementAncestorOrThrow } from "@lexical/utils";
 
 
+
+export function isAlertTitleInSelection(lexicalSelection: RangeSelection) {
+  return lexicalSelection.getNodes().some((node) => {
+    const elementNode = $getNearestBlockElementAncestorOrThrow(node);
+    return elementNode.getType() === 'alert-title';
+  });
+}
 
 export function isMarkdownEditorCodeInSelection(lexicalSelection: RangeSelection) {
   return lexicalSelection.getNodes().some((node) => {
@@ -53,13 +61,14 @@ function isLinkInSelection(lexicalSelection: RangeSelection) {
 
 export function getBoldStyling(lexicalSelection: RangeSelection) {
   const isMarkdownEditor = isMarkdownEditorCodeInSelection(lexicalSelection);
+  const isAlertTitle = isAlertTitleInSelection(lexicalSelection);
   const isCode = isCodeInSelection(lexicalSelection);
   const isH1 = isH1InSelection(lexicalSelection);
 
-  const isDisabled = isH1 || isCode || isMarkdownEditor;
+  const isDisabled = isH1 || isCode || isMarkdownEditor || isAlertTitle;
 
   return {
-    isBold: lexicalSelection.hasFormat("bold") || isH1,
+    isBold: lexicalSelection.hasFormat("bold") || isH1 || isAlertTitle,
     isDisabled: isDisabled,
   };
 }

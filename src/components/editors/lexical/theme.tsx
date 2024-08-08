@@ -106,6 +106,17 @@ export function Disclaimer() {
         <p>
           <strong>Disable direct markdown editing</strong> by toggling the setting in the toolbar settings.
         </p>
+        <br />
+        <h2 className="text-base">
+          <strong>Known Issues:</strong>
+        </h2>
+        <ul className="list-disc ml-7">
+          <li><strong>Bold</strong> is not supported in Headers</li>
+          <li><i>Italics</i> is not supported in Headers</li>
+          <li><strong>Bold</strong> is not supported in Alert Title</li>
+        </ul>
+        <br />
+        <p><strong>DO NOT</strong> manually add these formats in the markdown editor to the affected nodes, as the formatting will break</p>
       </AlertDescription>
     </Alert>
   )
@@ -190,27 +201,21 @@ function prePopulate() {
     paragraph.append($createTextNode('Hello, world!'));
     root.append(paragraph);
 
-    const alert = $createAlertNode(
-      'Known Issues:',
-      'This is a development page. Please do not use it for production.',
-      'destructive'
-    );
+    const alert = $createAlertNode('destructive');
+    alert.append($createAlertTitleNode('Known Issues:'));
+    alert.append($createAlertDescriptionNode('This is a development page. Please do not use it for production.'));
     root.append(alert);
 
-    const default_alert = $createAlertNode(
-      'Note:',
-      'Starting in .NET 9, a build warning is emitted if your project targets .NET Standard 1.x.',
-      'default'
-    );
+    const default_alert = $createAlertNode('default');
+    default_alert.append($createAlertTitleNode('Note:'));
+    default_alert.append($createAlertDescriptionNode('Starting in .NET 9, a build warning is emitted if your project targets .NET Standard 1.x.'));
     default_alert.append($createAlertDescriptionNode());
     default_alert.append($createAlertDescriptionNode('For more information, see Warning emitted for .NET Standard 1.x targets.'));
     root.append(default_alert);
 
-    const primary_alert = $createAlertNode(
-      'Known Issues:',
-      'This is a development page. Please do not use it for production.',
-      'primary'
-    );
+    const primary_alert = $createAlertNode('primary');
+    primary_alert.append($createAlertTitleNode('Known Issues:'));
+    primary_alert.append($createAlertDescriptionNode('This is a development page. Please do not use it for production.'));
     root.append(primary_alert);
 
     const heading = $createHeadingNode('h1');

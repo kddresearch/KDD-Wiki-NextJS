@@ -17,9 +17,10 @@ import { alertVariants } from "@/components/ui/alert";
 import { VariantProps } from "class-variance-authority";
 import {
   $createAlertDescriptionNode,
-  $isAlertDescriptionNode
+  $isAlertDescriptionNode,
+  AlertDescriptionNode
 } from "./description";
-import { $createAlertTitleNode, $isAlertTitleNode } from "./title";
+import { $createAlertTitleNode, $isAlertTitleNode, AlertTitleNode } from "./title";
 
 export type AlertVariant = VariantProps<typeof alertVariants>["variant"];
 
@@ -44,7 +45,7 @@ export class AlertNode extends ElementNode {
   }
 
   static importJSON(serializedNode: SerializedAlertNode): AlertNode {
-    const node = $createAlertNode(serializedNode.title, serializedNode.description, serializedNode.variant);
+    const node = $createAlertNode(serializedNode.variant);
     return node;
   }
 
@@ -226,6 +227,10 @@ export class AlertNode extends ElementNode {
     return titleNode ? titleNode.getTextContent() : '';
   }
 
+  getTitleNode(): AlertTitleNode | null {
+    return this.getChildren().find($isAlertTitleNode) || null;
+  }
+
   getDescription(): string {
     const descriptionNodeText = this.getChildren()
       .filter($isAlertDescriptionNode)
@@ -234,10 +239,11 @@ export class AlertNode extends ElementNode {
     return descriptionNodeText ? descriptionNodeText : '';
   }
 
+  getDescriptionNodes(): AlertDescriptionNode[] {
+    return this.getChildren().filter($isAlertDescriptionNode);
+  }
+
   collapseAtStart(): boolean {
-
-    console.log("running Alert Collapse");
-
     return true;
   }
 
@@ -267,13 +273,9 @@ export class AlertNode extends ElementNode {
   }
 }
 
-export function $createAlertNode(title: string = 'Note:', content?: string, variant: AlertVariant = 'default'): AlertNode {
+export function $createAlertNode(variant: AlertVariant = 'default'): AlertNode {
 
   const alertNode = new AlertNode(variant);
-  alertNode.append($createAlertTitleNode(title));
-  if (content) {
-    alertNode.append($createAlertDescriptionNode(content));
-  }
 
   return $applyNodeReplacement(alertNode);
 }

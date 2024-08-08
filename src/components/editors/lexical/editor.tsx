@@ -92,8 +92,8 @@ function Editor({
     ? editInMarkdown
       ? () => populateMarkdownEditor(() => prePopulate())
       : () => prePopulate()
-    : disableMarkdown
-      ? () => populateMarkdownEditor()
+    : editInMarkdown
+      ? () => populateMarkdownEditor(() => $convertFromMarkdownString(markdown ?? '', KDD_TRANSFORMERS))
       : () => $convertFromMarkdownString(markdown ?? '', KDD_TRANSFORMERS),
     namespace: 'KDD-MD-Editor',
     nodes: [...editorNodes],
