@@ -17,8 +17,8 @@ export class MakrdownEditorCodeNode extends CodeNode {
     return new MakrdownEditorCodeNode(node.__language, node.__key);
   }
 
-  static importJSON(serializedNode: any): MakrdownEditorCodeNode {
-    return new MakrdownEditorCodeNode();
+  static importJSON(serializedNode: SerializedMakrdownEditorCodeNode): MakrdownEditorCodeNode {
+    return new MakrdownEditorCodeNode(serializedNode.language);
   }
 
   // canInsertTextAfter(): boolean {
@@ -122,6 +122,8 @@ export class MakrdownEditorCodeNode extends CodeNode {
   exportJSON(): SerializedMakrdownEditorCodeNode {
     return {
       ...super.exportJSON(),
+      type: this.getType(),
+      version: 1,
     };
   }
 }

@@ -41,6 +41,7 @@ import {
   getStrikethroughStyling,
 } from "../utils/styles";
 import { useToast } from "@/components/ui/use-toast";
+import { Clipboard, ClipboardType, Copy, Scissors } from "lucide-react";
 
 const LowPriority = 1;
 
@@ -220,24 +221,24 @@ function ContextMenuPlugin({
 
         {/* Copy Button */}
         <ContextMenuItem
-          inset
           disabled={!canCopy}
           onClick={() => {
             editor.dispatchCommand(COPY_COMMAND, null);
           }}
         >
+          <Copy className="h-4 w-4 mr-2" />
           Copy
           <ContextMenuShortcut>⌘c</ContextMenuShortcut>
         </ContextMenuItem>
 
         {/* Cut Button */}
         <ContextMenuItem
-          inset
           disabled={!canCut}
           onClick={() => {
             editor.dispatchCommand(CUT_COMMAND, null);
           }}
         >
+          <Scissors className="h-4 w-4 mr-2" />
           Cut
           <ContextMenuShortcut>⌘x</ContextMenuShortcut>
         </ContextMenuItem>
@@ -246,7 +247,6 @@ function ContextMenuPlugin({
 
         {/* Paste Button */}
         <ContextMenuItem
-          inset
           onClick={async () => {
 
             const permission = await navigator.permissions.query({
@@ -281,13 +281,13 @@ function ContextMenuPlugin({
             })
           }}
         >
+          <ClipboardType className="h-4 w-4 mr-2" />
           Paste
           <ContextMenuShortcut>⌘v</ContextMenuShortcut>
         </ContextMenuItem>
 
         {/* Paste Without Formatting Button */}
         <ContextMenuItem
-          inset
           onClick={async () => {
 
             const permission = await navigator.permissions.query({
@@ -315,6 +315,7 @@ function ContextMenuPlugin({
             });
           }}
         >
+          <Clipboard className="h-4 w-4 mr-2" />
           Paste Without Formatting
           <ContextMenuShortcut>⇧⌘v</ContextMenuShortcut>
         </ContextMenuItem>
