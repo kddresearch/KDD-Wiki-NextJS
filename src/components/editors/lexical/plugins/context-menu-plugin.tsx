@@ -85,18 +85,30 @@ function ContextMenuPlugin({
       return;
     }
 
+    setDisabled(false);
+
+    const start = performance.now();
+
     const word = getWord(lexicalSelection);
 
     if (word) {
+
+      // if word is all caps, don't check spelling
+      if (word === word.toUpperCase()) {
+        return;
+      }
+
       isWordMisspelled(word).then((result) => {
         if (result) {
-          console.log("word:", word);
+          console.log("misspelled word:", word);
           setDisabled(true);
         }
       });
-    } else {
-      setDisabled(false);
     }
+
+    const end = performance.now();
+
+    console.log(`updateCommandBar took ${end - start} ms`);
 
     if (lexicalSelection.isCollapsed()) {
       setCanCut(false);
