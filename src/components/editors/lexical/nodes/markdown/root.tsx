@@ -1,5 +1,29 @@
-import { $createCodeHighlightNode, $isCodeHighlightNode, $isCodeNode, CodeHighlightNode, CodeNode, getFirstCodeNodeOfLine, SerializedCodeNode } from "@lexical/code";
-import { $createLineBreakNode, $createTabNode, $createTextNode, $isParagraphNode, $isTabNode, $isTextNode, ParagraphNode, RangeSelection, Spread, TabNode } from "lexical";
+import {
+  $createCodeHighlightNode,
+  $isCodeHighlightNode,
+  $isCodeNode,
+  CodeHighlightNode,
+  CodeNode,
+  getFirstCodeNodeOfLine,
+  SerializedCodeNode
+} from "@lexical/code";
+import {
+  $createLineBreakNode,
+  $createTabNode,
+  $createTextNode,
+  $isParagraphNode,
+  $isTabNode,
+  $isTextNode,
+  EditorConfig,
+  ParagraphNode,
+  RangeSelection,
+  Spread,
+  TabNode
+} from "lexical";
+import {
+  addClassNamesToElement,
+  isHTMLElement
+} from '@lexical/utils';
 
 export type SerializedMakrdownEditorCodeNode = Spread<
   SerializedCodeNode,
@@ -7,6 +31,9 @@ export type SerializedMakrdownEditorCodeNode = Spread<
 
   }
 >;
+
+const LANGUAGE_DATA_ATTRIBUTE = 'data-language';
+const HIGHLIGHT_LANGUAGE_DATA_ATTRIBUTE = 'data-highlight-language';
 
 export class MakrdownEditorCodeNode extends CodeNode {
   static getType(): 'markdown-editor' {
@@ -36,6 +63,20 @@ export class MakrdownEditorCodeNode extends CodeNode {
    * LICENSE file in the root directory of this source tree.
    *
   **/
+  createDOM(config: EditorConfig): HTMLElement {
+    const element = document.createElement('code');
+    addClassNamesToElement(element, config.theme.code);
+    element.setAttribute('spellcheck', 'true');
+    const language = this.getLanguage();
+    if (language) {
+      element.setAttribute(LANGUAGE_DATA_ATTRIBUTE, language);
+
+      if (this.getIsSyntaxHighlightSupported()) {
+        element.setAttribute(HIGHLIGHT_LANGUAGE_DATA_ATTRIBUTE, language);
+      }
+    }
+    return element;
+  }
 
   insertNewAfter(
     selection: RangeSelection,
@@ -43,21 +84,6 @@ export class MakrdownEditorCodeNode extends CodeNode {
   ): null | ParagraphNode | CodeHighlightNode | TabNode {
     const children = this.getChildren();
     const childrenLength = children.length;
-
-    // if (
-    //   childrenLength >= 2 &&
-    //   children[childrenLength - 1].getTextContent() === '\n' &&
-    //   children[childrenLength - 2].getTextContent() === '\n' &&
-    //   selection.isCollapsed() &&
-    //   selection.anchor.key === this.__key &&
-    //   selection.anchor.offset === childrenLength
-    // ) {
-    //   children[childrenLength - 1].remove();
-    //   children[childrenLength - 2].remove();
-    //   const newElement = $createParagraphNode();
-    //   this.insertAfter(newElement, restoreSelection);
-    //   return newElement;
-    // }
 
     // If the selection is within the codeblock, find all leading tabs and
     // spaces of the current line. Create a new line that has all those

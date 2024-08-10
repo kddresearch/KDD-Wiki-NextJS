@@ -1,8 +1,9 @@
 "use client";
 
-import { $isElementNode, $isTextNode, RangeSelection } from "lexical";
+import { $isElementNode, $isTextNode, LexicalEditor, RangeSelection } from "lexical";
 import Typo from "typo-js";
 import localForage from 'localforage';
+import { $getNearestBlockElementAncestorOrThrow } from "@lexical/utils";
 
 const dictionaryCache = localForage.createInstance({
   name: 'dictionary-cache',
@@ -17,13 +18,17 @@ type dictionaryCache = {
 
 async function getCachedDictionary(): Promise<Typo> {
   const dictionary = "en_US";
-  const path = "/dictionaries";
+  const path = "./dictionaries";
 
   if (dictionaryInstance) {
     return Promise.resolve(dictionaryInstance);
   }
 
   let cache = await dictionaryCache.getItem(dictionary) as dictionaryCache | null;
+
+  if (cache) {
+    console.log("Resolved dictionary from cache");
+  }
 
   if (!cache) {
     cache = {
@@ -36,6 +41,7 @@ async function getCachedDictionary(): Promise<Typo> {
     fetch(`${path}/${dictionary}/${dictionary}.aff`)
       .then(response => response.text())
       .then(data => {
+        console.log("Resolving affData from network");
         cache.affData = data;
         dictionaryCache.setItem(dictionary, cache);
       });
@@ -45,6 +51,7 @@ async function getCachedDictionary(): Promise<Typo> {
     fetch(`${path}/${dictionary}/${dictionary}.dic`)
       .then(response => response.text())
       .then(data => {
+        console.log("Resolving wordsData from network");
         cache.wordsData = data;
         dictionaryCache.setItem(dictionary, cache);
       });
@@ -54,8 +61,57 @@ async function getCachedDictionary(): Promise<Typo> {
   return dictionaryInstance;
 }
 
-export function getWord(selection: RangeSelection): string | null {
+function elementEnablesSpellcheck(element: Element): boolean {
+  // if element has no childElements
 
+  const spellcheck = element.getAttribute('spellcheck') !== 'false';
+
+  if (!spellcheck) {
+    return spellcheck;
+  }
+
+  if (element.children.length === 0) {
+    return spellcheck;
+  }
+
+  // check child elements
+  const childElements = element.querySelectorAll('*');
+
+  return Array.from(childElements).every(childElement => {
+    return elementEnablesSpellcheck(childElement);
+  });
+}
+
+export function spellcheckIsEnabledOnSelection(selection: RangeSelection, editor: LexicalEditor): boolean {
+  const nodes = selection.getNodes();
+  const elementNodes = nodes.map((node) => {
+    return $getNearestBlockElementAncestorOrThrow(node);
+  });
+
+  let result;
+
+  result = elementNodes.every(node => {
+    const nodeElement = editor.getElementByKey(node.getKey());
+
+    // if element has no childElements
+    if (!nodeElement) {
+      console.log('Element not found:', node);
+      return true;
+    }
+
+    return elementEnablesSpellcheck(nodeElement);
+  });
+
+  console.log('Result:', result);
+
+  if (result === undefined) {
+    return true;
+  }
+
+  return result;
+}
+
+export function getWord(selection: RangeSelection, editor: LexicalEditor): string | null {
   if (selection.isCollapsed()) {
     const anchorNodeText = selection.anchor.getNode().getTextContent();
     const anchorOffset = selection.anchor.offset;
@@ -110,16 +166,12 @@ export function getWord(selection: RangeSelection): string | null {
   return null;
 }
 
+export async function loadTypo() {
+  return getCachedDictionary();
+}
+
 export async function isWordMisspelled(word: string) {
-  const start = performance.now();
   const result = getCachedDictionary().then(dictionary => !dictionary.check(word.toLocaleLowerCase()));
-
-  // // wait 1 ms to get the result
-  // await new Promise(resolve => setTimeout(resolve, 10));
-
-  const end = performance.now();
-
-  console.log(`isWordMisspelled took ${end - start} ms`);
 
   return result;
 }

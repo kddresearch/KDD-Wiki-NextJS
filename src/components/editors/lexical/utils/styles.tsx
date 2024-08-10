@@ -94,3 +94,23 @@ export function getStrikethroughStyling(lexicalSelection: RangeSelection) {
     isDisabled: isCode || isMarkdownEditor,
   };
 }
+
+export function getLinkStyling(lexicalSelection: RangeSelection) {
+  const isMarkdownEditor = isMarkdownEditorCodeInSelection(lexicalSelection);
+  const isCode = isCodeInSelection(lexicalSelection);
+  const elementsDisabled = getElementsDisabled(lexicalSelection);
+
+  return {
+    isLink: isLinkInSelection(lexicalSelection),
+    isDisabled: isCode || isMarkdownEditor || elementsDisabled.isDisabled,
+  };
+}
+
+export function getElementsDisabled(lexicalSelection: RangeSelection) {
+  const isMarkdownEditor = isMarkdownEditorCodeInSelection(lexicalSelection);
+  const isCode = isCodeInSelection(lexicalSelection);
+
+  return {
+    isDisabled: isMarkdownEditor,
+  };
+}

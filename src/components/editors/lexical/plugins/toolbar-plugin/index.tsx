@@ -24,7 +24,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import * as React from "react";
 import { $isCodeNode } from '@lexical/code';
 
-import { Bold, Italic, Strikethrough, Undo, Redo, Settings, Bug, PictureInPicture2, Info } from "lucide-react"
+import { Bold, Italic, Strikethrough, Undo, Redo, Settings, Bug, PictureInPicture2, Info, SquareMousePointer } from "lucide-react"
 import {
   ToggleGroup,
   ToggleGroupItem,
@@ -39,7 +39,9 @@ import { useSettings } from "../settings-context-plugin";
 import AboutDialog from "../dialog/about";
 import {
   getBoldStyling,
+  getElementsDisabled,
   getItalicStyling,
+  getLinkStyling,
   getStrikethroughStyling,
   isCodeInSelection
 } from "../../utils/styles";
@@ -65,6 +67,11 @@ export default function ToolbarPlugin() {
   // Strikethrough
   const [isStrikethrough, setIsStrikethrough] = useState(false);
   const [isStrikethroughDisabled, setIsStrikethroughDisabled] = useState(false);
+  // Link
+  const [isLink, setIsLink] = useState(false);
+  const [isLinkDisabled, setIsLinkDisabled] = useState(false);
+  // Elements
+  const [isElementsDisabled, setIsElementsDisabled] = useState(false);
 
   const [showAboutDialog, setShowAboutDialog] = React.useState(false)
 
@@ -81,7 +88,8 @@ export default function ToolbarPlugin() {
     settings: {
       isDebug,
       useSelectionToolbar,
-      editInMarkdown
+      editInMarkdown,
+      disableContextMenu
     },
   } = useSettings();
 
@@ -110,6 +118,13 @@ export default function ToolbarPlugin() {
     const strikethroughStyling = getStrikethroughStyling(lexicalSelection);
     setIsStrikethrough(strikethroughStyling.isStrikethrough);
     setIsStrikethroughDisabled(strikethroughStyling.isDisabled);
+
+    const linkStyling = getLinkStyling(lexicalSelection);
+    setIsLink(linkStyling.isLink);
+    setIsLinkDisabled(linkStyling.isDisabled);
+
+    const elementsStyling = getElementsDisabled(lexicalSelection);
+    setIsElementsDisabled(elementsStyling.isDisabled);
 
     setIsCode(isCodeInSelection(lexicalSelection));
   }, []);
@@ -223,7 +238,7 @@ export default function ToolbarPlugin() {
         <Separator orientation="vertical" />
 
         <InsertElementDropdown
-          disabled={editInMarkdown}
+          disabled={isElementsDisabled}
           editor={editor}
           openKeyboardShortcuts={setKeyboardShortcutsOpen}
         />
@@ -240,7 +255,7 @@ export default function ToolbarPlugin() {
 
         </div>
 
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost">
               <Settings className="h-4 w-4" />
@@ -264,6 +279,7 @@ export default function ToolbarPlugin() {
 
             <DropdownMenuLabel>Settings</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            {/* Debug */}
             <DropdownMenuCheckboxItem
               checked={isDebug}
               onCheckedChange={() => {
@@ -274,6 +290,7 @@ export default function ToolbarPlugin() {
               <span>Debug</span>
             </DropdownMenuCheckboxItem>
             
+            {/* Edit in Markdown */}
             {/* TODO: Fix the mouseover issue */}
             <TooltipProvider delayDuration={250}>
               <Tooltip>
@@ -295,8 +312,27 @@ export default function ToolbarPlugin() {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
+            
+            {/* Disable Context Menu */}
 
-
+            <TooltipProvider delayDuration={250}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                <DropdownMenuCheckboxItem
+                  checked={disableContextMenu}
+                  onCheckedChange={() => {
+                    setOption("disableContextMenu", !disableContextMenu)
+                  }}
+                >
+                  <SquareMousePointer className="mr-2 h-4 w-4" />
+                  <span>Disable Context Menu</span>
+                </DropdownMenuCheckboxItem>
+                </TooltipTrigger>
+                <TooltipContent side="left">
+                  <p>Useful for Spellchecking Support</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
             <DropdownMenuSeparator />
             <DropdownMenuLabel>Experimental</DropdownMenuLabel>

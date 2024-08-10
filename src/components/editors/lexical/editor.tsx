@@ -57,7 +57,8 @@ function Editor({
     settings: {
       isDebug,
       useSelectionToolbar,
-      editInMarkdown
+      editInMarkdown,
+      disableContextMenu
     },
   } = useSettings();
 
@@ -84,10 +85,6 @@ function Editor({
   console.log('editInMarkdown', editInMarkdown);
 
   const initialConfig = {
-    // editorState: usePrePopulated
-    //   ? prePopulate
-    //   : disableMarkdown
-    //     ? () => populatePlainText(markdown ?? '')
     editorState: usePrePopulated
     ? editInMarkdown
       ? () => populateMarkdownEditor(() => prePopulate())
@@ -101,34 +98,44 @@ function Editor({
     onError: onError
   };
 
+  const proseClasses = 'relative prose max-w-none prose-h1:text-purple prose-a:text-purple prose-a:underline';
+  const spellcheck = true;
+
+  const contentEditable = (
+    <ContentEditable
+      id="lexical-text-editable"
+      className={`bg-white min-h-[150px] resize-none text-[15px] caret-darkGray relative outline-none m-[15px_10px] caret-[#444] px-6 ${proseClasses}`}
+      spellCheck={spellcheck}
+    />
+  );
+  
+  const editableContent = disableContextMenu ? contentEditable : (
+    <ContextMenuPlugin spellcheck={spellcheck}>
+      {contentEditable}
+    </ContextMenuPlugin>
+  );
+
   return (
     <>
       {editInMarkdown && <Disclaimer />}
       <LexicalComposer initialConfig={initialConfig}>
-        <div id="hello" className="bg-white text-black relative leading-5 font-normal text-left rounded-lg border-gray border">
+        <div id="lexical-KDD-Editor" className="bg-white text-black relative leading-5 font-normal text-left rounded-lg border-gray border">
           <ToolbarPlugin />
-          <ContextMenuPlugin className="relative prose max-w-none prose-h1:text-purple prose-a:text-purple prose-a:underline">
-            <RichTextPlugin
-              contentEditable={                
-                <ContentEditable
-                  id='lexical-text-editable'
-                  className="bg-white min-h-[150px] resize-none text-[15px] caret-darkGray relative outline-none m-[15px_10px] caret-[#444] px-6"
-                />
-              }
-              placeholder={<Placeholder/>}
-              ErrorBoundary={LexicalErrorBoundary}
-            />
-            <HistoryPlugin />
-            <AutoFocusPlugin />
-            <ListPlugin />
-            <InsertCommandsPlugin />
-            <CodeHighlightPlugin />
-            <LinkPlugin />
-            <KeyboardCommandsPlugin />
-            <MarkdownPlugin useMarkdownShortcuts={useMarkdownShortcuts} onMardownContentChange={onMardownContentChange} />
-            {useSelectionToolbar && <SelectionToolbarPlugin />}
-            {isDebug && <DebugToolbar />}
-          </ContextMenuPlugin>
+          <RichTextPlugin
+            contentEditable={editableContent}
+            placeholder={<Placeholder/>}
+            ErrorBoundary={LexicalErrorBoundary}
+          />
+          <HistoryPlugin />
+          <AutoFocusPlugin />
+          <ListPlugin />
+          <InsertCommandsPlugin />
+          <CodeHighlightPlugin />
+          <LinkPlugin />
+          <KeyboardCommandsPlugin />
+          <MarkdownPlugin useMarkdownShortcuts={useMarkdownShortcuts} onMardownContentChange={onMardownContentChange} />
+          {useSelectionToolbar && <SelectionToolbarPlugin />}
+          {isDebug && <DebugToolbar />}
         </div>
       </LexicalComposer>
     </>
@@ -166,23 +173,50 @@ function TextEditor({
   };
 
   return (
-    <Suspense fallback={<Loading />}>
-      <LexicalErrorBoundary onError={onError}>
-        <SettingsContext>
-          <Editor
-            markdown={markdown}
-            onMardownContentChange={onMardownContentChange}
-            usePrePopulated={usePrePopulated}
-            useMarkdownShortcuts={useMarkdownShortcuts}
-            disableMarkdown={disableMarkdown}
-            onError={onError}
-          />
-        </SettingsContext>
-      </LexicalErrorBoundary>
-    </Suspense>
+    <LexicalErrorBoundary onError={onError}>
+      <SettingsContext>
+        <Editor
+          markdown={markdown}
+          onMardownContentChange={onMardownContentChange}
+          usePrePopulated={usePrePopulated}
+          useMarkdownShortcuts={useMarkdownShortcuts}
+          disableMarkdown={disableMarkdown}
+          onError={onError}
+        />
+      </SettingsContext>
+    </LexicalErrorBoundary>
   )
 }
 
-const KDDEditor = dynamic(() => Promise.resolve(TextEditor), { ssr: false });
+const DynamicKDDEditor = dynamic(() => Promise.resolve(TextEditor), { ssr: false });
+
+function KDDEditor({
+  markdown,
+  onMardownContentChange,
+  usePrePopulated,
+  useMarkdownShortcuts,
+  showDisclaimer,
+  disableMarkdown,
+}: {
+  markdown?: string;
+  onMardownContentChange?: (newMarkdownContent: string) => void;
+  usePrePopulated?: boolean;
+  useMarkdownShortcuts?: boolean;
+  showDisclaimer?: boolean;
+  disableMarkdown?: boolean;
+}) {
+  return (
+    <Suspense fallback={<Loading />}>
+      <DynamicKDDEditor
+        markdown={markdown}
+        onMardownContentChange={onMardownContentChange}
+        usePrePopulated={usePrePopulated}
+        useMarkdownShortcuts={useMarkdownShortcuts}
+        showDisclaimer={showDisclaimer}
+        disableMarkdown={disableMarkdown}
+      />
+    </Suspense>
+  );
+}
 
 export default KDDEditor;

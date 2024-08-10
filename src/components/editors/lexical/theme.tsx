@@ -164,7 +164,7 @@ function Placeholder() {
   }, [hasPlayed, baseMessage]);
 
   return (
-    <div className='text-gray overflow-hidden absolute text-ellipsis top-[-20px] left-[14px] text-normal select-none inline-block pointer-events-none p-5'>
+    <div className='text-gray overflow-hidden absolute text-ellipsis top-12 left-[14px] text-normal select-none inline-block pointer-events-none p-5'>
       <span className="gradient-text font-semibold opacity-65">{message}</span>
       <span
         className="absolute top-0 left-0 p-5 text-transparent gradient-shadow font-semibold opacity-20"

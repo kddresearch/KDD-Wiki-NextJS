@@ -15,7 +15,7 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { mergeRegister } from "@lexical/utils";
 import {
   FORMAT_TEXT_COMMAND,
@@ -30,25 +30,31 @@ import {
   $isTextNode,
   CUT_COMMAND,
   COPY_COMMAND,
-  PASTE_COMMAND
+  PASTE_COMMAND,
+  RangeSelection,
+  $createRangeSelection,
+  $setSelection
 } from "lexical";
 import { getNodeBeforeRoot } from "../utils";
 import { $isCodeNode } from "@lexical/code";
 import LinkDialog from "./dialog/link";
 import {
   getBoldStyling,
+  getElementsDisabled,
   getItalicStyling,
+  getLinkStyling,
   getStrikethroughStyling,
 } from "../utils/styles";
 import { useToast } from "@/components/ui/use-toast";
 import { Clipboard, ClipboardType, Copy, Scissors } from "lucide-react";
-import { getWord, isWordMisspelled } from "../utils/spellcheck";
+import { getWord, isWordMisspelled, spellcheckIsEnabledOnSelection } from "../utils/spellcheck";
 
 const LowPriority = 1;
 
 function ContextMenuPlugin({
+  spellcheck,
   ...props
-}: React.HTMLProps<HTMLDivElement>
+}: React.HTMLProps<HTMLDivElement> & { spellcheck: boolean}
 ) {
   
   const [editor] = useLexicalComposerContext();
@@ -67,12 +73,19 @@ function ContextMenuPlugin({
   // Strikethrough
   const [isStrikethrough, setIsStrikethrough] = useState(false);
   const [isStrikethroughDisabled, setIsStrikethroughDisabled] = useState(false);
+  // Link
+  const [isLink, setIsLink] = useState(false);
+  const [isLinkDisabled, setIsLinkDisabled] = useState(false);
+  // Elements
+  const [isElementsDisabled, setIsElementsDisabled] = useState(false);
 
-  const [stylingDisabled, setStylingDisabled] = useState(false);
-  const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
-  const [selectedText, setSelectedText] = useState<string | undefined>(undefined);
+  // Selection
+  const [currentSelection, setCurrentSelection] = useState<RangeSelection | undefined>(undefined);
 
   const [currentNode, setCurrentNode] = useState<LexicalNode | undefined>(undefined);
+
+  // Portal Container
+  const [portalContainer, setPortalContainer] = useState<HTMLElement | undefined>(undefined);
 
   const updateCommandBar = useCallback(() => {
     const lexicalSelection = $getSelection();
@@ -85,30 +98,24 @@ function ContextMenuPlugin({
       return;
     }
 
-    setDisabled(false);
-
-    const start = performance.now();
-
-    const word = getWord(lexicalSelection);
-
-    if (word) {
-
-      // if word is all caps, don't check spelling
-      if (word === word.toUpperCase()) {
-        return;
-      }
-
-      isWordMisspelled(word).then((result) => {
-        if (result) {
-          console.log("misspelled word:", word);
-          setDisabled(true);
+    if (spellcheck && spellcheckIsEnabledOnSelection(lexicalSelection, editor)) { 
+      setDisabled(false);
+      const word = getWord(lexicalSelection, editor);
+  
+      if (word) {
+        // if word is all caps, don't check spelling
+        if (word === word.toUpperCase()) {
+          return;
         }
-      });
+  
+        isWordMisspelled(word).then((result) => {
+          if (result) {
+            console.log("misspelled word:", word);
+            setDisabled(true);
+          }
+        });
+      }
     }
-
-    const end = performance.now();
-
-    console.log(`updateCommandBar took ${end - start} ms`);
 
     if (lexicalSelection.isCollapsed()) {
       setCanCut(false);
@@ -117,7 +124,6 @@ function ContextMenuPlugin({
       setCanCut(true);
       setCanCopy(true);
     }
-
 
     const boldStyling = getBoldStyling(lexicalSelection);
     setIsBold(boldStyling.isBold);
@@ -129,39 +135,15 @@ function ContextMenuPlugin({
 
     const strikethroughStyling = getStrikethroughStyling(lexicalSelection);
     setIsStrikethrough(strikethroughStyling.isStrikethrough);
-    setIsStrikethroughDisabled(strikethroughStyling.isDisabled);    
-  }, []);
+    setIsStrikethroughDisabled(strikethroughStyling.isDisabled);
 
-  const handleInsertLink = () => {
-    editor.update(() => {
-      const selection = $getSelection();
-      if (!selection) {
-        return;
-      }
+    const linkStyling = getLinkStyling(lexicalSelection);
+    setIsLink(linkStyling.isLink);
+    setIsLinkDisabled(linkStyling.isDisabled);
 
-      if ($isRangeSelection(selection)) {
-        // get text from selection
-        const text = selection.getNodes().map((node) => {
-          if ($isCodeNode(node)) {
-            return "";
-          }
-
-          if ($isTextNode(node)) {
-            return node.getTextContent();
-          }
-        }).join("");
-
-        setSelectedText(text);
-
-        console.log("selectedText:", text);
-      }
-    });
-    setIsLinkDialogOpen(true);
-  };
-
-  const handleLinkDialogClose = () => {
-    setIsLinkDialogOpen(false);
-  };
+    const elementsStyling = getElementsDisabled(lexicalSelection);
+    setIsElementsDisabled(elementsStyling.isDisabled);
+  }, [editor, spellcheck]);
 
   useEffect(() => {
     return mergeRegister(
@@ -173,6 +155,7 @@ function ContextMenuPlugin({
       editor.registerCommand(
         SELECTION_CHANGE_COMMAND,
         (_payload, newEditor) => {
+          console.log("selection change");
           updateCommandBar();
           return false;
         },
@@ -205,11 +188,28 @@ function ContextMenuPlugin({
 
   }, [editor])
 
-  const onOpenChange = useCallback((isOpen: boolean) => {
-    if (!isOpen) {
-      return;
-    }
+  const saveSelection = useCallback(() => {
+    editor.update(() => {
+      const lexicalSelection = $getSelection();
 
+      if (!$isRangeSelection(lexicalSelection)) {
+        return;
+      }
+
+      setCurrentSelection(lexicalSelection);
+    });
+  }, [editor]);
+
+
+  const resstoreSelection = useCallback(() => {
+    if (currentSelection) {
+      editor.update(() => {
+        $setSelection(currentSelection);
+      });
+    }
+  }, [currentSelection, editor]);
+
+  const onOpenChange = useCallback((isOpen: boolean) => {
     getCurrentNode();
   }, [getCurrentNode]);
 
@@ -222,11 +222,11 @@ function ContextMenuPlugin({
   }, [currentNode]);
 
   return (
-    <ContextMenu onOpenChange={onOpenChange}>
-      <ContextMenuTrigger {...props} disabled={disabled}>
+    <ContextMenu onOpenChange={onOpenChange} modal={false}>
+      <ContextMenuTrigger {...props} disabled={disabled} asChild>
         {props.children}
       </ContextMenuTrigger>
-      <ContextMenuContent className="w-64">
+      <ContextMenuContent className="w-64" portalContainer={portalContainer ?? undefined}>
 
         {/* Copy Button */}
         <ContextMenuItem
@@ -368,21 +368,32 @@ function ContextMenuPlugin({
 
         {/* Elements */}
         <ContextMenuSeparator />
-        <ContextMenuItem inset onClick={handleInsertLink}>
-          Insert Link
-          <ContextMenuShortcut>⌘R</ContextMenuShortcut>
-        </ContextMenuItem>
+
+        {isLink ? (
+          <ContextMenuItem inset disabled={isLinkDisabled}>
+            Edit Link
+            <ContextMenuShortcut>⌘R</ContextMenuShortcut>
+          </ContextMenuItem>
+        ) : (
+          <ContextMenuItem inset disabled={isLinkDisabled}>
+            Insert Link
+            <ContextMenuShortcut>⌘R</ContextMenuShortcut>
+          </ContextMenuItem>
+        )}
+
         <ContextMenuSub>
-          <ContextMenuSubTrigger inset>More Elements</ContextMenuSubTrigger>
+          <ContextMenuSubTrigger inset>
+            More Elements
+          </ContextMenuSubTrigger>
           <ContextMenuSubContent className="w-48">
-            <ContextMenuItem>
+            <ContextMenuItem disabled={isElementsDisabled}>
               Insert Header
               <ContextMenuShortcut>⇧⌘S</ContextMenuShortcut>
             </ContextMenuItem>
-            <ContextMenuItem>
+            <ContextMenuItem disabled={isElementsDisabled}>
               Insert Code
             </ContextMenuItem>
-            <ContextMenuItem>
+            <ContextMenuItem disabled={isElementsDisabled}>
               Insert Table
             </ContextMenuItem>
           </ContextMenuSubContent>
@@ -390,17 +401,11 @@ function ContextMenuPlugin({
 
         <ContextMenuSeparator />
 
-        <ContextMenuItem>
+        <ContextMenuLabel>
           {currentNodeToText()}
-        </ContextMenuItem>
+        </ContextMenuLabel>
 
       </ContextMenuContent>
-      <LinkDialog
-        open={isLinkDialogOpen}
-        onOpenChange={handleLinkDialogClose}
-        defaultText={selectedText}
-        // You can pass additional props to the LinkDialog component if needed
-      />
     </ContextMenu>
   )
 }

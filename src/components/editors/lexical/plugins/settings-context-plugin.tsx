@@ -21,6 +21,7 @@ export const DEFAULT_SETTINGS = {
   isDebug: false,
   useSelectionToolbar: false,
   editInMarkdown: false,
+  disableContextMenu: false,
 } as const;
 
 export type SettingName = keyof typeof DEFAULT_SETTINGS;
