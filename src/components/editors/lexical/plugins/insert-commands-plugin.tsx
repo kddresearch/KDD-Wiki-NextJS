@@ -83,7 +83,7 @@ function InsertCommandsPlugin() {
       H6: { create: (payload) => $createHeadingNode("h6") },
       CODE_BLOCK: { create: (payload) => $createCodeNode("plaintext") },
       CODE_BLOCK_TS: { create: (payload) => $createCodeNode("typescript") },
-      CODE_BLOCK_PY: { create: (payload) => $createCodeNode("python") },
+      CODE_BLOCK_PY: { create: (payload) => $createCodeNode("py") },
       CODE_BLOCK_MD: { create: (payload) => $createCodeNode("markdown") },
       CODE_BLOCK_BASH: { create: (payload) => $createCodeNode("bash") },
       ALERT_DEFAULT: { create: (payload) => $createAlertNode("default") },

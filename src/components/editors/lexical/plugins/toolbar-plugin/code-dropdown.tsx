@@ -100,7 +100,6 @@ function CodeDropdown({
         )}
       {...props}
     >
-      {/* <Label className="my-auto text-sm">Language: </Label> */}
       <Combobox
         options={uniqueLanguages}
         defaultSelect={codeLanguage}

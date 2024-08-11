@@ -32,6 +32,7 @@ import { KDD_TRANSFORMERS } from './plugins/markdown-plugin/transform';
 import KeyboardCommandsPlugin from './plugins/keyboard-commands-plugin';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $createMakrdownEditorCodeNode, $isMakrdownEditorCodeNode } from './nodes/markdown';
+import SlashCommandPlugin from './plugins/slash-command-plugin';
 
 interface MarkdownEditorProps {
   markdown?: string;
@@ -133,6 +134,7 @@ function Editor({
           <CodeHighlightPlugin />
           <LinkPlugin />
           <KeyboardCommandsPlugin />
+          <SlashCommandPlugin />
           <MarkdownPlugin useMarkdownShortcuts={useMarkdownShortcuts} onMardownContentChange={onMardownContentChange} />
           {useSelectionToolbar && <SelectionToolbarPlugin />}
           {isDebug && <DebugToolbar />}
