@@ -62,6 +62,7 @@ const theme = {
   // placeholder: 'text-gray-500 overflow-hidden absolute text-ellipsis top-4 left-2.5 text-base pointer-events-none inline-block',
   // quote: 'm-0 ml-5 text-base text-[rgb(101,103,107)] border-l-4 border-[rgb(206,208,212)] pl-4 italic',
   // rtl: 'text-right',
+  link: 'p-1 rounded hover:bg-accent transition-colors cursor-pointer',
   text: {
     bold: 'font-bold',
     code: 'bg-[rgb(240,242,245)] px-1 py-0.5 font-mono text-[94%]',
@@ -71,7 +72,7 @@ const theme = {
     strikethrough: 'line-through',
     underline: 'underline',
     underlineStrikethrough: 'underline-strikethrough',
-    },
+  },
   tokenAnsi: {
     comment: 'text-slate-500',
     punctuation: 'text-gray-500',
@@ -184,6 +185,7 @@ import { $createCodeNode, $createCodeHighlightNode } from '@lexical/code';
 import { $createAlertNode } from './nodes/alert';
 import { $createAlertTitleNode } from './nodes/alert/title';
 import { $createAlertDescriptionNode } from './nodes/alert/description';
+import { $createLinkNode } from "@lexical/link";
 
 function populatePlainText(text: string) {
   const root = $getRoot();
@@ -225,6 +227,12 @@ function prePopulate() {
     const quote = $createQuoteNode();
     quote.append($createTextNode('Wesley Baldwin is so tired of writing code for this project. He just wants to go to bed.'));
     root.append(quote);
+
+    const link = $createParagraphNode();
+    link.append($createTextNode('Check out the '));
+    link.append($createLinkNode('https://kddresearch.org').append($createTextNode('KDD website')));
+    link.append($createTextNode(' for more information.'));
+    root.append(link);
 
     const codestr = 
 `// this is javascript

@@ -22,6 +22,10 @@ const Dev = () => {
 
 > I hope that quotes still work too... lol
 
+[Link](https://www.google.com)
+
+> [Link in a quote](https://www.google.com) lol
+
 ### This list is fine
 
 - HELLO 1
