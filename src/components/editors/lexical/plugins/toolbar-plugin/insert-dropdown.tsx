@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DropdownMenuProps } from "@radix-ui/react-dropdown-menu";
-import { CircleAlert, Code, Heading, Heading1Icon, Heading2Icon, Heading3Icon, Info, Keyboard, Link, OctagonAlert, PlusCircle, Settings } from "lucide-react";
+import { CircleAlert, Code, Heading, Heading1Icon, Heading2Icon, Heading3Icon, Info, Keyboard, Link, List, OctagonAlert, PlusCircle, Quote, Settings } from "lucide-react";
 
 import { $getSelection, $isRangeSelection, COMMAND_PRIORITY_EDITOR, createCommand, LexicalCommand, LexicalEditor } from "lexical";
 import { $insertNodeToNearestRoot, mergeRegister } from '@lexical/utils';
@@ -204,11 +204,29 @@ function InsertElementDropdown({
 
           <DropdownMenuItem
             onClick={() => {
-              editor.dispatchCommand(COMMANDS.INSERT_LINK, "myPayload");
+              editor.dispatchCommand(COMMANDS.INSERT_LINK, undefined);
             }}
           >
             <Link className="mr-2 h-4 w-4" />
             <span>Link</span>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            onClick={() => {
+              editor.dispatchCommand(COMMANDS.INSERT_QUOTE, undefined);
+            }}
+          >
+            <Quote className="mr-2 h-4 w-4" />
+            <span>Quote</span>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            onClick={() => {
+              editor.dispatchCommand(COMMANDS.INSERT_LIST, undefined);
+            }}
+          >
+            <List className="mr-2 h-4 w-4" />
+            <span>List</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
 

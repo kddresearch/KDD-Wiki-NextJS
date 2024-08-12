@@ -49,7 +49,7 @@ function KeyboardShortcutMenu({
         <CommandEmpty>No elements found</CommandEmpty>
         {nodeKeyboardShortcuts.map((group, index) => (
           <React.Fragment key={index}>
-            <CommandGroup key={index} heading={group.category}>
+            <CommandGroup heading={group.category}>
               {group.shortcuts.map((shortcut, index) => (
                 <CommandItem key={index}>
                   {cloneElement(shortcut.icon, { className: 'mr-2 h-4 w-4' })}

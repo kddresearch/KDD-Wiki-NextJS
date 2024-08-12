@@ -3,6 +3,7 @@
 import { $createCodeNode } from "@lexical/code";
 import {
   $createLinkNode,
+  $isLinkNode,
   TOGGLE_LINK_COMMAND
 } from "@lexical/link";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
@@ -26,12 +27,12 @@ import {
   LexicalNode
 } from "lexical";
 import { useEffect, useMemo } from "react";
-import { $createAlertNode } from "../nodes/alert";
+import { $createAlertNode, $createAlertTitleNode } from "../nodes/alert";
 import { $createListItemNode, $createListNode } from "@lexical/list";
 import { QUOTE } from "@lexical/markdown";
 
 interface NodeTypeProps {
-  create: (payload: string | undefined) => ElementNode;
+  create: (payload: string | undefined) => ElementNode | true;
 }
 
 type NodeType =
@@ -106,9 +107,9 @@ function InsertCommandsPlugin() {
   
   const NODE_TYPES: NodeTypes = useMemo(() => {
     return {
-      ALERT_DEFAULT: { create: (payload) => $createAlertNode("default") },
-      ALERT_PRIMARY: { create: (payload) => $createAlertNode("primary") },
-      ALERT_DESTRUCTIVE: { create: (payload) => $createAlertNode("destructive") },
+      ALERT_DEFAULT: { create: (payload) => $createAlertNode("default").append($createAlertTitleNode()) },
+      ALERT_PRIMARY: { create: (payload) => $createAlertNode("primary").append($createAlertTitleNode()) },
+      ALERT_DESTRUCTIVE: { create: (payload) => $createAlertNode("destructive").append($createAlertTitleNode()) },
       H1: { create: (payload) => $createHeadingNode("h1") },
       H2: { create: (payload) => $createHeadingNode("h2") },
       H3: { create: (payload) => $createHeadingNode("h3") },
@@ -123,18 +124,27 @@ function InsertCommandsPlugin() {
       CODE_BLOCK_BASH: { create: (payload) => $createCodeNode("bash") },
       LIST: { create: (payload) => $createListNode('bullet').append($createListItemNode()) },
       LINK: { create: (payload) => {
+
+        let title = payload;
         if (!payload) {
-          const url = window.location.href;
-          return $createLinkNode(url);
+          console.log("No payload provided, using current URL");
+          payload = window.location.protocol + "//" + window.location.host;
+          console.log("payload", payload);
         }
 
-        return $createLinkNode(payload);
+        const lexicalSelection = $getSelection();
+        if ($isRangeSelection(lexicalSelection) && lexicalSelection.isCollapsed()) {
+          editor.dispatchCommand(TOGGLE_LINK_COMMAND, payload);
+          return true;
+        }
+
+        return $createLinkNode(payload).append($createTextNode(title));
       }},
       USER_MENTION: { create: (payload) => $createParagraphNode().append($createTextNode("@")) },
       PLANNER_MENTION: { create: (payload) => $createParagraphNode().append($createTextNode("@planner-integration(id='12345')")) },
       TAG_MENTION: { create: (payload) => $createParagraphNode().append($createTextNode("#")) },
     };
-  }, []);
+  }, [editor]);
 
   useEffect(() => {
     const registeredCommands = (Object.keys(COMMANDS) as InsertCommandType[]).map((command_key) => {
@@ -152,35 +162,44 @@ function InsertCommandsPlugin() {
         const first = focusFirst ? focus : anchor;
         const last = focusFirst ? anchor : focus;
         const firstNode = first.getNode();
-        const firstParent = firstNode.getParent();
 
         const isCollapsed = lexicalSelection.isCollapsed();
         const lastEndsNode = last.getNode().getTextContentSize() === last.offset;
 
         const nodeTypeKey = command_key.replace('INSERT_', '') as NodeType;
-        const newNode = NODE_TYPES[nodeTypeKey].create(payload);
+        let newNode = NODE_TYPES[nodeTypeKey].create(payload);
 
-        console.log('newNode', newNode);
+        if (newNode === true) {
+          return newNode;
+        }
+
 
         if (lastEndsNode && isCollapsed) {
+          newNode = $isLinkNode(newNode) ? $createParagraphNode().append(newNode) : newNode;
           $getNearestBlockElementAncestorOrThrow(firstNode).insertAfter(newNode, true);
           newNode.getLatest().selectEnd();
           return true;
         }
 
+        console.log('newNode', newNode);
+
         if (!isCollapsed) {
+          if ($isLinkNode(newNode)) {
+            editor.dispatchCommand(TOGGLE_LINK_COMMAND, newNode.getURL());
+            return true;
+          }
+
           const latestNode = newNode.getLatest();
           const textContent = lexicalSelection.getTextContent();
-          lexicalSelection.removeText();
-
-          console.log("textContent:", textContent);
 
           const textNode = $createTextNode(textContent);
           latestNode.append(textNode);
+          
 
-          lastEndsNode ? $getNearestBlockElementAncestorOrThrow(firstNode).insertAfter(newNode, true) : $insertNodeToNearestRoot(newNode);
+          console.log('firstNode', firstNode);
 
-          console.log('lastEndsNode', lastEndsNode);
+          lastEndsNode ? $getValidElementAncestor(firstNode).insertAfter(newNode, true) : $insertNodeToNearestRoot(newNode);
+          lexicalSelection.removeText();
 
           const latestTextNode = textNode.getLatest();
           const [start, end] = focusFirst ? [latestTextNode.getTextContentSize(), 0] : [0, latestTextNode.getTextContentSize()];
@@ -204,6 +223,20 @@ function InsertCommandsPlugin() {
     <>
     </>
   );
+}
+
+function $getValidElementAncestor(node: LexicalNode): ElementNode {
+  if ($isElementNode(node) && !$isLinkNode(node)) {
+    return node;
+  }
+
+  console.log('node', node);
+  const parent = node.getParent();
+  if (!parent) {
+    throw new Error('Expected a parent node');
+  }
+
+  return $getValidElementAncestor(parent);
 }
 
 export default InsertCommandsPlugin;
