@@ -34,11 +34,11 @@ const nextConfig = {
     }
     return config
   },
-  experimental: {
-    turbo: {
+  // experimental: {
+  //   turbo: {
       
-    }
-  }
+  //   }
+  // }
 };
 
 export default nextConfig;

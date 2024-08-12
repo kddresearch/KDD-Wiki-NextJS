@@ -77,9 +77,9 @@ export function Combobox({
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder={`Search ${type} ...`} />
-          <CommandEmpty>No {type} found.</CommandEmpty>
+          <CommandInput placeholder={`Search ${type}...`} />
           <CommandList>
+            <CommandEmpty>No {type} found.</CommandEmpty>
             <CommandGroup>
               {options.map((option) => (
                 <CommandItem

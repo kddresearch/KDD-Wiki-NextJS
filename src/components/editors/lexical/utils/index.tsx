@@ -177,3 +177,75 @@ export function onlyChildIsListNode(node: ListNode): boolean {
 
   return listItemContainsListNode(listItemChildren[0]);
 }
+
+export type MenuTextMatch = {
+  leadOffset: number;
+  matchingString: string;
+  replaceableString: string;
+};
+
+import {
+  $getSelection,
+  $isRangeSelection,
+} from 'lexical';
+
+/**
+ * Walk backwards along user input and forward through entity title to try
+ * and replace more of the user's text with entity.
+ */
+function getFullMatchOffset(
+  documentText: string,
+  entryText: string,
+  offset: number,
+): number {
+  let triggerOffset = offset;
+  for (let i = triggerOffset; i <= entryText.length; i++) {
+    if (documentText.substr(-i) === entryText.substr(0, i)) {
+      triggerOffset = i;
+    }
+  }
+  return triggerOffset;
+}
+
+/**
+ * Split Lexical TextNode and return a new TextNode only containing matched text.
+ * Common use cases include: removing the node, replacing with a new node.
+ */
+export function $splitNodeContainingQuery(match: MenuTextMatch): TextNode | null {
+  const selection = $getSelection();
+  if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
+    console.error('Expected a collapsed range selection');
+    return null;
+  }
+  const anchor = selection.anchor;
+  if (anchor.type !== 'text') {
+    console.log('anchor', anchor.getNode());
+    console.error('Expected anchor to be a text node');
+    return null;
+  }
+  const anchorNode = anchor.getNode();
+  if (!anchorNode.isSimpleText()) {
+    console.error('Expected anchor to be a simple text node');
+    return null;
+  }
+  const selectionOffset = anchor.offset;
+  const textContent = anchorNode.getTextContent().slice(0, selectionOffset);
+  const characterOffset = match.replaceableString.length;
+  const queryOffset = getFullMatchOffset(
+    textContent,
+    match.matchingString,
+    characterOffset,
+  );
+  const startOffset = selectionOffset - queryOffset;
+  if (startOffset < 0) {
+    return null;
+  }
+  let newNode;
+  if (startOffset === 0) {
+    [newNode] = anchorNode.splitText(selectionOffset);
+  } else {
+    [, newNode] = anchorNode.splitText(startOffset, selectionOffset);
+  }
+
+  return newNode;
+}

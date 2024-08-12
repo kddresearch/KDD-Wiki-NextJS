@@ -4,25 +4,8 @@ import Breadcrumb from "@/components/breadcrumb";
 import StripeBackDrop from "@/components/layout/backdrop";
 import Card from "@/components/layout/card";
 import TextEditor from "@/components/editors/lexical/editor";
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle
-} from "@/components/ui/alert"
-import { InfoIcon, Terminal } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
 
 const Dev = () => {
-
-  const [currentMarkdownContent, setCurrentMarkdownContent] = useState<string>("");
-  const [showTranslation, setShowTranslation] = useState<boolean>(false);
-
-  const onMarkdownContentChange = (newMarkdownContent: string) => {
-    console.log(newMarkdownContent);
-    setCurrentMarkdownContent(newMarkdownContent);
-  }
-
   const defaultMarkdownContent = `
 > [!NOTEing:|destructive]
 > woah this is the DEV PAGE bro idk if you should be here.

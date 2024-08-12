@@ -174,10 +174,7 @@ export class AlertNode extends ElementNode {
   }
 
   insertNewAfter(selection: RangeSelection, restoreSelection?: boolean): null | LexicalNode {
-    // Create a new AlertDescriptionNode with a default text
     const latestNode = this.getLatest();
-
-    console.log("checking Breakout");
 
     if (this.canBreakout(selection)) {
       // Breakout of the AlertNode
@@ -223,10 +220,6 @@ export class AlertNode extends ElementNode {
       ) ||
         !nextSibling
     ) {
-      console.log('Inserting after 2');
-      console.log('Content:', firstSelectionNode.getTextContent());
-      console.log('more Content:', firstSelectionNode.getNextSibling());
-
       const newElement = $createAlertDescriptionNode('\u200B');
 
       firstSelectionNode.insertAfter(newElement);
@@ -262,6 +255,7 @@ export class AlertNode extends ElementNode {
   }
 
   collapseAtStart(): boolean {
+    this.replace($createParagraphNode());
     return true;
   }
 
