@@ -1,10 +1,26 @@
-// "use client"
+"use client"
 
-// import { signIn } from "@/auth";
-// // import { signIn } from "next-auth/react";
+import { useState } from "react";
+import { Button } from "../ui/button"
+import { Loader2 } from "lucide-react";
 
-// export function SignInButton({ children, className }: { children: React.ReactNode, className: string}) {
-//   return (
-//     <button onClick={() => signIn()} className={className}>{children}</button>
-//   )
-// }
+export function SignInButton() {
+
+  const [isClicked, setIsClicked] = useState(false);
+
+  const handleClick = () => {
+    setIsClicked(true);
+  };
+
+  return (
+    <Button
+      type="submit"
+      variant={"ghost"}
+      data-disabled={isClicked}
+      onClick={handleClick}
+    >
+      {isClicked && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+      {isClicked ? "Redirecting" : "Log In"}
+    </Button>
+  )
+}

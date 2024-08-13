@@ -1,5 +1,6 @@
-import { signOut } from "@/auth";
+"use client";
 
+import { handleSignOut } from "@/actions/auth";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,12 +34,13 @@ export function SignOut({
         <AlertDialogFooter>
           <AlertDialogCancel>Stay logged in</AlertDialogCancel>
           <AlertDialogAction asChild>
-            <form action={async (formData) => {
-                "use server"
-                await signOut()
-              }}
+            <form
+              action={handleSignOut}
             >
-              <Button type="submit" variant={"default"}>
+              <Button
+                type="submit"
+                variant={"default"}
+              >
                 Log Out
               </Button>
             </form>

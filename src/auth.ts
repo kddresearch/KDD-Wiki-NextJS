@@ -29,12 +29,11 @@ const providers: Provider[] = [
         issuer: env_config!.Auth!.Ksu.Issuer,
         clientId: env_config!.Auth!.Ksu.ClientId,
         clientSecret: env_config!.Auth!.Ksu.ClientSecret,
-        // codeChallengeMethod: '',
-        // protection: "",
-        checks: ["none"],
+        // checks: ["none"], //TODO - Add PKCE Back in
         profile(profile) {
             console.log(profile);
             return {
+                username: profile?.preferred_username,
                 id: profile.id,
                 name: profile?.name,
             };
@@ -43,7 +42,7 @@ const providers: Provider[] = [
             params: {
                 prompt: "login",
                 response_type: "code",
-                scope: "openid",
+                scope: "openid profile email preferred_username",
             },
         },
         wellKnown: 'https://signin.k-state.edu/WebISO/oidc/.well-known',
@@ -51,18 +50,27 @@ const providers: Provider[] = [
 ];
  
 export const config = {
-    // trustHost: true,
+    trustHost: true,
+    pages: {
+        error: "/notauthorized",
+    },
     basePath: "/auth",
     providers: providers,
     callbacks: {
         async signIn({ user, account, profile }) {
+            // Check if user is in the database
+
+            
+
+            console.log("signIn", user, account, profile);
             return true;
         },
         async redirect({ url, baseUrl }) {
-            // console.log("redirect", url, baseUrl)
+            console.log("redirect", url, baseUrl)
             return url;
         },
         async session({ session, token, user }) {
+            console.log("session", session, token, user);
 
             const kddUser = token.kdd_user as AdapterUser & User;
 
@@ -73,9 +81,16 @@ export const config = {
             return session;
         },
         authorized({ request, auth }) {
+            console.log("authorized", request, auth);
             return true;
         },
         jwt({ token, trigger, session }) {
+            console.log("jwt", token, trigger, session);
+
+            if (trigger === "signIn") {
+                console.log("Sign In Triggered", token);
+            }
+
             const devUserData = env_config!.dev_user;
 
             token!.kdd_user = new KddUser(devUserData).toJSON();

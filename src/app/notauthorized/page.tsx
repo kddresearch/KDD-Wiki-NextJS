@@ -11,7 +11,10 @@ export default function NotAuthorized() {
   const pathname = usePathname();
 
   const message = useSearchParams()?.get("message");
+  const error = useSearchParams()?.get("error");
   const callback = useSearchParams()?.get("callback");
+
+  console.log("NotAuthorized:", {message, error, callback});
 
   return( 
     <StripeBackDrop>

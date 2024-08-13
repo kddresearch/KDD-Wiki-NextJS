@@ -3,6 +3,8 @@
 import { signIn, signOut, auth } from "@/auth";
 
 async function handleSignIn() {
+    console.log("handleSignIn");
+
     const provider = "ksu";
     await signIn(provider);
 }
