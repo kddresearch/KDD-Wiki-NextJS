@@ -60,7 +60,6 @@ enum Category {
 }
 
 import { COMMANDS } from '../plugins/insert-commands-plugin';
-import { common } from '@mui/material/colors';
 
 type Shortcut = {
   icon: JSX.Element;

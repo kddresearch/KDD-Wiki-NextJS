@@ -1,4 +1,4 @@
-import KddUser from "@/models/kdd_user";
+import LegacyUser from "@/models/legacy-user";
 import UnitBar from "./unit-bar/unit-bar";
 import Navigation from "./unit-bar/nav-menu";
 import Link from "next/link";
@@ -14,7 +14,7 @@ export default async function Header() {
   let user;
 
   if (session?.user) {
-    user = new KddUser(session?.user);
+    user = new LegacyUser(session?.user);
     user = WikiUser.fromKddUser(user);
   } else {
     user = WikiUser.guestFactory();

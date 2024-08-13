@@ -6,7 +6,7 @@ import getConfig from "@/config";
 const env_config = await getConfig();
 
 import google from "next-auth/providers/google";
-import KddUser from "@/models/kdd_user";
+import LegacyUser from "@/models/legacy-user";
 import Auth0 from "next-auth/providers/auth0"
 import { AdapterUser } from "next-auth/adapters";
 import type { Provider } from "next-auth/providers"
@@ -92,8 +92,11 @@ export const config = {
             }
 
             const devUserData = env_config!.dev_user;
+            console.log("devUserData", devUserData);
 
-            token!.kdd_user = new KddUser(devUserData).toJSON();
+            console.log("devUser", deepJsonCopy(new LegacyUser(devUserData)));
+
+            token!.kdd_user = deepJsonCopy(new LegacyUser(devUserData));
 
             if (trigger === "update") token.name = session.user.name;
             return token;
@@ -106,19 +109,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth(config);
 
 /**
  * Gets the current user from the session
- * @returns {KddUser} - The current user
+ * @returns {LegacyUser} - The current user
  */
-export async function getCurrentUser(): Promise<KddUser> {
+export async function getCurrentUser(): Promise<LegacyUser> {
     const session = await auth();
 
-    if (!session) return KddUser.guestFactory();
+    if (!session) return LegacyUser.guestFactory();
 
     // TODO: Implement fetching user from the database
-    return KddUser.guestFactory();
+    return LegacyUser.guestFactory();
 }
 
 import WikiUser, { AccessLevel } from "@/models/wikiuser";
 import { fetchByUsername } from "@/db/wiki_user";
+import { deepJsonCopy } from "./utils/json";
 
 /**
  * Check if the user is authenticated
@@ -126,7 +130,7 @@ import { fetchByUsername } from "@/db/wiki_user";
  * @param member - check if the user is a member
  * Sends a 401 error if the user is not authenticated
  */
-export async function checkAuthAPI(access_level: AccessLevel): Promise<KddUser | WikiUser> /* TODO: FIX ANY TYPE */ {
+export async function checkAuthAPI(access_level: AccessLevel): Promise<LegacyUser | WikiUser> /* TODO: FIX ANY TYPE */ {
     const session = await auth();
 
     let user;
@@ -137,7 +141,7 @@ export async function checkAuthAPI(access_level: AccessLevel): Promise<KddUser |
     }
 
     try {
-        user = new KddUser(session?.user);
+        user = new LegacyUser(session?.user);
 
         ret_user = await fetchByUsername(user.username);
         if (ret_user === null) {
@@ -173,7 +177,7 @@ export async function checkAuth(access_level: AccessLevel): Promise<any> {
     if (!session) return null;
 
     try {
-        user = new KddUser(session?.user);
+        user = new LegacyUser(session?.user);
 
         ret_user = await fetchByUsername(user.username);
         if (ret_user === null) {

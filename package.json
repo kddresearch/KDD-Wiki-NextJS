@@ -34,7 +34,6 @@
     "@lexical/utils": "^0.16.1",
     "@mdx-js/loader": "^3.0.1",
     "@mdx-js/react": "^3.0.1",
-    "@mui/material": "^5.16.0",
     "@next/bundle-analyzer": "^14.2.4",
     "@next/env": "^14.2.4",
     "@next/mdx": "^14.2.4",

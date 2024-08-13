@@ -5,35 +5,20 @@ import Link from "next/link";
 // import { useRouter } from "next/router";
 // import React, { useState, useEffect } from "react";
 import { notFound, redirect } from "next/navigation";
-import KddUser from "@/models/kdd_user";
+import LegacyUser from "@/models/legacy-user";
 
 export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // const router = useRouter();
-  // const [Component, setComponent] = useState(null);
-
-  // useEffect(() => {
-  //   const loadComponent = async () => {
-  //     const { default: DynamicComponent } = await import(
-  //       `../../pages${router.pathname}`
-  //     );
-  //     setComponent(DynamicComponent);
-  //   };
-
-  //   loadComponent();
-  // }, [router.pathname]);
-
-  // check if user is authenticated
   const session = await auth();
 
   if (session?.user == undefined) {
     return redirect("/login");
   }
 
-  const user = new KddUser(session?.user);
+  const user = new LegacyUser(session?.user);
 
   if (!user.admin) {
     return redirect("/login");

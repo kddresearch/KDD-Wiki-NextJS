@@ -1,5 +1,5 @@
 import Joi from "joi";
-import KddUser from "./kdd_user";
+import LegacyUser from "./legacy-user";
 
 enum AccessLevel {
     Guest = "guest",
@@ -146,7 +146,7 @@ class WikiUser {
         return new WikiUser(userData);
     }
 
-    static fromKddUser(kddUser: KddUser): WikiUser {
+    static fromKddUser(kddUser: LegacyUser): WikiUser {
         const userData = {
             id: kddUser.id,
             username: kddUser.username,

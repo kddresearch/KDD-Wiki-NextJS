@@ -1,6 +1,4 @@
-import { 
-    Pool,
-    QueryResult,
+import {
     Client,
     PoolConfig
 } from "pg";
