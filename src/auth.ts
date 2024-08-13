@@ -1,4 +1,4 @@
-import NextAuth, { User } from "next-auth";
+import NextAuth, { Profile, User } from "next-auth";
 import { NextAuthConfig } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -10,6 +10,7 @@ import KddUser from "@/models/kdd_user";
 import Auth0 from "next-auth/providers/auth0"
 import { AdapterUser } from "next-auth/adapters";
 import type { Provider } from "next-auth/providers"
+import { OIDCConfig } from "next-auth/providers";
 
 const providers: Provider[] = [
     Auth0({
@@ -28,6 +29,9 @@ const providers: Provider[] = [
         issuer: env_config!.Auth!.Ksu.Issuer,
         clientId: env_config!.Auth!.Ksu.ClientId,
         clientSecret: env_config!.Auth!.Ksu.ClientSecret,
+        // codeChallengeMethod: '',
+        // protection: "",
+        checks: ["none"],
         profile(profile) {
             console.log(profile);
             return {
@@ -37,11 +41,13 @@ const providers: Provider[] = [
         },
         authorization: {
             params: {
-                scope: "email openid profile",
+                prompt: "login",
+                response_type: "code",
+                scope: "openid",
             },
         },
-        wellKnown: env_config!.Auth!.Ksu.WellKnown,
-    },
+        wellKnown: 'https://signin.k-state.edu/WebISO/oidc/.well-known',
+    } as OIDCConfig<Profile>,
 ];
  
 export const config = {

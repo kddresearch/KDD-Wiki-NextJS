@@ -50,7 +50,6 @@ import { FaMarkdown } from "react-icons/fa6";
 import { TOGGLE_DIRECT_MARKDOWN_COMMAND } from "../markdown-plugin";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-// No clue what this is for
 const LowPriority = 1;
 
 export default function ToolbarPlugin() {

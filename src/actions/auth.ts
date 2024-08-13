@@ -3,7 +3,7 @@
 import { signIn, signOut, auth } from "@/auth";
 
 async function handleSignIn() {
-    const provider = "auth0";
+    const provider = "ksu";
     await signIn(provider);
 }
 

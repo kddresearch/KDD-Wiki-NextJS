@@ -33,6 +33,7 @@ import KeyboardCommandsPlugin from './plugins/keyboard-commands-plugin';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $createMakrdownEditorCodeNode, $isMakrdownEditorCodeNode } from './nodes/markdown';
 import SlashCommandPlugin from './plugins/slash-command-plugin';
+import { EditLinkPlugin } from './plugins/edit-link-plugin';
 
 interface MarkdownEditorProps {
   markdown?: string;
@@ -133,6 +134,7 @@ function Editor({
           <InsertCommandsPlugin />
           <CodeHighlightPlugin />
           <LinkPlugin />
+          <EditLinkPlugin />
           <KeyboardCommandsPlugin />
           <SlashCommandPlugin />
           <MarkdownPlugin useMarkdownShortcuts={useMarkdownShortcuts} onMardownContentChange={onMardownContentChange} />

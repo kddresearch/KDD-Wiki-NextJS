@@ -134,8 +134,6 @@ export function containsNode(
   selection: RangeSelection,
   nodePredicate: (node: LexicalNode) => boolean
 ): boolean {
-  const nodes = selection.getNodes();
-
   return selection.getNodes().some((node) => {
     let currentNode = node;
     while (currentNode.getParent() && !$isRootNode(currentNode.getParent())) {
@@ -248,4 +246,24 @@ export function $splitNodeContainingQuery(match: MenuTextMatch): TextNode | null
   }
 
   return newNode;
+}
+
+export function $getNodesFromSelection<T extends LexicalNode>(
+  selection: RangeSelection,
+  klass: Klass<T>
+): (T)[] {
+  const result = selection.getNodes().map((node) => {
+    let currentNode = node;
+    while (currentNode.getParent() && !$isRootNode(currentNode.getParent())) {
+      if (currentNode instanceof klass) return currentNode;
+      currentNode = currentNode.getParent()!;
+    }
+
+    if (currentNode instanceof klass) return currentNode;
+
+    return;
+  });
+
+  const nodeArray = result.filter((node) => node !== undefined);
+  return nodeArray.filter((node) => node !== undefined) as T[];
 }
