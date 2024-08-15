@@ -6,9 +6,31 @@ import { mergeRegister } from "@lexical/utils";
 import { Popover, PopoverContent } from "@/components/ui/popover";
 import { $isLinkNode, LinkNode } from "@lexical/link";
 import { $getNodesFromSelection } from "../utils";
-import { Edit, Globe, Clipboard, Link2Off } from "lucide-react";
+import { Edit, Clipboard, Link2Off, Earth, Text } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+
+
+const linkSchema = z.object({
+  Title: z.string().optional(),
+  Url: z.string().url({ message: "Invalid URL" }),
+})
 
 const LowPriority = 1;
 
@@ -16,11 +38,18 @@ export function EditLinkPlugin() {
   const [editor] = useLexicalComposerContext();
 
   const [isLink, setIsLink] = useState(false);
+
   const [linkUrl, setLinkUrl] = useState('');
+  const [displayedLinkUrl, setDisplayedLinkUrl] = useState('');
   const [linkText, setLinkText] = useState('');
+
   const [LinkEditorOpen, setLinkEditorOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [popoverLocation, setPopoverLocation] = useState({ x: 0, y: 0 });
   const [linkElement, setLinkElement] = useState<HTMLElement | null>(null);
+
+  const { toast } = useToast();
+
 
   const updateLinkEditor = useCallback(() => {
     const lexicalSelection = $getSelection();
@@ -65,6 +94,8 @@ export function EditLinkPlugin() {
 
     setLinkText(linkNode.getTitle() || '');
     setLinkUrl(linkNode.getURL());
+    // Remove protocol from displayed link
+    setDisplayedLinkUrl(linkNode.getURL().replace(/(^\w+:|^)\/\//, ''));
 
     const linkElementFromEditor = editor.getElementByKey(linkNode.getKey());
 
@@ -88,6 +119,20 @@ export function EditLinkPlugin() {
   const setEditorState = useCallback((open: boolean) => {
     setLinkEditorOpen(open);
   }, [])
+
+  const onCopyLink = useCallback(() => {
+    navigator.clipboard.writeText(linkUrl);
+    toast({
+      title: 'Link copied to clipboard',
+      description: linkUrl,
+    });
+    setLinkEditorOpen(false);
+  }, [linkUrl]);
+
+  const onEditLink = useCallback(() => {
+    setIsEditing(true);
+    setLinkEditorOpen(false);
+  }, []);
 
   const updatePosition = useCallback(() => {
     if (linkElement === null) {
@@ -132,14 +177,25 @@ export function EditLinkPlugin() {
     };
   }, [LinkEditorOpen]);
 
+  const onSubmit = useCallback((values: z.infer<typeof linkSchema>) => {
+    console.log('values', values);
+  }, [])
+
+  const form = useForm<z.infer<typeof linkSchema>>({
+    resolver: zodResolver(linkSchema),
+    defaultValues: {
+      Title: linkText,
+      Url: linkUrl,
+    },
+  })
+
   return (
     <Popover
       open={LinkEditorOpen}
       onOpenChange={setEditorState}
-      // modal={false}
     >
       <PopoverContent
-        className="p-1 flex items-center rounded-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
+        className="p-1 w-auto max-w-md items-center rounded-sm"
         onOpenAutoFocus={(event) => event.preventDefault()}
         style={
           {
@@ -149,21 +205,67 @@ export function EditLinkPlugin() {
           }
         }
       >
-        <Globe className="h-4 w-4 ml-4" />
-        <Button asChild variant={"link"}>
-          <Link href={linkUrl} target="_blank" rel="noopener noreferrer" className="text-ellipsis">
-            {linkUrl}
-          </Link>
-        </Button>
-        <Button variant={'ghost'} size="icon">
-          <Clipboard className="h-4 w-4" />
-        </Button>
-        <Button variant={'ghost'} size="icon">
-          <Edit className="h-4 w-4" />
-        </Button>
-        <Button variant={'ghost'} size="icon">
-          <Link2Off className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center">
+          <Button asChild variant={"link"}>
+            <Link href={linkUrl} target="_blank" rel="noopener noreferrer" className="max-w-xs">
+              <Earth className="h-4 w-4 mr-2" />
+              <p className="overflow-hidden text-nowrap overflow-ellipsis">
+                {displayedLinkUrl}
+              </p>
+            </Link>
+          </Button>
+          <Button variant={'ghost'} size="icon" onClick={onCopyLink}>
+            <Clipboard className="h-4 w-4" />
+          </Button>
+          <Button variant={'ghost'} size="icon" onClick={onEditLink}>
+            <Edit className="h-4 w-4" />
+          </Button>
+          <Button variant={'ghost'} size="icon">
+            <Link2Off className="h-4 w-4" />
+          </Button>
+        </div>
+        {isEditing && (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="">
+              <FormField
+                control={form.control}
+                name="Title"
+                render={({ field }) => (
+                  <FormItem className="px-4 py-2 space-y-0">
+                    <div className="flex items-center">
+                      <Text className="h-4 w-4 mr-2" />
+                      <FormControl>
+                        <Input placeholder="title" {...field} />
+                      </FormControl>
+                    </div>
+                    <FormMessage className="ml-4"/>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="Url"
+                render={({ field }) => (
+                  <FormItem className="px-4 py-2 space-y-0">
+                    <div className="inline-flex items-center">
+                      <Earth className="h-4 w-4 mr-2 grow" />
+                      <FormControl className="grow-0">
+                        <Input placeholder="https://acme.com" {...field} />
+                      </FormControl>
+                    </div>
+                    <FormMessage className="ml-4"/>
+                  </FormItem>
+                )}
+              />
+              <div className="flex px-4">
+                <div className="grow" />
+                <Button type="submit" variant={"outline"} size="sm">
+                  Apply
+                </Button>
+              </div>
+            </form>
+          </Form>
+        )}
       </PopoverContent>
     </Popover>
   )

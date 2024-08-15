@@ -14,9 +14,13 @@ async function fetchAll(): Promise<LegacyUser[]> {
     }
 }
 
-async function fetchByUsername(username: string): Promise<LegacyUser> {
-    try {  
+async function fetchByUsername(username: string): Promise<LegacyUser | null> {
+    try {
         const result = await db!.select().from(kddUserTable).where(eq(kddUserTable.username, username));
+
+        if (result.length === 0) {
+            return null;
+        }
 
         return new LegacyUser(result[0]);
     } catch (err) {

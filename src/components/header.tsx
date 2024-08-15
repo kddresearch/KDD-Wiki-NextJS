@@ -13,12 +13,15 @@ export default async function Header() {
 
   let user;
 
-  if (session?.user) {
-    user = new LegacyUser(session?.user);
-    user = WikiUser.fromKddUser(user);
-  } else {
-    user = WikiUser.guestFactory();
-  }
+  // if (session?.user) {
+
+  //   console.log(session);
+
+  //   user = new LegacyUser(session?.user);
+  //   user = WikiUser.fromKddUser(user);
+  // } else {
+  user = WikiUser.guestFactory();
+  // }
 
   user = user.toJSON();
 

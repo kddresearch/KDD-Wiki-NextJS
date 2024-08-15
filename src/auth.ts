@@ -11,6 +11,12 @@ import Auth0 from "next-auth/providers/auth0"
 import { AdapterUser } from "next-auth/adapters";
 import type { Provider } from "next-auth/providers"
 import { OIDCConfig } from "next-auth/providers";
+import * as LegacyUserDB from "./db/legacy-user";
+
+interface KSUProfile extends Profile {
+    preferred_username: string;
+    id: string;
+};
 
 const providers: Provider[] = [
     Auth0({
@@ -29,13 +35,13 @@ const providers: Provider[] = [
         issuer: env_config!.Auth!.Ksu.Issuer,
         clientId: env_config!.Auth!.Ksu.ClientId,
         clientSecret: env_config!.Auth!.Ksu.ClientSecret,
-        // checks: ["none"], //TODO - Add PKCE Back in
         profile(profile) {
-            console.log(profile);
+            console.log('the Profile', profile);
             return {
-                username: profile?.preferred_username,
-                id: profile.id,
+                id: profile?.preferred_username,
                 name: profile?.name,
+                email: profile?.email,
+                image: profile?.picture,
             };
         },
         authorization: {
@@ -46,7 +52,7 @@ const providers: Provider[] = [
             },
         },
         wellKnown: 'https://signin.k-state.edu/WebISO/oidc/.well-known',
-    } as OIDCConfig<Profile>,
+    } as OIDCConfig<KSUProfile>,
 ];
  
 export const config = {
@@ -58,21 +64,31 @@ export const config = {
     providers: providers,
     callbacks: {
         async signIn({ user, account, profile }) {
-            // Check if user is in the database
+            console.log(`username`, profile?.sub)
 
-            
-
-            console.log("signIn", user, account, profile);
+            // console.log("signIn", user, account, profile);
             return true;
         },
         async redirect({ url, baseUrl }) {
-            console.log("redirect", url, baseUrl)
             return url;
         },
         async session({ session, token, user }) {
             console.log("session", session, token, user);
 
             const kddUser = token.kdd_user as AdapterUser & User;
+
+            if (!token.sub) {
+                throw new Error("No sub in token");
+            }
+
+            console.log("Fetching user", token.sub);
+
+            const start = performance.now();
+
+            const legacyUser = await LegacyUserDB.fetchByUsername(token.sub);
+            console.log("Fetched user", legacyUser);
+
+            console.log("Time to fetch user", performance.now() - start);
 
             session.user = {
               ...kddUser,
@@ -84,19 +100,28 @@ export const config = {
             console.log("authorized", request, auth);
             return true;
         },
-        jwt({ token, trigger, session }) {
-            console.log("jwt", token, trigger, session);
+        jwt({ token, user, account, trigger, session }) {
+            console.log("jwt", token, user, account, trigger, session);
 
             if (trigger === "signIn") {
-                console.log("Sign In Triggered", token);
+                console.log("Sign In Triggered", token, user, account, trigger, session);
+
+                token = {
+                    ...token,
+                    username: user.id,
+                    version: 2.0,
+                }
             }
 
-            const devUserData = env_config!.dev_user;
-            console.log("devUserData", devUserData);
+            // const loadingDevUser = true;
 
-            console.log("devUser", deepJsonCopy(new LegacyUser(devUserData)));
+            // const devUserData = env_config!.dev_user;
 
-            token!.kdd_user = deepJsonCopy(new LegacyUser(devUserData));
+            // token = {
+            //     ...token,
+            //     ...deepJsonCopy(new LegacyUser(devUserData)),
+            //     version: loadingDevUser ? 1.0 : 2.0,
+            // }
 
             if (trigger === "update") token.name = session.user.name;
             return token;
@@ -121,7 +146,6 @@ export async function getCurrentUser(): Promise<LegacyUser> {
 }
 
 import WikiUser, { AccessLevel } from "@/models/wikiuser";
-import { fetchByUsername } from "@/db/wiki_user";
 import { deepJsonCopy } from "./utils/json";
 
 /**
@@ -143,7 +167,7 @@ export async function checkAuthAPI(access_level: AccessLevel): Promise<LegacyUse
     try {
         user = new LegacyUser(session?.user);
 
-        ret_user = await fetchByUsername(user.username);
+        ret_user = await LegacyUserDB.fetchByUsername(user.username);
         if (ret_user === null) {
             ret_user = user;
             // throw { status: 404, error: "User not found" };
@@ -179,7 +203,7 @@ export async function checkAuth(access_level: AccessLevel): Promise<any> {
     try {
         user = new LegacyUser(session?.user);
 
-        ret_user = await fetchByUsername(user.username);
+        ret_user = await LegacyUserDB.fetchByUsername(user.username);
         if (ret_user === null) {
             ret_user = user;
         }

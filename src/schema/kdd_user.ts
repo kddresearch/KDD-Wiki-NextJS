@@ -1,6 +1,6 @@
 import { pgTable, integer, varchar, text, date, serial, jsonb, boolean } from 'drizzle-orm/pg-core';
 
-export const kddUserTable = pgTable('kdd_users', {
+export const kddUserTable = pgTable('kdd_user', {
     id: serial('id').primaryKey(),
     username: varchar('username', { length: 50 }).notNull(), 
     //to be required
