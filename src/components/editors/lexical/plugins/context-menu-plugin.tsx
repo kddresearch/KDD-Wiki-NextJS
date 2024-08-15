@@ -110,7 +110,7 @@ function ContextMenuPlugin({
   
         isWordMisspelled(word).then((result) => {
           if (result) {
-            console.log("misspelled word:", word);
+            // console.log("misspelled word:", word);
             setDisabled(true);
           }
         });

@@ -102,8 +102,6 @@ export function spellcheckIsEnabledOnSelection(selection: RangeSelection, editor
     return elementEnablesSpellcheck(nodeElement);
   });
 
-  console.log('Result:', result);
-
   if (result === undefined) {
     return true;
   }

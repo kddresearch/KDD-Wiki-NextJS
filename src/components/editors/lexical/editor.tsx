@@ -84,7 +84,7 @@ function Editor({
       );
   }, [editInMarkdown, setOption]);
 
-  console.log('editInMarkdown', editInMarkdown);
+  // console.log('editInMarkdown', editInMarkdown);
 
   const initialConfig = {
     editorState: usePrePopulated
