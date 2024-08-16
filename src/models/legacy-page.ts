@@ -1,9 +1,13 @@
 import { z } from "zod";
 
+export const priorityValues = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
+
 export const legacyPageSchema = z.object({
     id: z.coerce.number().int().min(0),
     title: z.string().max(50).min(1),
-    priority: z.number().int().min(0).default(1000),
+    priority: z.coerce.number().int().min(0)
+        .max(1000, { message: "Priority cannot be higher than 1000" })
+        .refine(val => priorityValues.includes(val), { message: "Priority must be multiples of 100" }).default(1000),
     content: z.string().min(0),
     discussion: z.string().min(0).nullable(),
     is_private: z.boolean(),
@@ -11,7 +15,7 @@ export const legacyPageSchema = z.object({
     date_modified: z.coerce.date(),
     category_id: z.number().int().min(0).nullable(),
     author_id: z.number().int().min(0),
-    name: z.string().max(50).nullable(),
+    name: z.string().max(50).transform((val) => val ?? undefined).optional(),
     has_publication: z.boolean(),
     is_kdd_only: z.boolean(),
     last_updated: z.string().nullable(),
@@ -30,7 +34,7 @@ class Page {
     date_modified: Date;
     category_id: number | null;
     author_id: number;
-    name: string | null;
+    name: string | undefined;
     has_publication: boolean;
     is_kdd_only: boolean;
     last_updated: string | null;

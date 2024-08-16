@@ -14,17 +14,28 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 
 import TextEditor from "@/components/editors/lexical/editor";
 import Page from "@/models/legacy-page";
+import { priorityValues } from "@/models/legacy-page";
 import { useCallback, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { useToast } from "../ui/use-toast";
+import { DropdownRadioSelect } from "../ui/dropdown-radio-select";
 
 const submitPage = async (page: Page) => {
+  console.log(page);
+
   const response = await fetch(`/api/page/${page.id}`, {
     method: 'PATCH',
     headers: {
@@ -86,6 +97,49 @@ function PageEditor({ inputPage }: { inputPage: object }) {
               </FormControl>
               <FormDescription>
                 Displayed at the top of the page
+              </FormDescription>
+              <FormMessage/>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={pageEditorForm.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Name" {...field} />
+              </FormControl>
+              <FormDescription>
+                Used in the URL
+              </FormDescription>
+              <FormMessage/>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={pageEditorForm.control}
+          name="priority"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Priority</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value.toString()}>
+                <FormControl>
+                  <SelectTrigger className="w-32">
+                    <SelectValue placeholder="Select Priority" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {priorityValues.map((priority, index) => (
+                    <SelectItem key={index} value={priority.toString()}>
+                      {priority}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormDescription>
+                Determines the order in which pages are displayed
               </FormDescription>
               <FormMessage/>
             </FormItem>
