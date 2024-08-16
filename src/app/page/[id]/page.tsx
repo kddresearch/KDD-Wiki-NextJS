@@ -60,3 +60,5 @@ async function viewPage({ params }: { params: { id: string } }) {
 }
 
 export default viewPage;
+
+export const revalidate = false

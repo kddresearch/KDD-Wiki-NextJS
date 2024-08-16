@@ -63,8 +63,6 @@ const IconImage = React.forwardRef<IconImageElement, IconImageProps>(
     const context = useIconContext(IMAGE_NAME, __scopeIcon);
     const [loadingStatus, setLoadingStatus] = React.useState<ImageLoadingStatus>('idle');
 
-    console.log('IconImage', src);
-
     const handleLoadingStatusChange = useCallbackRef((status: ImageLoadingStatus) => {
       context.onImageLoadingStatusChange(status);
     });
@@ -80,7 +78,6 @@ const IconImage = React.forwardRef<IconImageElement, IconImageProps>(
     });
 
     useLayoutEffect(() => {
-      console.log('useLayoutEffect', loadingStatus, src);
       if (loadingStatus !== 'idle') {
         handleLoadingStatusChange(loadingStatus);
       }

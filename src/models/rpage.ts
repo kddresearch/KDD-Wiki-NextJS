@@ -1,6 +1,6 @@
 import Joi from "joi";
 import { AccessLevel } from "./wikiuser";
-import Page from "./_page";
+import Page from "./legacy-page";
 
 const rpageSchema = Joi.object({
     id: Joi.number().integer().min(0),

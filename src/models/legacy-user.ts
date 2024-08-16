@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-const legacy_userSchema = z.object({
-  id:  z.number().int().refine(val => val >= 0 || val === -2, { message: "id must be a positive integer or -2 for guest user" }),
+export const legacyUserSchema = z.object({
+  id:  z.coerce.number().int().refine(val => val >= 0 || val === -2, { message: "id must be a positive integer or -2 for guest user" }),
   username: z.string().min(1)
     .max(50,
       { message: "username must be less than 50 characters" })
@@ -10,16 +10,10 @@ const legacy_userSchema = z.object({
   member: z.boolean().nullable().default(false).transform(val => val ?? false),
   admin: z.boolean().nullable().default(false).transform(val => val ?? false),
   readonly: z.boolean().nullable().default(false).transform(val => val ?? false),
-  date_created: z.union([
-    z.date(),
-    z.string().transform(val => new Date(val)),
-  ]),
-  date_modified: z.union([
-    z.date(),
-    z.string().transform(val => new Date(val)),
-  ]),
-  kdd_group_id: z.number().int().min(0).optional(),
-  directory_group_id: z.number().int().min(0).optional(),
+  date_created: z.coerce.date(),
+  date_modified: z.coerce.date(),
+  kdd_group_id: z.number().int().min(0).optional().nullable(),
+  directory_group_id: z.number().int().min(0).optional().nullable(),
   is_kdd_only: z.boolean(),
 });
 
@@ -32,12 +26,12 @@ class LegacyUser {
   readonly: boolean;
   date_created: Date;
   date_modified: Date;
-  kdd_group_id: number | undefined;
-  directory_group_id: number | undefined;
+  kdd_group_id: number | undefined | null;
+  directory_group_id: number | undefined | null;
   is_kdd_only: boolean;
 
   constructor(data: any) {
-    const result = legacy_userSchema.safeParse(data);
+    const result = legacyUserSchema.safeParse(data);
 
     if (!result.success) {
       throw new Error(`Invalid user data: ${JSON.stringify(result.error.errors)}`);

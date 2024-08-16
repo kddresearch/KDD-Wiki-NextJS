@@ -75,23 +75,18 @@ export const config = {
         async session({ session, token, user }) {
             console.log("session", session, token, user);
 
-            const kddUser = token.kdd_user as AdapterUser & User;
-
-            if (!token.sub) {
-                throw new Error("No sub in token");
-            }
-
-            console.log("Fetching user", token.sub);
+            console.log("Fetching user", token.username);
 
             const start = performance.now();
 
-            const legacyUser = await LegacyUserDB.fetchByUsername(token.sub);
+            const legacyUser = await LegacyUserDB.fetchByUsername(token.username as string) as unknown as AdapterUser & User;
             console.log("Fetched user", legacyUser);
 
             console.log("Time to fetch user", performance.now() - start);
 
+
             session.user = {
-              ...kddUser,
+              ...legacyUser as AdapterUser & User,
             };
 
             return session;
@@ -106,9 +101,12 @@ export const config = {
             if (trigger === "signIn") {
                 console.log("Sign In Triggered", token, user, account, trigger, session);
 
+                console.log("User", user);
+                console.log("account?.providerAccountId", account?.providerAccountId);
+
                 token = {
                     ...token,
-                    username: user.id,
+                    username: account?.providerAccountId,
                     version: 2.0,
                 }
             }
@@ -117,13 +115,13 @@ export const config = {
 
             // const devUserData = env_config!.dev_user;
 
-            // token = {
-            //     ...token,
-            //     ...deepJsonCopy(new LegacyUser(devUserData)),
-            //     version: loadingDevUser ? 1.0 : 2.0,
-            // }
+            token = {
+                ...token,
+                // ...deepJsonCopy(new LegacyUser(devUserData)),
+                // version: loadingDevUser ? 1.0 : 2.0,
+            }
 
-            if (trigger === "update") token.name = session.user.name;
+            // if (trigger === "update") token.name = session.user.name;
             return token;
         },
     },
@@ -154,22 +152,24 @@ import { deepJsonCopy } from "./utils/json";
  * @param member - check if the user is a member
  * Sends a 401 error if the user is not authenticated
  */
-export async function checkAuthAPI(access_level: AccessLevel): Promise<LegacyUser | WikiUser> /* TODO: FIX ANY TYPE */ {
+export async function checkAuthAPI(accessLevel: AccessLevel, req?: NextRequest): Promise<LegacyUser | WikiUser> /* TODO: FIX ANY TYPE */ {
     const session = await auth();
 
     let user;
-    let ret_user;
+    let returnUser;
 
     if (!session) {
         throw { status: 401, message: "Unauthorized" };
     }
 
     try {
+        console.log('hell guys', session?.user);
+
         user = new LegacyUser(session?.user);
 
-        ret_user = await LegacyUserDB.fetchByUsername(user.username);
-        if (ret_user === null) {
-            ret_user = user;
+        returnUser = await LegacyUserDB.fetchByUsername(user.username);
+        if (returnUser === null) {
+            returnUser = user;
             // throw { status: 404, error: "User not found" };
         }
     } catch (err) {
@@ -178,13 +178,13 @@ export async function checkAuthAPI(access_level: AccessLevel): Promise<LegacyUse
     }
 
 
-    if (access_level == AccessLevel.Admin && !user.admin)
+    if (accessLevel == AccessLevel.Admin && !user.admin)
         throw { status: 403, message: "Unauthorized" };
 
-    if (access_level == AccessLevel.Member && !user.member)
+    if (accessLevel == AccessLevel.Member && !user.member)
         throw { status: 403, message: "Unauthorized" };
 
-    return ret_user;
+    return returnUser;
 }
 
 /**

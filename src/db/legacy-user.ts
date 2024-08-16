@@ -22,6 +22,8 @@ async function fetchByUsername(username: string): Promise<LegacyUser | null> {
             return null;
         }
 
+        console.log(result[0]);
+
         return new LegacyUser(result[0]);
     } catch (err) {
         console.error("Error occurred during query execution:", err);

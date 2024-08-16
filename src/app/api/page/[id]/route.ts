@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import Page from "@/models/_page";
+import Page from "@/models/legacy-page";
 import { 
     fetchAll,
     fetchAllByCategoryIdsOrNoCategory,
@@ -54,7 +54,11 @@ export async function PATCH(
         if (page === null)
             throw { status: 404, message: "Page not found" };
 
-        page.update(await bodyParser(req, Page));
+        const updatedPage = await bodyParser(req, Page);
+
+        console.log('updatedPage', updatedPage);
+
+        page.update(updatedPage);
         page = await update(page);
 
         return NextResponse.json(page);

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchAll, fetchByName, insert } from "@/db/_page";
+import { fetchAll, fetchById, fetchByName, insert } from "@/db/_page";
 
 import { checkAuthAPI } from "@/auth";
 import { AccessLevel } from "@/models/wikiuser";
-import Page from "@/models/_page";
+import Page from "@/models/legacy-page";
 import { bodyParser, handleAPIError } from "@/utils/api";
 
 export async function GET(
@@ -35,7 +35,7 @@ export async function POST(
         const authUser = await checkAuthAPI(AccessLevel.Admin);
 
         page = await bodyParser(req, Page);
-        existingPage = await fetchByName(page.name);
+        existingPage = await fetchById(page.id);
 
         if (existingPage !== null)
             throw { status: 409, message: `Page with name "${existingPage.name}" already exists` };

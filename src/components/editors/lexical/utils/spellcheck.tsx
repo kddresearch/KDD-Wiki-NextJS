@@ -21,7 +21,7 @@ async function getCachedDictionary(): Promise<Typo> {
   const path = "./dictionaries";
 
   if (dictionaryInstance) {
-    return Promise.resolve(dictionaryInstance);
+    return dictionaryInstance;
   }
 
   let cache = await dictionaryCache.getItem(dictionary) as dictionaryCache | null;
@@ -31,6 +31,7 @@ async function getCachedDictionary(): Promise<Typo> {
   }
 
   if (!cache) {
+    console.log("Resolving dictionary from network");
     cache = {
       affData: null,
       wordsData: null,
@@ -38,23 +39,19 @@ async function getCachedDictionary(): Promise<Typo> {
   }
 
   if (!cache.affData) {
-    fetch(`${path}/${dictionary}/${dictionary}.aff`)
-      .then(response => response.text())
-      .then(data => {
-        console.log("Resolving affData from network");
-        cache.affData = data;
-        dictionaryCache.setItem(dictionary, cache);
-      });
+    const respose = await fetch(`${path}/${dictionary}/${dictionary}.aff`)
+    const data = await respose.text();
+    console.log("Resolving affData from network");
+    cache.affData = data;
+    dictionaryCache.setItem(dictionary, cache);
   }
 
   if (!cache.wordsData) {
-    fetch(`${path}/${dictionary}/${dictionary}.dic`)
-      .then(response => response.text())
-      .then(data => {
-        console.log("Resolving wordsData from network");
-        cache.wordsData = data;
-        dictionaryCache.setItem(dictionary, cache);
-      });
+    const respose = await fetch(`${path}/${dictionary}/${dictionary}.dic`)
+    const data = await respose.text();
+    console.log("Resolving wordsData from network");
+    cache.wordsData = data;
+    dictionaryCache.setItem(dictionary, cache);
   }
 
   dictionaryInstance = new Typo(dictionary, cache.affData, cache.wordsData);
@@ -169,7 +166,12 @@ export async function loadTypo() {
 }
 
 export async function isWordMisspelled(word: string) {
-  const result = getCachedDictionary().then(dictionary => !dictionary.check(word.toLocaleLowerCase()));
+  if (!dictionaryInstance) {
+    console.warn('Dictionary not loaded');
+    dictionaryInstance = await getCachedDictionary();
+  }
 
-  return result;
+  const result = dictionaryInstance.check(word.toLocaleLowerCase());
+
+  return !result;
 }

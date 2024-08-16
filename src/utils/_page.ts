@@ -1,5 +1,5 @@
 import { fetchById, fetchByName } from "../db/_page";
-import Page from "../models/_page";
+import Page from "../models/legacy-page";
 
 
 async function fetchPage(identifier: string): Promise<Page | null> {
