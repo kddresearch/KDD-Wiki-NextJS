@@ -1,7 +1,7 @@
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
 import { getLinkStyling } from "../utils/styles";
-import { $createTextNode, $getSelection, $isRangeSelection, NodeKey, SELECTION_CHANGE_COMMAND } from "lexical";
+import { $createTextNode, $getSelection, $isRangeSelection, $isTextNode, NodeKey, SELECTION_CHANGE_COMMAND, TextNode } from "lexical";
 import { mergeRegister } from "@lexical/utils";
 import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover";
 import { $isLinkNode, LinkNode } from "@lexical/link";
@@ -34,9 +34,10 @@ import { Icon, IconFallback, IconImage } from "@/components/ui/icon";
 import { useSettings } from "./settings-context-plugin";
 
 const linkSchema = z.object({
-  Title: z.string().min(1, { message: "Title is required" }),
+  Content: z.string().min(1, { message: "Title is required" }),
   Url: z.string().url({ message: "Invalid URL" }).transform((val) => {
-    if (val.startsWith('http://') || val.startsWith('https://')) {
+
+    if (/(^\w+:\/\/)/.test(val)) {
       return val.trim();
     }
 
@@ -75,7 +76,7 @@ export function EditLinkPlugin() {
   const form = useForm<z.infer<typeof linkSchema>>({
     resolver: zodResolver(linkSchema),
     defaultValues: {
-      Title: '',
+      Content: '',
       Url: '',
     },
   })
@@ -173,7 +174,7 @@ export function EditLinkPlugin() {
 
       const latest = linkNode.getLatest();
 
-      setLinkText(latest.getTitle() || latest.getTextContent());
+      setLinkText(latest.getTextContent());
       setLinkUrl(latest.getURL());
 
       setLinkNode(latest);
@@ -208,8 +209,16 @@ export function EditLinkPlugin() {
         return;
       }
 
-      linkNode.getLatest().setTitle(values.Title);
+      const textChild = linkNode.getLatest().getFirstChildOrThrow();
+
+      if (!$isTextNode(textChild)) {
+        console.warn('textChild is not a TextNode');
+        return;
+      }
+
+      linkNode.getLatest().setTitle(values.Url.replace(/(^\w+:|^)\/\//, '').replace(/^(www\.)/, '')); // Hover title
       linkNode.getLatest().setURL(values.Url);
+      textChild.setTextContent(values.Content);
 
       setLinkNode(linkNode);
       linkNode.selectEnd();
@@ -245,7 +254,7 @@ export function EditLinkPlugin() {
 
   useEffect(() => {
     form.reset({
-      Title: linkText,
+      Content: linkText,
       Url: linkUrl,
     })
   }, [form, linkText, linkUrl])
@@ -278,7 +287,7 @@ export function EditLinkPlugin() {
         <div className="flex items-center">
 
           {/* Open Link */}
-          <Button asChild variant={"link"} className="w-48 justify-start">
+          <Button asChild variant={"link"} className="w-48 justify-start px-2">
             <Link href={linkUrl} title={linkUrl} target="_blank" rel="noopener noreferrer">
               <Icon className="w-auto h-auto mr-2 min-w-4">
                 <IconImage src={iconUrl} width={24} height={24} alt="Link Icon" className="h-6 w-6" />
@@ -336,13 +345,13 @@ export function EditLinkPlugin() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="px-4 pb-2">
               <FormField
                 control={form.control}
-                name="Title"
+                name="Content"
                 render={({ field }) => (
                   <FormItem className="space-y-0">
                     <div className="py-2 flex items-center w-full">
                       <Text className="h-4 w-4 mr-2" />
                       <FormControl className="w-auto grow" >
-                        <Input placeholder="title" className="w-auto" {...field} />
+                        <Input placeholder="content" className="w-auto" {...field} />
                       </FormControl>
                     </div>
                     <FormMessage className="ml-6"/>
