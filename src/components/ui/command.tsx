@@ -43,11 +43,15 @@ const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
   )
 }
 
+// Must be controlled input to hide input
+interface CommandInputProps<T extends boolean | undefined = undefined> extends React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input> {
+  hideInput?: T;
+  value: T extends true ? string : string | undefined; 
+}
+
 const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input> & {
-    hideInput?: boolean
-  }
+  CommandInputProps<boolean | undefined>
 >(({ className, hideInput, ...props }, ref) => (
   <div className={`flex items-center border-b px-3 ${hideInput ? 'hidden' : ''}`} cmdk-input-wrapper="">
     <Search className="mr-2 h-4 w-4 shrink-0 opacity-50 " />

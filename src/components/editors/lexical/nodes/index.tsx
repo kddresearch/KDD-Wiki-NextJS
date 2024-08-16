@@ -53,7 +53,7 @@ import {
   OctagonAlert
 } from "lucide-react"
 
-enum Category {
+export enum Category {
   BASIC = "Basic",
   FORMATTING = "Formatting",
   INTEGRATIONS = "Integrations",
@@ -61,7 +61,7 @@ enum Category {
 
 import { COMMANDS } from '../plugins/insert-commands-plugin';
 
-type Shortcut = {
+export type Shortcut = {
   icon: JSX.Element;
   name: string;
   shortcut: string;
@@ -70,7 +70,7 @@ type Shortcut = {
   command?: LexicalCommand<string | undefined>;
 }
 
-type ShortcutCategory = {
+export type ShortcutCategory = {
   category: Category;
   shortcuts: Shortcut[];
 }

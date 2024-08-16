@@ -55,8 +55,7 @@ const IMAGE_NAME = 'IconImage';
 
 type IconImageElement = React.ElementRef<typeof Nextimage>;
 type PrimitiveImageProps = React.ComponentPropsWithoutRef<typeof Nextimage>;
-interface IconImageProps extends PrimitiveImageProps {
-}
+interface IconImageProps extends Omit<PrimitiveImageProps, 'loading' > {}
 
 const IconImage = React.forwardRef<IconImageElement, IconImageProps>(
   (props: ScopedProps<IconImageProps>, forwardedRef) => {
@@ -70,13 +69,13 @@ const IconImage = React.forwardRef<IconImageElement, IconImageProps>(
       context.onImageLoadingStatusChange(status);
     });
 
-    const onLoadCallback = useCallbackRef(() => {
-      console.log('onLoadCallback', src);
+    const onLoadCallback = useCallbackRef((event) => {
+      imageProps.onLoad?.(event);
       setLoadingStatus('loaded');
     });
 
-    const onImageError = useCallbackRef(() => {
-      console.log('onImageError', src);
+    const onImageError = useCallbackRef((event) => {
+      imageProps.onError?.(event);
       setLoadingStatus('error');
     });
 
@@ -88,7 +87,7 @@ const IconImage = React.forwardRef<IconImageElement, IconImageProps>(
     }, [loadingStatus, handleLoadingStatusChange, src]);
 
     return (
-      <Nextimage {...imageProps} ref={forwardedRef} src={src} onLoad={onLoadCallback} onError={onImageError} className={className + ` ${loadingStatus === 'loaded' ? '' : 'hidden'}`} />
+      <Nextimage {...imageProps} ref={forwardedRef} loading='eager' src={src} onLoad={onLoadCallback} onError={onImageError} className={className + ` ${loadingStatus === 'loaded' ? '' : 'hidden'}`} />
     );
   }
 );

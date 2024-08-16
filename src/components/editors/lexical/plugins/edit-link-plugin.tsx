@@ -30,8 +30,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { TooltipPortal } from "@radix-ui/react-tooltip";
 import { Icon, IconFallback, IconImage } from "@/components/ui/icon";
+import { useSettings } from "./settings-context-plugin";
 
 const linkSchema = z.object({
   Title: z.string().min(1, { message: "Title is required" }),
@@ -47,6 +47,16 @@ const linkSchema = z.object({
 const LowPriority = 1;
 
 export function EditLinkPlugin() {
+  const {
+    setOption,
+    settings: {
+      isDebug,
+      useSelectionToolbar,
+      editInMarkdown,
+      disableContextMenu
+    },
+  } = useSettings();
+
   const [editor] = useLexicalComposerContext();
 
   const [linkUrl, setLinkUrl] = useState('');
@@ -79,6 +89,7 @@ export function EditLinkPlugin() {
 
     const elements = $getElementsUpToEditorRoot(linkNode, editor)
 
+    // Anchor element is relative to the editor
     const result = elements.reduce((acc, element, index) => {
       // First element is the anchor element
       if (index === 0) {
@@ -134,7 +145,6 @@ export function EditLinkPlugin() {
 
     const url = new URL(linkNode.getURL());
     setIconUrl(`https://icons.duckduckgo.com/ip3/${url.hostname}.ico`); // Fetch favicon from duckduckgo
-    // setIconUrl(`http://www.google.com/s2/favicons?domain=${url.hostname}`); // Fetch favicon from google
 
     setLinkUrl(linkNode.getURL());
     setLinkNode(linkNode);
@@ -248,7 +258,7 @@ export function EditLinkPlugin() {
         {linkNode && (
           <div
             id="link-editor-anchor"
-            className="absolute opacity-50 pointer-events-none bg-purple ml-2 mt-16 p-1"
+            className={`absolute pointer-events-none ml-2 mt-16 p-1 ${isDebug ? 'opacity-50 bg-purple ' : ''}`}
             style={
               {
                 height: popoverLocation.height,
@@ -266,31 +276,23 @@ export function EditLinkPlugin() {
         align="start"
       >
         <div className="flex items-center">
-          <TooltipProvider>
 
-            {/* Open Link */}
-            <Tooltip delayDuration={250}>
-              <TooltipTrigger asChild>
-                <Button asChild variant={"link"} className="w-48 justify-start">
-                  <Link href={linkUrl} title={linkUrl} target="_blank" rel="noopener noreferrer">
-                    {/* <Earth className="h-4 w-4 mr-2 min-w-4" /> */}
-                    <Icon className="w-auto h-auto mr-2 min-w-4">
-                      <IconImage src={iconUrl} width={24} height={24} alt="Link Icon" className="h-6 w-6" loading='eager' />
-                      {/* <Image src={iconUrl} width={16} height={16} alt="Link Icon" className="h-4 w-4 mr-2" onError={(event) => { console.log('MyError', event) }} /> */}
-                      <IconFallback asChild className="h-4 w-4">
-                        <Earth />
-                      </IconFallback>
-                    </Icon>
-                    <p className="truncate">
-                      {linkUrl.replace(/(^\w+:|^)\/\//, '').replace(/^(www\.)/, '')}
-                    </p>
-                  </Link>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top" align="center">
-                Open link in new tab
-              </TooltipContent>
-            </Tooltip>
+          {/* Open Link */}
+          <Button asChild variant={"link"} className="w-48 justify-start">
+            <Link href={linkUrl} title={linkUrl} target="_blank" rel="noopener noreferrer">
+              <Icon className="w-auto h-auto mr-2 min-w-4">
+                <IconImage src={iconUrl} width={24} height={24} alt="Link Icon" className="h-6 w-6" />
+                <IconFallback asChild className="h-4 w-4">
+                  <Earth />
+                </IconFallback>
+              </Icon>
+              <p className="truncate">
+                {linkUrl.replace(/(^\w+:|^)\/\//, '').replace(/^(www\.)/, '')}
+              </p>
+            </Link>
+          </Button>
+
+          <TooltipProvider>
 
             {/* Copy Button */}
             <Tooltip delayDuration={250}>

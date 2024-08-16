@@ -23,26 +23,23 @@ import {
 import * as Portal from '@radix-ui/react-portal';
 import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover";
 import { $getNearestBlockElementAncestorOrThrow, mergeRegister } from "@lexical/utils";
-import { nodeKeyboardShortcuts } from "../../nodes";
+import { nodeKeyboardShortcuts, Shortcut } from "../../nodes";
 import { $splitNodeContainingQuery } from "../../utils";
+import { useSettings } from "../settings-context-plugin";
 
 class ElementCommandOption extends MenuOption {
   name: string;
-  // What happens when you select this option?
-  onSelect: (queryString: string) => void;
-
-
   constructor(
     name: string,
-    options: {
+    options?: {
       icon?: JSX.Element;
       keywords?: Array<string>;
       keyboardShortcut?: string;
-      onSelect: (queryString: string) => void;
-    }) {
-      super(name);
-      this.name = name;
-      this.onSelect = options.onSelect.bind(this);
+      onSelect?: (queryString: string) => void;
+    }
+  ) {
+    super(name);
+    this.name = name;
   }
 }
 
@@ -50,171 +47,76 @@ const SUGGESTION_LIST_LENGTH_LIMIT = 5;
 
 interface CommandProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
   value: string;
-  onValueChange: (value: string) => void;
-  popoverLocation: { x: number, y: number };
-  setPopoverLocation: (anchorElement: HTMLElement) => void;
-  commandRef: LegacyRef<HTMLDivElement>;
   queryString: string | null;
-
   anchorElement: HTMLElement | null;
-  editor: LexicalEditor;
-  cleanup: (option: ElementCommandOption) => void
-  commandIndex: number | null;
-  options: ElementCommandOption[];
-  setHighlighedIndex: (index: number) => void;
 }
 
 function QuickCommand({
   open,
-  onOpenChange,
   value,
-  onValueChange,
-  popoverLocation,
-  setPopoverLocation,
-  commandRef,
   queryString,
   anchorElement,
-  editor,
-  cleanup,
-  commandIndex,
-  options,
-  setHighlighedIndex,
 }
 : CommandProps
 ) {
+  const [editor] = useLexicalComposerContext();
+
+  const [popoverLocation, setPopoverLocation] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const commandMenuRef = useRef<HTMLDivElement>(null);
+
+  const setPosition = useCallback((anchorElement: HTMLElement) => {
+    // Anchor element is a portal
+    const x = anchorElement.offsetLeft;
+    const y = anchorElement.offsetTop;
+    const height = anchorElement.offsetHeight;
+    const width = anchorElement.offsetWidth;
+
+    console.log('x:', x, 'y:', y, 'height:', height, 'width:', width);
+
+    setPopoverLocation({ x, y, height, width });
+  }, [])
+
+  const {
+    setOption,
+    settings: {
+      isDebug
+    },
+  } = useSettings();
+
+  const onSelectCallback = useCallback((shortcut: Shortcut) => {
+    editor.update(() => {
+      const textNode = $splitNodeContainingQuery({
+        leadOffset: 0,
+        matchingString: queryString || '',
+        replaceableString: `/${queryString}`,
+      })
+  
+      if (!textNode) {
+        throw new Error('No textNode found, cannot remove query string');
+      }
+  
+      if (shortcut.command) {
+        editor.dispatchCommand(shortcut.command, undefined);
+      }
+  
+      if (textNode) {
+        const ElementNode = $getNearestBlockElementAncestorOrThrow(textNode);
+        if (ElementNode.getTextContent() === textNode.getTextContent()) {
+          ElementNode.remove();
+        } else {
+          textNode.remove();
+        }
+      }
+    })
+  }, [editor, queryString]);
 
   useEffect(() => {
     if (anchorElement) {
-      setPopoverLocation(anchorElement);
+      console.log(anchorElement);
+      setPosition(anchorElement);
     }
-  }, [anchorElement, setPopoverLocation]);
-
-  return (
-    <Popover
-      open={open}
-      onOpenChange={onOpenChange}
-      modal={false}
-    >
-      <PopoverContent
-        className="p-0"
-        onOpenAutoFocus={(event) => event.preventDefault()}
-        style={
-          {
-            position: 'absolute',
-            top: popoverLocation.y,
-            left: popoverLocation.x,
-          }
-        }
-      >
-       <Command ref={commandRef} tabIndex={-1} value={value} onValueChange={onValueChange}>
-        <CommandInput value={queryString || ''} hideInput={true} />
-        <CommandList>
-          <CommandEmpty>No elements found</CommandEmpty>
-          {nodeKeyboardShortcuts.map((group, index) => (
-            <Fragment key={index}>
-              <CommandGroup
-                heading={group.category}
-              >
-                {group.shortcuts.map((shortcut, index) => (
-                  <CommandItem
-                    keywords={shortcut.keywords}
-                    key={index}
-                    onSelect={() => {
-                      console.log('shortcut:', shortcut);
-                      
-                      const textNode = $splitNodeContainingQuery({
-                        leadOffset: 0,
-                        matchingString: queryString || '',
-                        replaceableString: `/${queryString}`,
-                      })
-
-                      if (!textNode) {
-                        throw new Error('No textNode found, cannot remove query string');
-                      }
-
-                      if (shortcut.command) {
-                        editor.dispatchCommand(shortcut.command, undefined);
-                      }
-
-                      if (textNode) {
-                        const ElementNode = $getNearestBlockElementAncestorOrThrow(textNode);
-                        if (ElementNode.getTextContent() === textNode.getTextContent()) {
-                          ElementNode.remove();
-                        } else {
-                          textNode.remove();
-                        }
-                      }
-                    }}
-                  >
-                    {cloneElement(shortcut.icon, { className: 'mr-2 h-4 w-4 ' + shortcut.icon.props.className })}
-                    <span>{shortcut.name}</span>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-              {index < nodeKeyboardShortcuts.length - 1 && <CommandSeparator key={index * 2}/>}
-            </Fragment>
-          ))}
-        </CommandList>
-       </Command>
-      </PopoverContent>
-    </Popover>
-  );
-}
-
-
-
-export default function SlashCommandPlugin() {
-  const [editor] = useLexicalComposerContext();
-  const [queryString, setQueryString] = useState<string | null>(null);
-  const [popoverLocation, setPopoverLocation] = useState({ x: 0, y: 0 });
-
-  const results = useMemo(() => ["hello"], []); ;
-
-  const checkForSlashTriggerMatch = useBasicTypeaheadTriggerMatch('/', {
-    minLength: 0,
-  });
-
-  const options = useMemo(
-    () =>
-      results
-        .map(
-          (result) =>
-            new ElementCommandOption(result, {
-              onSelect: (queryString: string) => {
-                console.log('queryString:', queryString);
-              }
-            }),
-        )
-        .slice(0, SUGGESTION_LIST_LENGTH_LIMIT),
-    [results],
-  );
-
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState<string>(' ');
-  const commandMenuRef = useRef<HTMLDivElement>(null);
-
-  const setCommandValue = useCallback((value: string) => {
-    console.log('setCommandValue:', value);
-    setValue(value);
-  }, []);
-
-  const onSelectOption = useCallback(
-    (
-      selectedOption: ElementCommandOption,
-      nodeToRemove: TextNode | null,
-      closeMenu: () => void,
-      matchingString: string,
-    ) => {
-      editor.update(() => {
-        nodeToRemove?.remove();
-        selectedOption.onSelect(matchingString);
-        closeMenu();
-      });
-    },
-    [editor],
-  );
+  }, [anchorElement, setPosition]);
 
   useEffect(() => {
     return mergeRegister(
@@ -222,15 +124,16 @@ export default function SlashCommandPlugin() {
         KEY_ARROW_DOWN_COMMAND,
         (event: KeyboardEvent) => {
           if (commandMenuRef.current) {
-            console.log('downArrow Pressed!!!');
+            console.log('downArrow consumed yum!!!');
 
             event.preventDefault();
             event.stopImmediatePropagation();
 
-            const keyboardEvent = new KeyboardEvent('keydown', { bubbles: true, key: 'ArrowDown' }); // TODO: Fix this stupid solution
+            const keyboardEvent = new KeyboardEvent('keydown', { key: 'ArrowDown' }); // TODO: Fix this stupid solution
+            console.log('keyboardEvent', commandMenuRef.current);
+
             commandMenuRef.current?.dispatchEvent(keyboardEvent);
           }
-
           return true;
         },
         COMMAND_PRIORITY_NORMAL,
@@ -262,8 +165,6 @@ export default function SlashCommandPlugin() {
           }
 
           if (commandMenuRef.current) {
-            console.log('enter consumed yum!!!');
-            console.log('selected item:', value);
 
             event.preventDefault();
             event.stopImmediatePropagation();
@@ -279,18 +180,95 @@ export default function SlashCommandPlugin() {
     );
   });
 
-  const setPosition = useCallback((anchorElement: HTMLElement) => {
-    const rect = anchorElement?.getBoundingClientRect();
-    const { x, y } = rect ? { x: rect.x, y: rect.y + rect.height } : { x: 0, y: 0 };
-    setPopoverLocation({ x, y});
+  return (
+    <Popover
+      open={open}
+      onOpenChange={() => {}}
+      modal={false}
+    >
+      <PopoverAnchor asChild>
+        <Portal.Root asChild>
+          <div
+            id="slash-command-anchor"
+            className={`absolute pointer-events-none ${isDebug ? 'opacity-50 bg-purple ' : ''}`}
+            style={
+              {
+                height: popoverLocation.height,
+                width: popoverLocation.width,
+                top: popoverLocation.y,
+                left: popoverLocation.x,
+              }
+            }
+          />
+        </Portal.Root>
+      </PopoverAnchor>
 
-    if (anchorElement) {
-      setOpen(true);
-    } else {
-      setOpen(false);
-    }
+      <PopoverContent
+        className="p-0"
+        onOpenAutoFocus={(event) => event.preventDefault()}
+        align="start"
+      >
+        <Command
+          tabIndex={-1}
+          value={value}
+          ref={commandMenuRef}
+        >
+          <CommandInput value={queryString || ''} hideInput={true} />
+          <CommandList>
+            <CommandEmpty>No elements found</CommandEmpty>
+            {nodeKeyboardShortcuts.map((group, index) => (
+              <Fragment key={index}>
+                <CommandGroup
+                  heading={group.category}
+                >
+                  {group.shortcuts.map((shortcut, index) => (
+                    <CommandItem
+                      keywords={shortcut.keywords}
+                      key={index}
+                      onSelect={() => onSelectCallback(shortcut) }
+                    >
+                      {cloneElement(shortcut.icon, { className: 'mr-2 h-4 w-4 ' + shortcut.icon.props.className })}
+                      <span>{shortcut.name}</span>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+                {index < nodeKeyboardShortcuts.length - 1 && <CommandSeparator key={index * 2}/>}
+              </Fragment>
+            ))}
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}
 
-  }, [])
+
+
+export default function SlashCommandPlugin() {
+  const [editor] = useLexicalComposerContext();
+  const [queryString, setQueryString] = useState<string | null>(null);
+
+  const checkForSlashTriggerMatch = useBasicTypeaheadTriggerMatch('/', {
+    minLength: 0,
+  });
+
+  const options = [new ElementCommandOption("None")];
+
+  const [value, setValue] = useState<string>(' ');
+
+  const onSelectOption = useCallback((
+      selectedOption: ElementCommandOption,
+      nodeToRemove: TextNode | null,
+      closeMenu: () => void,
+      matchingString: string,
+    ) => {
+      editor.update(() => {
+        nodeToRemove?.remove();
+        closeMenu();
+      });
+    },
+    [editor],
+  );
 
   return (
     <LexicalTypeaheadMenuPlugin<ElementCommandOption>
@@ -303,25 +281,14 @@ export default function SlashCommandPlugin() {
         {selectedIndex, selectOptionAndCleanUp, setHighlightedIndex},
         matchingString
       ) => {
-        console.log('selectedIndex:', selectedIndex);
         return (
           <QuickCommand
-            open={open}
-            onOpenChange={setOpen}
+            open={anchorElementRef.current !== null}
             value={value}
-            onValueChange={setCommandValue}
-            popoverLocation={popoverLocation}
-            setPopoverLocation={setPosition}
-            commandRef={commandMenuRef}
             anchorElement={anchorElementRef.current}
-            queryString={queryString}
-            editor={editor}
-            commandIndex={selectedIndex}
-            cleanup={selectOptionAndCleanUp}
-            options={options}
-            setHighlighedIndex={setHighlightedIndex}
+            queryString={matchingString}
           />
-        );
+        )
       }}
     />
   );
