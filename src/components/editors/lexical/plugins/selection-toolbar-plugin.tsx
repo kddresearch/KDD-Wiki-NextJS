@@ -6,7 +6,7 @@ import { mergeRegister } from "@lexical/utils";
 import { $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND, SELECTION_CHANGE_COMMAND } from "lexical";
 import { Bold, Italic, Strikethrough, Underline } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getNodeBeforeRoot, getSelectedNode } from "../utils";
+import { $getNodeBeforeRoot, getSelectedNode } from "../utils";
 
 // Still no clue what this is for
 const LowPriority = 1;
@@ -177,7 +177,7 @@ function SelectionToolbarPlugin() {
 
       console.log("node", node);
 
-      const topNode = getNodeBeforeRoot(node);
+      const topNode = $getNodeBeforeRoot(node);
       if ($isCodeNode(topNode)) {
         return true;
       }

@@ -1,6 +1,6 @@
 import { $isListItemNode, $isListNode, ListItemNode, ListNode } from "@lexical/list";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { getNodeBeforeRoot, hasSiblings, onlyChildIsListNode, listItemContainsListNode } from "../../utils";
+import { $getNodeBeforeRoot, hasSiblings, onlyChildIsListNode, listItemContainsListNode } from "../../utils";
 import { $getNearestBlockElementAncestorOrThrow } from "@lexical/utils";
 
 function sortListItemsByListNodes(a: ListItemNode, b: ListItemNode): number {
@@ -47,7 +47,7 @@ export function PreventOrphanedIndentsPlugin({
   const [editor] = useLexicalComposerContext();
 
   editor.registerNodeTransform(ListNode, (node) => {
-    const rootListNode = getNodeBeforeRoot<ListNode>(node, ListNode);
+    const rootListNode = $getNodeBeforeRoot<ListNode>(node, ListNode);
     const childrenSize = rootListNode.getChildrenSize();
     const children = rootListNode.getChildren();
 

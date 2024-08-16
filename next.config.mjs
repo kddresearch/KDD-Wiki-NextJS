@@ -22,6 +22,12 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "www.kddresearch.org",
+      },
+      {
+        protocol: "https",
+        hostname: "icons.duckduckgo.com",
+        port: '',
+        pathname: '/ip3/**.ico',
       }
     ],
   },

@@ -4,7 +4,7 @@ import { Combobox } from "@/components/ui/combo-box";
 import { $isCodeNode, CODE_LANGUAGE_FRIENDLY_NAME_MAP, getCodeLanguages, getLanguageFriendlyName } from "@lexical/code";
 import { Label } from "@radix-ui/react-label";
 import { $getSelection, $isRangeSelection, LexicalEditor } from "lexical";
-import { getNodeBeforeRoot, getSelectedNode } from "../../utils";
+import { $getNodeBeforeRoot, getSelectedNode } from "../../utils";
 import React, { useCallback, useEffect, useState } from "react";
 import { mergeRegister } from "@lexical/utils";
 
@@ -45,7 +45,7 @@ function CodeDropdown({
     }
 
     const node = getSelectedNode(selection);
-    const codeNode = getNodeBeforeRoot(node);
+    const codeNode = $getNodeBeforeRoot(node);
 
     if (!$isCodeNode(codeNode)) {
       return;
@@ -80,7 +80,7 @@ function CodeDropdown({
       }
 
       const node = getSelectedNode(selection);
-      const codeNode = getNodeBeforeRoot(node);
+      const codeNode = $getNodeBeforeRoot(node);
   
       if (!$isCodeNode(codeNode)) {
         return;

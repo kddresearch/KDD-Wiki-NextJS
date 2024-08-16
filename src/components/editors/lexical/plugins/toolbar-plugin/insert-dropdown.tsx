@@ -55,6 +55,7 @@ function InsertElementDropdown({
 ) {
   return (
     <DropdownMenu
+      modal={false}
       onOpenChange={(open) => {
         if (!open) {
           editor.focus();

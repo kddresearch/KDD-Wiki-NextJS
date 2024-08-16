@@ -35,7 +35,7 @@ import {
   $createRangeSelection,
   $setSelection
 } from "lexical";
-import { getNodeBeforeRoot } from "../utils";
+import { $getNodeBeforeRoot } from "../utils";
 import { $isCodeNode } from "@lexical/code";
 import LinkDialog from "./dialog/link";
 import {
@@ -155,7 +155,6 @@ function ContextMenuPlugin({
       editor.registerCommand(
         SELECTION_CHANGE_COMMAND,
         (_payload, newEditor) => {
-          console.log("selection change");
           updateCommandBar();
           return false;
         },
@@ -176,7 +175,7 @@ function ContextMenuPlugin({
 
       if ($isRangeSelection(selection)) {
         node = selection.focus.getNode();
-        node = getNodeBeforeRoot(node);
+        node = $getNodeBeforeRoot(node);
       }
 
       if (node === undefined) {

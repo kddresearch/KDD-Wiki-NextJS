@@ -5,16 +5,15 @@ import { $createTextNode, $getSelection, $isRangeSelection, NodeKey, SELECTION_C
 import { mergeRegister } from "@lexical/utils";
 import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover";
 import { $isLinkNode, LinkNode } from "@lexical/link";
-import { $getNodesFromSelection } from "../utils";
-import { Edit, Clipboard, Link2Off, Earth, Text } from "lucide-react";
+import { $getElementsUpToEditorRoot, $getNodesFromSelection } from "../utils";
+import { Edit, Clipboard, Link2Off, Earth, Text, Bug } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import Image from "next/image";
 import {
   Form,
   FormControl,
@@ -25,7 +24,14 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { TooltipPortal } from "@radix-ui/react-tooltip";
+import { Icon, IconFallback, IconImage } from "@/components/ui/icon";
 
 const linkSchema = z.object({
   Title: z.string().min(1, { message: "Title is required" }),
@@ -43,19 +49,16 @@ const LowPriority = 1;
 export function EditLinkPlugin() {
   const [editor] = useLexicalComposerContext();
 
-  const [isLink, setIsLink] = useState(false);
-
   const [linkUrl, setLinkUrl] = useState('');
-  const [displayedLinkUrl, setDisplayedLinkUrl] = useState('');
   const [linkText, setLinkText] = useState('');
 
-  const [LinkEditorOpen, setLinkEditorOpen] = useState(false);
+  const [iconUrl, setIconUrl] = useState('');
+
+  const [showEditor, setShowEditor] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [popoverLocation, setPopoverLocation] = useState({ x: 0, y: 0 });
+  const [popoverLocation, setPopoverLocation] = useState({ x: 0, y: 0, width: 0, height: 0 });
 
   const [linkNode, setLinkNode] = useState<LinkNode | null>(null);
-  const [linkElement, setLinkElement] = useState<HTMLAnchorElement | undefined>(undefined);
-  const linkElementRef = useRef<HTMLAnchorElement | undefined>(undefined);
 
   const { toast } = useToast();
 
@@ -67,16 +70,47 @@ export function EditLinkPlugin() {
     },
   })
 
+  // Callbacks
   const updatePosition = useCallback(() => {
-    if (!linkElement) {
-      console.warn('linkElement is null');
+    if (!linkNode) {
+      console.warn('linkNode is null');
       return;
     }
 
-    const rect = linkElement.getBoundingClientRect();
-    console.log(rect);
-    setPopoverLocation({ x: rect.left, y: rect.bottom });
-  }, [linkElement]);
+    const elements = $getElementsUpToEditorRoot(linkNode, editor)
+
+    const result = elements.reduce((acc, element, index) => {
+      // First element is the anchor element
+      if (index === 0) {
+        acc.x = element.offsetLeft;
+        acc.y = element.offsetTop;
+        acc.width = element.offsetWidth;
+        acc.height = element.offsetHeight;
+
+        return acc;
+      }
+
+      // if element is relative 
+      if (element.style.position === 'relative' || element.classList.contains('relative')) { // TODO: Make check more robust for non-tailwind
+        acc.x += element.offsetLeft;
+        acc.y += element.offsetTop;
+        return acc;
+      }
+      return acc;
+    }, { x: 0, y: 0, width: 0, height: 0 });
+
+    setPopoverLocation(result);
+  }, [linkNode, editor]);
+
+  const setEditorState = useCallback((open: boolean) => {
+    console.log('setEditorState', open, isEditing);
+
+    if (isEditing) {
+      return;
+    }
+
+    setShowEditor(open);
+  }, [isEditing])
 
   const updateLinkEditor = useCallback(() => {
     const lexicalSelection = $getSelection();
@@ -89,86 +123,25 @@ export function EditLinkPlugin() {
       setIsEditing(false);
     }
 
-    const styling = getLinkStyling(lexicalSelection);
-
-    if (styling.isDisabled) {
-      console.log('styling is disabled');
-      setLinkEditorOpen(false);
-      return;
-    }
-
-    if (!styling.isLink) {
-      console.log('styling is not link');
-      setLinkEditorOpen(false);
-      setIsLink(false);
-      return;
-    }
-
     const result = $getNodesFromSelection(lexicalSelection, LinkNode);
 
-    if (result.length === 0) {
-      console.log('no links found');
-      setLinkEditorOpen(false);
-      setIsLink(false);
+    if (result.length !== 1) {
+      setShowEditor(false);
       return;
-    }
-
-    if (result.length > 1) {
-      setLinkEditorOpen(false);
-      setIsLink(false);
     }
 
     const linkNode = result[0];
 
-    setLinkNode(linkNode);
-    setLinkText(linkNode.getTitle() || linkNode.getTextContent());
+    const url = new URL(linkNode.getURL());
+    setIconUrl(`https://icons.duckduckgo.com/ip3/${url.hostname}.ico`); // Fetch favicon from duckduckgo
+    // setIconUrl(`http://www.google.com/s2/favicons?domain=${url.hostname}`); // Fetch favicon from google
+
     setLinkUrl(linkNode.getURL());
-    setDisplayedLinkUrl(linkNode.getURL().replace(/(^\w+:|^)\/\//, ''));
+    setLinkNode(linkNode);
 
-    const linkElementFromEditor = editor.getElementByKey(linkNode.getKey()) as HTMLAnchorElement;
-
-    if (!linkElementFromEditor) {
-      console.warn('linkElementFromEditor is null');
-
-      setLinkElement(undefined);
-      setLinkEditorOpen(false);
-      setIsLink(false);
-      return;
-    }
-
-    // console.log('linkElementFromEditor', linkElementFromEditor);
-    // console.log('linkElement', linkElement);
-    
-    setLinkElement(linkElementFromEditor);
     updatePosition();
-    setLinkEditorOpen(true);
-    setIsLink(styling.isLink);
-  }, [editor, setLinkElement, setLinkEditorOpen, updatePosition])
-
-  useEffect(() => {
-    if (linkElement) {
-      updatePosition();
-    } else {
-      if (LinkEditorOpen) {
-        console.warn('linkElement is null, closing editor');
-        setLinkEditorOpen(false);
-      }
-    }
-  }, [linkElement, updatePosition, LinkEditorOpen]);
-
-  const setEditorState = useCallback((open: boolean) => {
-
-    console.log('setEditorState', open, isEditing);
-
-    if (isEditing) {
-      return;
-    }
-
-    setLinkEditorOpen(open);
-    if (!open) {
-      setIsEditing(false);
-    }
-  }, [isEditing])
+    setShowEditor(true);
+  }, [setShowEditor, updatePosition, setIsEditing])
 
   const onCopyLink = useCallback(() => {
     navigator.clipboard.writeText(linkUrl);
@@ -176,88 +149,44 @@ export function EditLinkPlugin() {
       title: 'Link copied to clipboard',
       description: linkUrl,
     });
-    setLinkEditorOpen(false);
-  }, [linkUrl, toast]);
+    setEditorState(false);
+  }, [linkUrl, toast, setEditorState]);
 
   const onEditLink = useCallback((event: any) => {
     setIsEditing(true);
 
     editor.update(() => {
-      const lexicalSelection = $getSelection();
-
-      if (!$isRangeSelection(lexicalSelection)) {
-        return;
-      }
-  
-      const styling = getLinkStyling(lexicalSelection);
-  
-      if (!styling.isLink) {
-        return;
-      }
-  
-      const result = $getNodesFromSelection(lexicalSelection, LinkNode);
-  
-      if (result.length === 0) {
-        return;
-      }
-  
-      if (result.length > 1) {
-        throw new Error('Multiple links found in selection');
-      }
-
-      const linkNode = result[0];
-
-      setLinkNode(linkNode);
-      linkNode.select(0, 1);
-
-      if (!linkElement) {
-        console.warn('linkElement is null');
+      if (!linkNode) {
+        console.warn('linkNode is null');
         return;
       }
 
-      setLinkElement(linkElement);
-      setLinkEditorOpen(true);
+      const latest = linkNode.getLatest();
+
+      setLinkText(latest.getTitle() || latest.getTextContent());
+      setLinkUrl(latest.getURL());
+
+      setLinkNode(latest);
+      latest.select(0, 1);
     })
-
-  }, [editor, linkElement]);
+  }, [editor, linkNode]);
 
   const onRemoveLink = useCallback(() => {
-
     editor.update(() => {
-      const lexicalSelection = $getSelection();
-
-      if (!$isRangeSelection(lexicalSelection)) {
+      if (!linkNode) {
+        console.warn('linkNode is null');
         return;
       }
-  
-      const styling = getLinkStyling(lexicalSelection);
-  
-      if (!styling.isLink) {
-        return;
-      }
-  
-      const result = $getNodesFromSelection(lexicalSelection, LinkNode);
-  
-      if (result.length === 0) {
-        return;
-      }
-  
-      if (result.length > 1) {
-        throw new Error('Multiple links found in selection');
-      }
 
-      const offset = lexicalSelection.focus.offset;
-      const linkNode = result[0];
+      const latest = linkNode.getLatest();
 
-      setLinkNode(linkNode);
+      setLinkNode(latest);
 
-      const textNode = $createTextNode(linkNode.getTitle() || linkNode.getTextContent());
+      const textNode = $createTextNode(latest.getTextContent());
       const newNode = linkNode.replace(textNode);
-      newNode.select(offset, offset);
+      newNode.getLatest().select(0, 1);
     })
-
-    setLinkEditorOpen(false);
-  }, [editor]);
+  }, [editor, linkNode]);
 
   const onSubmit = useCallback((values: z.infer<typeof linkSchema>) => {
     console.log('values', values);
@@ -271,10 +200,13 @@ export function EditLinkPlugin() {
 
       linkNode.getLatest().setTitle(values.Title);
       linkNode.getLatest().setURL(values.Url);
-    })
 
-    setLinkEditorOpen(false);
+      setLinkNode(linkNode);
+      linkNode.selectEnd();
+    })
   }, [editor, linkNode]);
+
+  // onMount
 
   useEffect(() => {
     return mergeRegister(      
@@ -289,10 +221,17 @@ export function EditLinkPlugin() {
   }, [editor, updateLinkEditor])
 
   useEffect(() => {
-    if (linkElement) {
-      linkElementRef.current = linkElement;
+    if (linkNode) {
+      editor.update(() => {
+        updatePosition();
+      })
+    } else {
+      if (showEditor) {
+        console.warn('linkNode is null', false);
+        setShowEditor(false);
+      }
     }
-  }, [linkElement]);
+  }, [linkNode, editor, updatePosition, showEditor]);
 
   useEffect(() => {
     form.reset({
@@ -303,45 +242,92 @@ export function EditLinkPlugin() {
 
   return (
     <Popover
-      open={LinkEditorOpen}
-      onOpenChange={setEditorState}
+      open={showEditor}
     >
-      <PopoverAnchor asChild className="absolute" id="PopoverAnchorTHing">
-        {linkElementRef.current && <div style={{
-          position: 'absolute',
-          top: popoverLocation.y,
-          left: popoverLocation.x,
-        }}></div>}
+      <PopoverAnchor asChild>
+        {linkNode && (
+          <div
+            id="link-editor-anchor"
+            className="absolute opacity-50 pointer-events-none bg-purple ml-2 mt-16 p-1"
+            style={
+              {
+                height: popoverLocation.height,
+                width: popoverLocation.width,
+                top: popoverLocation.y,
+                left: popoverLocation.x,
+              }
+            } 
+          />
+        )}
       </PopoverAnchor>
       <PopoverContent
-        className="p-1 w-auto max-w-md items-center rounded-sm max-h-0 transition-all duration-300 delay-75 ease-out data-[state=open]:max-h-[500px] overflow-hidden"
+        className="p-1 w-auto max-w-md items-center rounded-sm overflow-hidden"
         onOpenAutoFocus={(event) => event.preventDefault()}
-        // style={
-        //   {
-        //     position: 'absolute',
-        //     top: popoverLocation.y,
-        //     left: popoverLocation.x,
-        //   }
-        // }
+        align="start"
       >
         <div className="flex items-center">
-          <Button asChild variant={"link"}>
-            <Link href={linkUrl} target="_blank" rel="noopener noreferrer" className="max-w-xs">
-              <Earth className="h-4 w-4 mr-2" />
-              <p className="overflow-hidden text-nowrap overflow-ellipsis">
-                {displayedLinkUrl}
-              </p>
-            </Link>
-          </Button>
-          <Button variant={'ghost'} size="icon" onClick={onCopyLink} onFocus={(event) => event.preventDefault()}>
-            <Clipboard className="h-4 w-4" />
-          </Button>
-          <Button variant={'ghost'} size="icon" onClick={onEditLink}>
-            <Edit className="h-4 w-4" />
-          </Button>
-          <Button variant={'ghost'} size="icon" onClick={onRemoveLink}>
-            <Link2Off className="h-4 w-4" />
-          </Button>
+          <TooltipProvider>
+
+            {/* Open Link */}
+            <Tooltip delayDuration={250}>
+              <TooltipTrigger asChild>
+                <Button asChild variant={"link"} className="w-48 justify-start">
+                  <Link href={linkUrl} title={linkUrl} target="_blank" rel="noopener noreferrer">
+                    {/* <Earth className="h-4 w-4 mr-2 min-w-4" /> */}
+                    <Icon className="w-auto h-auto mr-2 min-w-4">
+                      <IconImage src={iconUrl} width={24} height={24} alt="Link Icon" className="h-6 w-6" loading='eager' />
+                      {/* <Image src={iconUrl} width={16} height={16} alt="Link Icon" className="h-4 w-4 mr-2" onError={(event) => { console.log('MyError', event) }} /> */}
+                      <IconFallback asChild className="h-4 w-4">
+                        <Earth />
+                      </IconFallback>
+                    </Icon>
+                    <p className="truncate">
+                      {linkUrl.replace(/(^\w+:|^)\/\//, '').replace(/^(www\.)/, '')}
+                    </p>
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top" align="center">
+                Open link in new tab
+              </TooltipContent>
+            </Tooltip>
+
+            {/* Copy Button */}
+            <Tooltip delayDuration={250}>
+              <TooltipTrigger asChild>
+                <Button variant={'ghost'} size="icon" onClick={onCopyLink} onFocus={(event) => event.preventDefault()}>
+                  <Clipboard className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top" align="center">
+                Copy link
+              </TooltipContent>
+            </Tooltip>
+
+            {/* Edit Button */}
+            <Tooltip delayDuration={250}>
+              <TooltipTrigger asChild>
+                <Button variant={'ghost'} size="icon" onClick={onEditLink}>
+                  <Edit className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top" align="center">
+                Edit link
+              </TooltipContent>
+            </Tooltip>
+
+            {/* Remove Link */}
+            <Tooltip delayDuration={250}>
+              <TooltipTrigger asChild>
+                <Button variant={'ghost'} size="icon" onClick={onRemoveLink}>
+                  <Link2Off className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top" align="center">
+                Remove link
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
         <div data-open={isEditing} className="transition-all duration-300 ease-out overflow-hidden max-h-0 delay-75 data-[open=true]:max-h-[500px]">
           <Form {...form}>
@@ -374,7 +360,6 @@ export function EditLinkPlugin() {
                     </div>
                     <FormMessage className="ml-6"/>
                   </FormItem>
-                  //class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors text-primary underline-offset-4 h-10 px-4 py-2 max-w-xs"
                 )}
               />
               <div className="grid justify-end w-full">

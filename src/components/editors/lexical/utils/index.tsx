@@ -64,7 +64,7 @@ export function sanitizeURL(url: string): string {
 }
 
 import {$isAtNodeEnd} from '@lexical/selection';
-import {$isRootNode, ElementNode, Klass, KlassConstructor, LexicalNode, RangeSelection, TextNode} from 'lexical';
+import {$isRootNode, ElementNode, Klass, KlassConstructor, LexicalEditor, LexicalNode, RangeSelection, TextNode} from 'lexical';
 
 export function getSelectedNode(
   selection: RangeSelection,
@@ -117,7 +117,7 @@ export function useDebounce<T extends (...args: never[]) => void>(
   );
 };
 
-export function getNodeBeforeRoot<T extends LexicalNode>(node: LexicalNode, klass?: Klass<T>): T {
+export function $getNodeBeforeRoot<T extends LexicalNode>(node: LexicalNode, klass?: Klass<T>): T {
   let currentNode = node;
   while (currentNode.getParent() && !$isRootNode(currentNode.getParent())) {
     currentNode = currentNode.getParent()!;
@@ -250,7 +250,7 @@ export function $splitNodeContainingQuery(match: MenuTextMatch): TextNode | null
 
 export function $getNodesFromSelection<T extends LexicalNode>(
   selection: RangeSelection,
-  klass: Klass<T>
+  klass: new (...args: any[]) => T
 ): (T)[] {
   const result = selection.getNodes().map((node) => {
     let currentNode = node;
@@ -264,6 +264,23 @@ export function $getNodesFromSelection<T extends LexicalNode>(
     return;
   });
 
-  const nodeArray = result.filter((node) => node !== undefined);
-  return nodeArray.filter((node) => node !== undefined) as T[];
+  return result.filter((node) => node !== undefined) as T[];
+}
+
+export function $getElementsUpToEditorRoot(node: LexicalNode, editor: LexicalEditor): HTMLElement[] {
+  const elements = [];
+  let currentNode = node;
+  while (currentNode.getParent()) {
+    if ($isRootNode(currentNode)) {
+      break;
+    }
+
+    if (currentNode instanceof ElementNode) {
+      const elementKey = currentNode.getKey();
+      const element = editor.getElementByKey(elementKey);
+      elements.push(element);
+    }
+    currentNode = currentNode.getParent()!;
+  }
+  return elements.filter((element) => element !== null);
 }

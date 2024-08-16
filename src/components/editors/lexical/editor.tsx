@@ -106,7 +106,7 @@ function Editor({
   const contentEditable = (
     <ContentEditable
       id="lexical-text-editable"
-      className={`bg-white min-h-[150px] resize-none text-[15px] caret-darkGray relative outline-none m-[15px_10px] caret-[#444] px-6 ${proseClasses}`}
+      className={`bg-white min-h-40 resize-none text-sm caret-darkGray relative outline-none mx-2 my-4 caret-current px-6 ${proseClasses}`}
       spellCheck={spellcheck}
     />
   );

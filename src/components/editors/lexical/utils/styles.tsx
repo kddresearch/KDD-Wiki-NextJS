@@ -1,6 +1,6 @@
 // utils/selection-utils.js
 import { $getSelection, $isRangeSelection, LexicalEditor, RangeSelection } from "lexical";
-import { containsNode, getNodeBeforeRoot } from ".";
+import { containsNode, $getNodeBeforeRoot } from ".";
 import { $isCodeNode } from "@lexical/code";
 import { $isHeadingNode } from "@lexical/rich-text";
 import { $isLinkNode } from "@lexical/link";
@@ -18,7 +18,7 @@ export function isAlertTitleInSelection(lexicalSelection: RangeSelection) {
 
 export function isMarkdownEditorCodeInSelection(lexicalSelection: RangeSelection) {
   return lexicalSelection.getNodes().some((node) => {
-    const topNode = getNodeBeforeRoot(node);
+    const topNode = $getNodeBeforeRoot(node);
     return $isMakrdownEditorCodeNode(topNode);
   });
 }
@@ -31,14 +31,14 @@ export function isCodeInSelection(lexicalSelection: RangeSelection) {
   }
 
   return lexicalSelection.getNodes().some((node) => {
-    const topNode = getNodeBeforeRoot(node);
+    const topNode = $getNodeBeforeRoot(node);
     return $isCodeNode(topNode);
   });
 }
 
 function isH1InSelection(lexicalSelection: RangeSelection) {
   return lexicalSelection.getNodes().some((node) => {
-    const topNode = getNodeBeforeRoot(node);
+    const topNode = $getNodeBeforeRoot(node);
     if ($isHeadingNode(topNode)) {
       return topNode.getTag() === 'h1';
     }
@@ -48,7 +48,7 @@ function isH1InSelection(lexicalSelection: RangeSelection) {
 
 function isQuoteInSelection(lexicalSelection: RangeSelection) {
   return lexicalSelection.getNodes().some((node) => {
-    const topNode = getNodeBeforeRoot(node);
+    const topNode = $getNodeBeforeRoot(node);
     return topNode.getType() === 'quote';
   });
 }
