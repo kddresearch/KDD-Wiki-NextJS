@@ -44,9 +44,9 @@ const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
 }
 
 // Must be controlled input to hide input
-interface CommandInputProps<T extends boolean | undefined = undefined> extends React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input> {
+interface CommandInputProps<T extends boolean | undefined = undefined> extends Omit<React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>, 'value'> {
   hideInput?: T;
-  value: T extends true ? string : string | undefined; 
+  value?: T extends true ? string : string | undefined;
 }
 
 const CommandInput = React.forwardRef<

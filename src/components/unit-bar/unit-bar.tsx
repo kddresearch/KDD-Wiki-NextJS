@@ -1,4 +1,4 @@
-import KddUser from "@/models/kdd_user";
+import LegacyUser from "@/models/legacy-user";
 import Image from "next/image";
 import Link from "next/link";
 import { Search } from "react-bootstrap-icons";

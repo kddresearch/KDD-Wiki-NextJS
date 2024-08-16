@@ -8,7 +8,7 @@ import {
   remove,
 } from "@/db/wiki_user";
 import { checkAuthAPI } from "@/auth";
-import KddUser from "@/models/kdd_user";
+import LegacyUser from "@/models/legacy-user";
 import { AccessLevel } from "@/models/wikiuser";
 import WikiUser from "@/models/wikiuser";
 import { bodyParser, handleAPIError } from "@/utils/api";

@@ -111,7 +111,7 @@ export default function SlashCommandPlugin() {
         COMMAND_PRIORITY_HIGH,
       ),
     );
-  }, [editor]);
+  }, [editor, handleKeyArrowDown, handleKeyArrowUp, handleKeyEnter]);
 
   return (
     <LexicalTypeaheadMenuPlugin<ElementCommandOption>
