@@ -1,6 +1,10 @@
 "use client";
 
-import { $isElementNode, $isTextNode, LexicalEditor, RangeSelection } from "lexical";
+import {
+  $isTextNode,
+  LexicalEditor,
+  RangeSelection
+} from "lexical";
 import Typo from "typo-js";
 import localForage from 'localforage';
 import { $getNearestBlockElementAncestorOrThrow } from "@lexical/utils";
