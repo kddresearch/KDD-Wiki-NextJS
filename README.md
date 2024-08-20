@@ -1,14 +1,21 @@
-# [KDD Research Wiki](https://kdd-wiki-website.azurewebsites.net/)
+# KDD - Wiki - NextJS
 
-This is a wiki for the KDD Research Lab. 
+This is the wiki for the KDD Research Lab. Rewritten in NextJS as the
+framework, this wiki is aimed to me more maintainable and standardized
+to the current webapp standards.
 
-**ONLY ACCESSABLE ON THE K-STATE NETWORK**
+Includes a custom built WYSIWYG editor, full markdown support, and easy
+extensibility for extra pages and features
+
+**ONLY ACCESSIBLE ON THE K-STATE NETWORK**
 To access the website, you must be signed into the global protect vpn
 
-## Getting Started
+[KDDResearch.org](https://kdd-wiki-website.azurewebsites.net/)
+
+## Installation
 
 Install the proper tools:
-- NodeJS
+- NodeJS 20+
 - Docker
 - Azure CLI (Optional)
 
@@ -44,9 +51,12 @@ AZURE_TENANT_ID=
 AZURE_CLIENT_SECRET=
 ```
 
-## Run With Docker (Preferred)
+## Usage
 
-Install [Docker Desktop](https://docs.docker.com/desktop/install/windows-install/) and restart your PC
+### Run With Docker (Preferred)
+
+Install [Docker Desktop](https://docs.docker.com/desktop/install/windows-install/)
+and restart your PC
 
 Open the directory in the cli
 
@@ -64,3 +74,20 @@ docker-compose up --build kdd-wiki-prod
 
 Open [your browser](http://localhost:3000) to see the result.
 
+## Contributing
+
+If you would like to contribute to the KDD Wiki, fork the repository and follow
+the styling guidelines for this project. Code is not guaranteed to be
+accepted, but all contributions are welcome.
+
+### Security
+
+If you are reporting a vulnerability, follow the instructions in `SECURITY.md`
+
+## Confidentiality: Public
+
+> Access: Public Users
+
+This repository should remain a public repository, inviting contributions and
+letting others take advantage of the work done at KDD. This will be the first
+project in the Open Source line-up for KDD Research.
