@@ -15,29 +15,31 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DropdownMenuProps } from "@radix-ui/react-dropdown-menu";
-import { CircleAlert, Code, Heading, Heading1Icon, Heading2Icon, Heading3Icon, Info, Keyboard, Link, List, OctagonAlert, PlusCircle, Quote, Settings } from "lucide-react";
-
-import { $getSelection, $isRangeSelection, COMMAND_PRIORITY_EDITOR, createCommand, LexicalCommand, LexicalEditor } from "lexical";
-import { $insertNodeToNearestRoot, mergeRegister } from '@lexical/utils';
-import { $createHeadingNode } from "@lexical/rich-text";
-import { useEffect } from "react";
+import {
+  CircleAlert,
+  Code,
+  Heading,
+  Heading1Icon,
+  Heading2Icon,
+  Heading3Icon,
+  Info,
+  Keyboard,
+  Link,
+  List,
+  OctagonAlert,
+  PlusCircle,
+  Quote
+} from "lucide-react";
+import { LexicalEditor } from "lexical";
 import {
   COMMANDS
 } from "../insert-commands-plugin";
 
 import {
-  FaPython,
-  FaSquareJs,
-  FaSquare
-} from "react-icons/fa6";
-
-import {
   SiTypescript,
-  SiJavascript,
   SiMarkdown,
   SiPython
 } from "react-icons/si";
-
 
 interface InsertElementDropdownProps extends DropdownMenuProps {
   openKeyboardShortcuts: (open: boolean) => void;
