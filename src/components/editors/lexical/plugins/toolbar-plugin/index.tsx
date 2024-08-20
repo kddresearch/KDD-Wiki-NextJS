@@ -7,24 +7,29 @@ import {
   $isRangeSelection,
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
-  ElementNode,
-  FORMAT_ELEMENT_COMMAND,
   FORMAT_TEXT_COMMAND,
   REDO_COMMAND,
   SELECTION_CHANGE_COMMAND,
-  TextNode,
   UNDO_COMMAND,
-  $createTextNode
 } from "lexical";
 import {
-  $isLinkNode,
-  TOGGLE_LINK_COMMAND
-} from "@lexical/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+  useCallback,
+  useEffect,
+  useState
+} from "react";
 import * as React from "react";
-import { $isCodeNode } from '@lexical/code';
-
-import { Bold, Italic, Strikethrough, Undo, Redo, Settings, Bug, PictureInPicture2, Info, SquareMousePointer } from "lucide-react"
+import {
+  Bold,
+  Italic,
+  Strikethrough,
+  Undo,
+  Redo,
+  Settings,
+  Bug,
+  PictureInPicture2,
+  Info,
+  SquareMousePointer
+} from "lucide-react"
 import {
   ToggleGroup,
   ToggleGroupItem,
@@ -34,7 +39,15 @@ import { Separator } from "@/components/ui/separator";
 import KeyboardShortcutMenu from "./keyboard-shortcut-menu";
 import InsertElementDropdown from "./insert-dropdown";
 import CodeDropdown from "./code-dropdown";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 import { useSettings } from "../settings-context-plugin";
 import AboutDialog from "../dialog/about";
 import {
@@ -45,10 +58,14 @@ import {
   getStrikethroughStyling,
   isCodeInSelection
 } from "../../utils/styles";
-import { is } from "drizzle-orm";
 import { FaMarkdown } from "react-icons/fa6";
 import { TOGGLE_DIRECT_MARKDOWN_COMMAND } from "../markdown-plugin";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
 
 const LowPriority = 1;
 
