@@ -125,7 +125,6 @@ export function Disclaimer() {
 
 import {
   useEffect,
-  useMemo,
   useState
 } from 'react';
 
@@ -179,9 +178,19 @@ function Placeholder() {
   );
 }
 
-import { $createParagraphNode, $createTextNode, $getRoot, $getSelection, EditorState } from 'lexical';
-import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
-import { $createCodeNode, $createCodeHighlightNode } from '@lexical/code';
+import {
+  $createParagraphNode,
+  $createTextNode,
+  $getRoot
+} from 'lexical';
+import {
+  $createHeadingNode,
+  $createQuoteNode
+} from '@lexical/rich-text';
+import {
+  $createCodeNode,
+  $createCodeHighlightNode
+} from '@lexical/code';
 import { $createAlertNode } from './nodes/alert';
 import { $createAlertTitleNode } from './nodes/alert/title';
 import { $createAlertDescriptionNode } from './nodes/alert/description';
