@@ -1,13 +1,18 @@
-// utils/selection-utils.js
-import { $getSelection, $isRangeSelection, LexicalEditor, RangeSelection } from "lexical";
-import { containsNode, $getNodeBeforeRoot } from ".";
+import {
+  $getSelection,
+  $isRangeSelection,
+  LexicalEditor,
+  RangeSelection
+} from "lexical";
+import {
+  containsNode,
+  $getNodeBeforeRoot
+} from ".";
 import { $isCodeNode } from "@lexical/code";
 import { $isHeadingNode } from "@lexical/rich-text";
 import { $isLinkNode } from "@lexical/link";
 import { $isMakrdownEditorCodeNode } from "../nodes/markdown";
 import { $getNearestBlockElementAncestorOrThrow } from "@lexical/utils";
-
-
 
 export function isAlertTitleInSelection(lexicalSelection: RangeSelection) {
   return lexicalSelection.getNodes().some((node) => {
