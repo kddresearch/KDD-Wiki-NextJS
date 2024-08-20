@@ -68,3 +68,5 @@ export async function generateMetadata(
     title: title
   }
 }
+
+export const revalidate = false

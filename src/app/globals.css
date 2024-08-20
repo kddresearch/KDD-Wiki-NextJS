@@ -1,29 +1,46 @@
+@import url("https://use.typekit.net/inv7hae.css");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: #512888;
+    --primary-foreground: #fff;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: #F5F0FA;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: #F5F0FA;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
 @layer utilities {
@@ -46,3 +63,41 @@ body {
   background-color: rgba(81, 40, 136, .9); /* Set the selection background color to purple */
   color: white; /* Set the text color to white */
 }
+
+.gradient-text {
+  background: linear-gradient(90deg, var(--primary), #3498db);
+  background-size: 400% 100%;
+  animation: gradient-animation 10s ease infinite;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-shadow {
+  animation: shadow-animation 10s ease infinite;
+}
+
+@keyframes shadow-animation {
+  0% {
+    text-shadow: 0 0 10px #7A288A, 0 0 20px #3498db, 0 0 30px #7A288A;
+  }
+  50% {
+    text-shadow: 0 0 10px #3498db, 0 0 20px #7A288A, 0 0 30px #3498db;
+  }
+  100% {
+    text-shadow: 0 0 10px #7A288A, 0 0 20px #3498db, 0 0 30px #7A288A;
+  }
+}
+

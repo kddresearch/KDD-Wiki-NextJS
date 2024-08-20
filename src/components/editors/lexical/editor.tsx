@@ -1,206 +1,226 @@
-// "use client";
+"use client";
 
-// // lexical
-// import { HashtagPlugin } from "@lexical/react/LexicalHashtagPlugin";
-// import { PlainTextPlugin } from "@lexical/react/LexicalPlainTextPlugin";
-// import useLexicalEditable from "@lexical/react/useLexicalEditable";
-// import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
-// import { LexicalComposer } from "@lexical/react/LexicalComposer";
-// import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-// import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-// import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-// import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
-// import { $createTextNode, $getRoot, $getSelection } from "lexical";
-// import { useEffect, useState } from "react";
-// // import {
-// //   $convertFromMarkdownString,
-// //   $convertToMarkdownString,
-// //   TRANSFORMERS,
-// // } from '@lexical/markdown';
-// import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import {Suspense, useCallback, useEffect, useState} from 'react';
+import theme, { Disclaimer, populatePlainText } from "./theme";
 
-// // Nodes
-// // import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
-// // import editorNodes from "./nodes";
+import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
+import { InitialConfigType, LexicalComposer } from '@lexical/react/LexicalComposer';
+import { $getRoot, LexicalEditor } from 'lexical';
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { ContentEditable } from '@lexical/react/LexicalContentEditable';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
+import MarkdownPlugin, { TOGGLE_DIRECT_MARKDOWN_COMMAND } from "./plugins/markdown-plugin";
+import ToolbarPlugin from './plugins/toolbar-plugin';
+import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
+import { useToast } from "@/components/ui/use-toast"
 
+import { $convertFromMarkdownString, $convertToMarkdownString } from '@lexical/markdown';
 
-// // custom plugins
-// import ToolbarPlugin from "./plugins/toolbar-plugin";
-// import theme from "./theme";
-// import DraggableBlockPlugin from "./plugins/draggable-node-plugin";
-// import MarkdownPlugin from "./plugins/markdown-plugin";
-// import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
+import editorNodes from './nodes';
+import { ListPlugin } from './plugins/list-plugin';
 
-// function onError(error: Error) {
-//   console.error(error);
-// }
+import { Placeholder, prePopulate } from './theme';
+import CodeHighlightPlugin from './plugins/code-highlighting-plugin';
+import ContextMenuPlugin from './plugins/context-menu-plugin';
+import dynamic from 'next/dynamic';
+import InsertCommandsPlugin from './plugins/insert-commands-plugin';
+import { SettingsContext, useSettings } from './plugins/settings-context-plugin';
+import SelectionToolbarPlugin from './plugins/selection-toolbar-plugin';
+import DebugToolbar from './plugins/debug-toolbar-plugin';
+import { KDD_TRANSFORMERS } from './plugins/markdown-plugin/transform';
+import KeyboardCommandsPlugin from './plugins/keyboard-commands-plugin';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { $createMakrdownEditorCodeNode, $isMakrdownEditorCodeNode } from './nodes/markdown';
+import SlashCommandPlugin from './plugins/slash-command-plugin';
+import { EditLinkPlugin } from './plugins/edit-link-plugin';
 
-// function Placeholder() {
-//   return <div className="text-lightgray overflow-hidden absolute text-ellipsis top-[15px] left-[10px] text-normal select-none inline-block pointer-events-none">
-//     Enter some rich text...
-//   </div>;
-// }
-
-// function prePopulate() {
-//   const root = $getRoot();
-//   if (root.getFirstChild() === null) {
-//     // const heading = $createHeadingNode("h1");
-
-//     // root.append(heading);
-
-//     // heading.append($createTextNode("Hello world!"));
-//     // root.append(heading);
-
-//     // const quote = $createQuoteNode();
-//     // quote.append($createTextNode("This is a quote for everyone talking about how good lexical is as a framework."));
-//     // root.append(quote);
-//   }
-//   const selection = $getSelection();
-
-// }
-
-// const TextEditor = ({
-//   markdown,
-//   onContentChange,
-// }: {
-//   markdown?: string;
-//   onContentChange: (newContent: string) => void;
-// }) => {
-//   const [isClient, setIsClient] = useState(false);
-
-//   useEffect(() => {
-//     setIsClient(true);
-//   }, []);
-
-//   const initialConfig = {
-//     // editorState: markdown ? () => $convertFromMarkdownString(markdown) : prePopulate,
-//     namespace: "editor",
-//     // nodes: [...editorNodes],
-//     onError: onError,
-//     theme: theme,
-//   };
-
-//   const [foatingAnchorElm, setFloatingAnchorElm] = useState<HTMLDivElement | null>(null);
-
-//   const onRef = (_floatingAnchorElem: HTMLDivElement) => {
-//     if (_floatingAnchorElem !== null) {
-//       _floatingAnchorElem.id = "floating-anchor";
-//       _floatingAnchorElem.className = "relative";
-//       setFloatingAnchorElm(_floatingAnchorElem);
-//     }
-//   };
-
-//   return (
-//     <>
-//       {isClient ? (
-//         <LexicalComposer initialConfig={initialConfig}>
-//           <Editor
-//             onContentChange={onContentChange}
-//             onRef={onRef}
-//             foatingAnchorElm={foatingAnchorElm}
-//           />
-//         </LexicalComposer>
-//       ) : (
-//         <div>Loading editor... (enable javascript)</div>
-//       )}
-//     </>
-//   );
-// };
-
-// const Editor = ({ 
-//   onContentChange,
-//   onRef,
-//   foatingAnchorElm,
-// }: { 
-//   onContentChange: (newContent: string) => void; 
-//   onRef: (elem: HTMLDivElement) => void;
-//   foatingAnchorElm: HTMLDivElement | null;
-// }) => {
-//   const [editor] = useLexicalComposerContext();
-
-//   useEffect(() => {
-//     return editor.registerUpdateListener(({ editorState }) => {
-//       // onContentChange(editorState.read(() => $convertToMarkdownString()));
-//     });
-//   }, [editor, onContentChange]);
-
-//   return (
-//     <div id="hello" className="my-5 text-black relative leading-5 font-normal text-left rounded-t-lg border-gray border rounded-b-lg">
-//       <ToolbarPlugin />
-//       <div id="world" className="bg-white relative prose max-w-none prose-h1:text-purple prose-a:text-purple prose-a:underline">
-//         <RichTextPlugin
-//           contentEditable={
-//             <div className="editor-scroller">
-//               <div className="editor" ref={onRef}>
-//                 <ContentEditable className="min-h-[150px] resize-none text-[15px] caret-[#444)] relative tab-[1] outline-none p-[15px_10px] caret-[#444] pl-7" />
-//               </div>
-//             </div>
-//           }
-//           placeholder={<Placeholder />}
-//           ErrorBoundary={LexicalErrorBoundary}
-//         />
-//         <HistoryPlugin />
-//         {/* <MarkdownPlugin /> */}
-//         <MarkdownShortcutPlugin />
-//         <AutoFocusPlugin />
-//         {foatingAnchorElm ? <DraggableBlockPlugin anchorElem={foatingAnchorElm} /> : null}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default TextEditor;
-
-
-import {$getRoot, $getSelection} from 'lexical';
-import {useEffect} from 'react';
-
-import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
-import {LexicalComposer} from '@lexical/react/LexicalComposer';
-import {RichTextPlugin} from '@lexical/react/LexicalRichTextPlugin';
-import {ContentEditable} from '@lexical/react/LexicalContentEditable';
-import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
-import {LexicalErrorBoundary} from '@lexical/react/LexicalErrorBoundary';
-// import ToolbarPlugin from './plugins/toolbar-plugin';
-
-function onError(error: Error) {
-  console.error(error);
+interface MarkdownEditorProps {
+  markdown?: string;
+  onMardownContentChange?: (newMarkdownContent: string) => void;
+  usePrePopulated?: boolean;
+  useMarkdownShortcuts?: boolean;
+  disableMarkdown?: boolean;
+  onError: (error: Error, editor: LexicalEditor) => void;
 }
 
-const theme = {
-  // Theme styling goes here
-  //...
-}
+function Editor({
+  markdown,
+  onMardownContentChange,
+  usePrePopulated,
+  useMarkdownShortcuts = true,
+  disableMarkdown,
+  onError,
+}: 
+  MarkdownEditorProps  
+) {
+  const {
+    setOption,
+    settings: {
+      isDebug,
+      useSelectionToolbar,
+      editInMarkdown,
+      disableContextMenu
+    },
+  } = useSettings();
 
-function Placeholder() {
-  return <div className="text-lightgray overflow-hidden absolute text-ellipsis top-[15px] left-[10px] text-normal select-none inline-block pointer-events-none">
-    Enter some rich text...
-  </div>;
-}
+  const populateMarkdownEditor = useCallback((prePopulate?: () => void) => {
+    let markdownString;
 
-function Editor() {
+    if (prePopulate) {
+      prePopulate();
+      markdownString = $convertToMarkdownString(KDD_TRANSFORMERS);
+    }
+
+    if (!editInMarkdown) {
+      setOption('editInMarkdown', true);
+    }
+
+    const root = $getRoot();
+    root
+      .clear()
+      .append(
+        $createMakrdownEditorCodeNode(markdownString ?? '')
+      );
+  }, [editInMarkdown, setOption]);
+
+  // console.log('editInMarkdown', editInMarkdown);
+
   const initialConfig = {
-    namespace: 'MyEditor',
-    theme,
-    onError,
+    editorState: usePrePopulated
+    ? editInMarkdown
+      ? () => populateMarkdownEditor(() => prePopulate())
+      : () => prePopulate()
+    : editInMarkdown
+      ? () => populateMarkdownEditor(() => $convertFromMarkdownString(markdown ?? '', KDD_TRANSFORMERS))
+      : () => $convertFromMarkdownString(markdown ?? '', KDD_TRANSFORMERS),
+    namespace: 'KDD-MD-Editor',
+    nodes: [...editorNodes],
+    theme: theme,
+    onError: onError
   };
 
-  return (
-    <LexicalComposer initialConfig={initialConfig}>
-      {/* <ToolbarPlugin /> */}
-      <RichTextPlugin
-        contentEditable={<ContentEditable />}
-        placeholder={<Placeholder/>}
-        ErrorBoundary={LexicalErrorBoundary}
-      />
-      <HistoryPlugin />
-      <AutoFocusPlugin />
-    </LexicalComposer>
-  );
-}
+  const proseClasses = 'relative prose max-w-none prose-h1:text-purple prose-a:text-purple prose-a:underline';
+  const spellcheck = true;
 
-function textEditor() {
+  const contentEditable = (
+    <ContentEditable
+      id="lexical-text-editable"
+      className={`bg-white min-h-40 resize-none text-sm caret-darkGray relative outline-none mx-2 my-4 caret-current px-6 ${proseClasses}`}
+      spellCheck={spellcheck}
+    />
+  );
+  
+  const editableContent = disableContextMenu ? contentEditable : (
+    <ContextMenuPlugin spellcheck={spellcheck}>
+      {contentEditable}
+    </ContextMenuPlugin>
+  );
+
+  return (
+    <>
+      {editInMarkdown && <Disclaimer />}
+      <LexicalComposer initialConfig={initialConfig}>
+        <div id="lexical-KDD-Editor" className="bg-white text-black relative leading-5 font-normal text-left rounded-lg border-gray border">
+          <ToolbarPlugin />
+          <RichTextPlugin
+            contentEditable={editableContent}
+            placeholder={<Placeholder/>}
+            ErrorBoundary={LexicalErrorBoundary}
+          />
+          <HistoryPlugin />
+          <AutoFocusPlugin />
+          <ListPlugin />
+          <InsertCommandsPlugin />
+          <CodeHighlightPlugin />
+          <LinkPlugin />
+          <EditLinkPlugin />
+          <KeyboardCommandsPlugin />
+          <SlashCommandPlugin />
+          <MarkdownPlugin useMarkdownShortcuts={useMarkdownShortcuts} onMardownContentChange={onMardownContentChange} />
+          {useSelectionToolbar && <SelectionToolbarPlugin />}
+          {isDebug && <DebugToolbar />}
+        </div>
+      </LexicalComposer>
+    </>
+
+  );
+};
+
+function Loading() {
   return <div>Loading editor... (enable javascript)</div>;
 }
 
-export default Editor;
+function TextEditor({
+  markdown,
+  onMardownContentChange,
+  usePrePopulated,
+  useMarkdownShortcuts,
+  showDisclaimer = true,
+  disableMarkdown = false,
+}: {
+  markdown?: string;
+  onMardownContentChange?: (newMarkdownContent: string) => void;
+  usePrePopulated?: boolean;
+  useMarkdownShortcuts?: boolean;
+  showDisclaimer?: boolean;
+  disableMarkdown?: boolean;
+}) {
+  const { toast } = useToast();
+
+  const onError = (error: Error) => {
+    console.error('Lexical Error:', error);
+    toast({
+      title: 'An unexpected error occurred in the editor',
+      description: error.message,
+    });
+  };
+
+  return (
+    <LexicalErrorBoundary onError={onError}>
+      <SettingsContext>
+        <Editor
+          markdown={markdown}
+          onMardownContentChange={onMardownContentChange}
+          usePrePopulated={usePrePopulated}
+          useMarkdownShortcuts={useMarkdownShortcuts}
+          disableMarkdown={disableMarkdown}
+          onError={onError}
+        />
+      </SettingsContext>
+    </LexicalErrorBoundary>
+  )
+}
+
+const DynamicKDDEditor = dynamic(() => Promise.resolve(TextEditor), { ssr: false });
+
+function KDDEditor({
+  markdown,
+  onMardownContentChange,
+  usePrePopulated,
+  useMarkdownShortcuts,
+  showDisclaimer,
+  disableMarkdown,
+}: {
+  markdown?: string;
+  onMardownContentChange?: (newMarkdownContent: string) => void;
+  usePrePopulated?: boolean;
+  useMarkdownShortcuts?: boolean;
+  showDisclaimer?: boolean;
+  disableMarkdown?: boolean;
+}) {
+  return (
+    <Suspense fallback={<Loading />}>
+      <DynamicKDDEditor
+        markdown={markdown}
+        onMardownContentChange={onMardownContentChange}
+        usePrePopulated={usePrePopulated}
+        useMarkdownShortcuts={useMarkdownShortcuts}
+        showDisclaimer={showDisclaimer}
+        disableMarkdown={disableMarkdown}
+      />
+    </Suspense>
+  );
+}
+
+export default KDDEditor;

@@ -1,28 +1,25 @@
-import { 
-    Pool,
-    QueryResult,
+import {
     Client,
     PoolConfig
 } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { sql } from "drizzle-orm";
 import getConfig from "@/config";
-const env_config = await getConfig();
-
-let poolConfig: PoolConfig;
-
-poolConfig = {
-    user: env_config!.Db!.Username,
-    host: env_config!.Db!.Host,
-    database: env_config!.Db!.Name,
-    password: env_config!.Db!.Password,
-    port: parseInt(env_config!.Db!.Port?.toString() || "5432"), // Default port is 5432, if not specified
-    ssl: true
-}
 
 let db: ReturnType<typeof drizzle>;
 
 async function connectDrizzle() {
+    const env_config = await getConfig();
+
+    const poolConfig: PoolConfig = {
+        user: env_config!.Db!.Username,
+        host: env_config!.Db!.Host,
+        database: env_config!.Db!.Name,
+        password: env_config!.Db!.Password,
+        port: parseInt(env_config!.Db!.Port?.toString() || "5432"), // Default port is 5432, if not specified
+        ssl: true
+    }
+
     try {
         const client = new Client(poolConfig);
         await client.connect();

@@ -1,7 +1,7 @@
 import WikiUser from "../models/wikiuser";
 import { wikiUserTable } from "@/schema/wiki_user";
 import { db } from "../db"
-import { eq, inArray, isNull, or, asc, desc, and } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 
 async function fetchAll(): Promise<WikiUser[]> {
     try {

@@ -1,5 +1,3 @@
-version: '3.5'
-
 services:
   kdd-wiki-dev:
     container_name: kdd-wiki-dev

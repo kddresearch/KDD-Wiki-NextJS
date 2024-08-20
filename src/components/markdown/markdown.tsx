@@ -1,13 +1,14 @@
-import fs from 'fs';
+import 'server-only';
 import React from 'react';
 import classNames from 'classnames';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Card from '@/components/layout/card';
 import Link from 'next/link';
+import fs from 'fs';
 
 const components = { Card, Link };
 
-async function RenderMarkdownString({ 
+export async function RenderMarkdownString({ 
   markdown, 
   ...props 
 }: { 
@@ -23,7 +24,7 @@ async function RenderMarkdownString({
   );
 }
 
-function RenderMarkdownFile({ 
+export function RenderMarkdownFile({ 
   filePath, 
   ...props 
 }: { 
@@ -33,5 +34,3 @@ function RenderMarkdownFile({
   const fileContent = fs.readFileSync(filePath, 'utf8');
   return <RenderMarkdownString markdown={fileContent} {...props} />;
 }
-
-export { RenderMarkdownFile, RenderMarkdownString };

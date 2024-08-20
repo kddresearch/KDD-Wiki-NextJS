@@ -1,26 +1,11 @@
-import { signIn } from "@/auth";
-import { ArrowUpRight } from "react-bootstrap-icons";
+import { handleSignIn } from "@/actions/auth";
+import { Button } from "@/components/ui/button";
+import { SignInButton } from "./signinbutton";
 
-export function SignIn({
-  provider = "google",
-  ...props
-}: { provider?: string } & React.HTMLAttributes<HTMLButtonElement>) {
+export function SignIn() {
   return (
-    <form
-      action={async () => {
-        "use server";
-        await signIn(provider);
-      }}
-    >
-      <button
-        className="align-middle h-8 min-w-max text-bold hover:underline"
-        {...props}
-      >
-        Log In
-        <span className="inline-block pl-1 align-middle text-bold">
-          <ArrowUpRight />
-        </span>
-      </button>
+    <form action={handleSignIn}>
+      <SignInButton/>
     </form>
   );
 }

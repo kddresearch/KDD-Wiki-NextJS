@@ -12,7 +12,7 @@ export default async function Footer() {
   return (
     <>
       <Breadcrumb />
-      <footer className="bg-gray h-auto md:h-32">
+      <footer className="bg-lightgray h-auto md:h-32">
         <div className="container flex flex-row md:flex-row h-full">
           <Link className="grow md:w-auto" href={"https://www.k-state.edu"}>
             <Image

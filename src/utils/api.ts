@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import WikiUser from "../models/wikiuser";
-import KddUser from "../models/kdd_user";
 import rCategory from "../models/rcategory";
 import rCategoryMember from "../models/rcategory_member";
 import { BlobStorageError } from "../files";

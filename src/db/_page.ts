@@ -1,4 +1,4 @@
-import Page from "../models/_page";
+import Page from "../models/legacy-page";
 import { pageTable } from "@/schema/_page";
 import { db } from "../db"
 import { eq, inArray, isNull, or, asc, desc } from 'drizzle-orm'
@@ -114,6 +114,8 @@ async function insert(page: Page): Promise<Page> {
   
 async function update(page: Page): Promise<Page> {
     try {
+        console.log('updating page', page);
+
         const result = await db!.update(pageTable)
         .set({
             title: page.title,
@@ -131,8 +133,11 @@ async function update(page: Page): Promise<Page> {
             is_template : page.is_template,
         })
         .where(eq(pageTable.id,page.id))
+        .returning();
+
+        console.log('result', result);
   
-        return new Page(result.rows[0]);
+        return new Page(result[0]);
     } catch (err) {
         console.error("Error occurred during query execution:", err);
         throw err;

@@ -10,6 +10,7 @@ import { notFound, redirect } from "next/navigation";
 import { NextResponse } from "next/server";
 import { renderToString } from 'react-dom/server'; // Import renderToString
 import { URL } from 'url';
+import { deepJsonCopy } from "@/utils/json";
 
 async function editPage({ 
   params 
@@ -28,22 +29,13 @@ async function editPage({
   if (page == null)
     return notFound();
 
-  // let pageAuthorization = page.is_private ? AccessLevel.Member : AccessLevel.ReadOnly;
-  let pageAuthorization = AccessLevel.Admin;
+  let pageAuthorization = page.is_private ? AccessLevel.Member : AccessLevel.ReadOnly;
   let user = await checkAuth(pageAuthorization);
-
-  const generateRedirectUrl = (message: string) => {
-    const path = `/notauthorized/?message=${encodeURIComponent(message)}&callback=/page/${params.id}/edit`;
-    return path;
-  };
-
-  if (user == null)
-    return redirect(generateRedirectUrl("You must be an admin to edit pages"));
 
   return (
     <StripeBackDrop>
       <Card title="Edit Page">
-        <PageEditor inputPage={page.toJSON()}/>
+        <PageEditor inputPage={deepJsonCopy(page)}/>
       </Card>
     </StripeBackDrop>
   );

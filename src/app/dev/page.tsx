@@ -1,43 +1,45 @@
 "use client";
 
-import Link from "next/link";
-import { Arrow90degRight } from "react-bootstrap-icons";
-import Category from "@/models/nav-model/category";
-import NavItem from "@/models/nav-model/nav_item";
 import Breadcrumb from "@/components/breadcrumb";
 import StripeBackDrop from "@/components/layout/backdrop";
 import Card from "@/components/layout/card";
 import TextEditor from "@/components/editors/lexical/editor";
-import { useState, useEffect } from 'react';
-
-// Lexical
-
-const fetchData = async () => {
-  try {
-    const response = await fetch('/api/user/self');
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    const data = await response.text();
-    return data;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    return "Error fetching data!";
-  }
-};
 
 const Dev = () => {
+  const defaultMarkdownContent = `
+> [!NOTEing:|destructive]
+> woah this is the DEV PAGE bro idk if you should be here.
+> errmmm
 
-  const [apiData, setApiData] = useState('');
+> [!NOTEing:|primary]
+> Starting in .NET 9, a build warning is emitted if your project targets .NET Standard 1.x.
+> 
+> For more information, see Warning emitted for .NET Standard 1.x targets.
 
-  useEffect(() => {
-    const fetchApiData = async () => {
-      const data = await fetchData();
-      setApiData(data);
-    };
+> [!NOTEing:|default]
+> if you find this please fix my bugs bro please please please
+> pls pls pls pls pls pls
 
-    fetchApiData();
-  }, []);
+> I hope that quotes still work too... lol
+
+[Link](https://www.google.com)
+
+> [Link in a quote](https://www.google.com) lol
+
+### This list is fine
+
+- HELLO 1
+- WORLD 1
+    - TESTING 2
+        - INDENTING 3
+
+### This list is weird
+
+- HELLO 1
+- WORLD 1
+- TESTING 2
+        - INDENTING 3
+`.trim();
 
   return (
     <div className="h-full flex flex-col">
@@ -45,14 +47,12 @@ const Dev = () => {
 
       <StripeBackDrop>
         <Card title="hello testing">
-          <TextEditor 
-            // onContentChange={() => {}}
-          />
+          <TextEditor usePrePopulated={true} />
         </Card>
-        <Card title="Testing the api!">
-          <p className="prose prose-code">
-            <pre>{apiData}</pre>
-          </p>
+        <Card title="Testing the markdown">
+          <TextEditor
+            markdown={defaultMarkdownContent}
+          />
         </Card>
         <Card title="hello testing">THIS IS THE NEW VERSION pushed from the azure registry</Card>
         <Card title="hello testing">dwa id</Card>

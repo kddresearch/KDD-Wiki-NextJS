@@ -1,18 +1,26 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Open_Sans } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
+const openSans = Open_Sans({ subsets: ["latin"] });
+
 export const metadata: Metadata = {
   title: "KSU KDD Wiki",
   description: "Wiki for the KSU KDD Research group",
   icons: ["/favicon.ico"],
-  robots: "noindex, nofollow",
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+  }
 };
+
 
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import Script from "next/script";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function RootLayout({
   children,
@@ -21,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className + " flex flex-col h-screen"}>
+      <body className={`font-ksu-fonts flex flex-col h-screen`}>
         <Script type="text/javascript" id="MS Clarity">
           {`
             (function(c,l,a,r,i,t,y){
@@ -34,6 +42,7 @@ export default function RootLayout({
         <Header />
         <div className="grow">{children}</div>
         <Footer />
+        <Toaster />
       </body>
     </html>
   );

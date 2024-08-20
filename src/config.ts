@@ -1,4 +1,4 @@
-import 'server-only'
+import 'server-only';
 import ConfigLoader from './config/loader';
 import ConfigStructure from './config/interface';
 

@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: ['next-mdx-remote'],
   images: {
     remotePatterns: [
       { 
@@ -21,6 +22,12 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "www.kddresearch.org",
+      },
+      {
+        protocol: "https",
+        hostname: "icons.duckduckgo.com",
+        port: '',
+        pathname: '/ip3/**.ico',
       }
     ],
   },
@@ -33,6 +40,11 @@ const nextConfig = {
     }
     return config
   },
+  experimental: {
+    turbo: {
+      
+    }
+  }
 };
 
 export default nextConfig;

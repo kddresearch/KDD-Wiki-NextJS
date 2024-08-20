@@ -4,14 +4,16 @@ import StripeBackDrop from "@/components/layout/backdrop"
 import Card from "@/components/layout/card"
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { BoxArrowUpRight, Github } from "react-bootstrap-icons";
 import IssueReportButton from "@/components/buttons/report";
 
 export default function NotAuthorized() {
   const pathname = usePathname();
 
   const message = useSearchParams()?.get("message");
+  const error = useSearchParams()?.get("error");
   const callback = useSearchParams()?.get("callback");
+
+  console.log("NotAuthorized:", {message, error, callback});
 
   return( 
     <StripeBackDrop>

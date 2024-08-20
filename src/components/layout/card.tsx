@@ -28,6 +28,7 @@ function Card({
     'text-lg',
     'my-8',
     'shadow-md',
+    'gap-5',
     props.className
   );
 

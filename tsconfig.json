@@ -11,12 +11,12 @@
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
-    // "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "allowSyntheticDefaultImports": true,
     "plugins": [
       {
         "name": "next"
@@ -27,13 +27,15 @@
         "./src/*"
       ]
     },
-    "module": "esnext"
+    "module": "esnext",
+    "types": ["vitest/globals"]
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "tw-css-plugin.js"
   ],
   "exclude": [
     "node_modules"
