@@ -1,14 +1,24 @@
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { cloneElement, Fragment, LegacyRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef
+} from "react";
 import {
   LexicalTypeaheadMenuPlugin,
   MenuOption,
-  MenuTextMatch,
   useBasicTypeaheadTriggerMatch,
 } from '@lexical/react/LexicalTypeaheadMenuPlugin';
-import { COMMAND_PRIORITY_LOW, COMMAND_PRIORITY_NORMAL, COMMAND_PRIORITY_HIGH, KEY_ARROW_DOWN_COMMAND, KEY_ARROW_UP_COMMAND, KEY_ENTER_COMMAND, LexicalEditor, TextNode } from "lexical";
-// import { fireEvent } from "@testing-library/react";
-import { $getNearestBlockElementAncestorOrThrow, mergeRegister } from "@lexical/utils";
+import {
+  COMMAND_PRIORITY_LOW,
+  COMMAND_PRIORITY_NORMAL,
+  COMMAND_PRIORITY_HIGH,
+  KEY_ARROW_DOWN_COMMAND,
+  KEY_ARROW_UP_COMMAND,
+  KEY_ENTER_COMMAND,
+  TextNode
+} from "lexical";
+import { mergeRegister } from "@lexical/utils";
 
 import { CommandMenu } from "./menu";
 import { Command } from "@/components/ui/command";
