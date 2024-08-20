@@ -56,8 +56,6 @@ export async function PATCH(
 
         const updatedPage = await bodyParser(req, Page);
 
-        console.log('updatedPage', updatedPage);
-
         page.update(updatedPage);
         page = await update(page);
 
