@@ -1,12 +1,15 @@
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import React, { cloneElement, Fragment, LegacyRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  LexicalTypeaheadMenuPlugin,
-  MenuOption,
-  MenuTextMatch,
-  useBasicTypeaheadTriggerMatch,
-} from '@lexical/react/LexicalTypeaheadMenuPlugin';
-// import { fireEvent } from "@testing-library/react";
+  cloneElement,
+  ElementRef,
+  ComponentPropsWithoutRef,
+  forwardRef,
+  Fragment,
+  LegacyRef,
+  useCallback,
+  useEffect,
+  useState
+} from "react";
 import {
   Command,
   CommandDialog,
@@ -16,25 +19,31 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-  CommandShortcut,
 } from "@/components/ui/command"
 
 import * as Portal from '@radix-ui/react-portal';
-import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover";
-import { $getNearestBlockElementAncestorOrThrow, mergeRegister } from "@lexical/utils";
-import { nodeKeyboardShortcuts, Shortcut } from "../../nodes";
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent
+} from "@/components/ui/popover";
+import { $getNearestBlockElementAncestorOrThrow } from "@lexical/utils";
+import {
+  nodeKeyboardShortcuts,
+  Shortcut
+} from "../../nodes";
 import { $splitNodeContainingQuery } from "../../utils";
 import { useSettings } from "../settings-context-plugin";
 
-interface CommandProps extends React.ComponentPropsWithoutRef<typeof Command> {
+interface CommandProps extends ComponentPropsWithoutRef<typeof Command> {
   open: boolean;
   queryString: string | null;
   anchorElement: HTMLElement | null;
   ref?: LegacyRef<HTMLDivElement>;
 }
 
-const commandMenu = React.forwardRef<
-  React.ElementRef<typeof Command>,
+const commandMenu = forwardRef<
+  ElementRef<typeof Command>,
   CommandProps
 >(({ open, queryString, anchorElement, ...props }, ref) => {
   const [editor] = useLexicalComposerContext();
