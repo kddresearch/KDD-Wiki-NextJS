@@ -6,11 +6,6 @@ export const createBlockNode = (
   createNode: (match: Array<string>) => ElementNode,
 ): ElementTransformer['replace'] => {
   return (parentNode, children, match) => {
-
-    console.log('match', match);
-    console.log('parentNode', parentNode);
-    console.log('children', children);
-
     const node = createNode(match);
     node.append(...children);
     parentNode.replace(node);
