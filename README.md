@@ -16,8 +16,8 @@ To access the website, you must be signed into the global protect vpn
 
 Install the proper tools:
 - NodeJS 20+
+- pnpm
 - Docker
-- Azure CLI (Optional)
 
 Next, fill out all the required secrets:
 

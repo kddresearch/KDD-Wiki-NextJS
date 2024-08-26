@@ -1,8 +1,7 @@
 import Page from "../models/legacy-page";
 import { pageTable } from "@/schema/_page";
-import { db } from "../db"
-import { eq, inArray, isNull, or, asc, desc } from 'drizzle-orm'
-
+import { db } from "../db";
+import { eq, inArray, isNull, or, asc, desc } from 'drizzle-orm';
 
 if (db === null) {
     console.error("Database is not initialized");
