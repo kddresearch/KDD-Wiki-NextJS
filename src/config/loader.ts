@@ -9,7 +9,6 @@ class ConfigLoader {
     private secretClient: SecretClient | null = null;
 
     constructor(private keyVaultName?: String) {
-
         if (keyVaultName === undefined) {
             return;
         }
@@ -31,16 +30,16 @@ class ConfigLoader {
             return this.config;
         }
 
-        if (this.config.Keystore?.Active) {
-            return this.config;
+        if (this.config.Keystore?.Provider !== undefined) {
             console.log("Keystore is active, skipping keyvault load")
+            return this.config;
         }
 
-        await this.loadFromKeyVault();
+        await this.loadFromKeystore();
         return this.config;
     }
 
-    private async loadFromKeyVault() {
+    private async loadFromKeystore() {
 
         const start = Date.now();
 
@@ -58,16 +57,11 @@ class ConfigLoader {
 
                 secretTimes.push({ secretName, timeTaken });
 
-                // console.log("Secret Name:", secretName);
                 this.setConfigValue(secretName, secret.value! as string);
             }));
         }
 
         await Promise.all(secretPromises);
-
-        // secretTimes.forEach(({ secretName, timeTaken }) => {
-        //     console.log(`${timeTaken} ms, ${secretName}`);
-        // });
 
         console.log("Required reload of secrets");
         console.log("Time to load secrets:", Date.now() - start, "ms");
@@ -87,12 +81,12 @@ class ConfigLoader {
     }
 
     private async loadFromEnv() {
-
-        // console.log('Loading from environment variables')
-
         this.config = {
-            port: Number(process.env.PORT) || 3000,
-            isdevelopment: process.env.NODE_ENV !== 'production',
+            port: Number(process.env.PORT) || 3000, // Defualt port 3000
+            isdevelopment: process.env.NODE_ENV !== 'production', // Default to development
+            Keystore: {
+                Provider: process.env.KEYSTORE_PROVIDER,
+            },
             Auth: {
                 Secret: process.env.AUTH_SECRET,
                 Google: {

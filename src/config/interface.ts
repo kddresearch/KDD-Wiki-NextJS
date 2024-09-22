@@ -1,7 +1,7 @@
 interface ConfigStructure {
     // Local and Azure Configurations
     Keystore?: {
-        Active: boolean;
+        Provider: string | undefined;
     };
     Auth?: {
         Secret: string | undefined;
