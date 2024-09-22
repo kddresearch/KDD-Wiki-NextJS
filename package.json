@@ -15,6 +15,7 @@
   "dependencies": {
     "@azure/core-http": "^3.0.4",
     "@azure/identity": "^4.3.0",
+    "@azure/keyvault-keys": "^4.8.0",
     "@azure/keyvault-secrets": "^4.8.0",
     "@azure/storage-blob": "^12.23.0",
     "@emotion/react": "^11.11.4",
@@ -68,6 +69,7 @@
     "@radix-ui/react-visually-hidden": "^1.1.0",
     "@types/mdx": "^2.0.13",
     "@vercel/otel": "^1.9.1",
+    "aws-sdk": "^2.1691.0",
     "axios": "^1.7.2",
     "bootstrap-icons": "^1.11.3",
     "class-variance-authority": "^0.7.0",
