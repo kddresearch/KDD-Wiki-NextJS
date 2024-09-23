@@ -1,70 +1,64 @@
 import 'server-only'
 
-import { DefaultAzureCredential } from '@azure/identity';
-import { SecretClient } from '@azure/keyvault-secrets';
 import ConfigStructure from './interface';
+import { ISecretStore } from '@/interfaces/secret-store';
+import { AzureSecretStore } from '@/keystore/azure-secret-store';
+import { AWSSecretStore } from '@/keystore/aws-secret-store';
 
 class ConfigLoader {
-    private config: Partial<ConfigStructure> = {};
-    private secretClient: SecretClient | null = null;
+    private config?: ConfigStructure;
+    private secretClient?: ISecretStore;
 
-    constructor(private keyVaultName?: String) {
-        if (keyVaultName === undefined) {
-            return;
+    constructor() {
+        const provider = process.env.WIKI_SECRETSTORE_PROVIDER;
+
+        if (!provider) {
+            this.secretClient = undefined;
+            console.log("No secret store provider found");
+        } else if (provider === 'azure') {
+            this.secretClient = new AzureSecretStore();
+            console.log("Azure key vault loaded");
+        } else if (provider === 'aws') {
+            this.secretClient = new AWSSecretStore();
+            console.log("AWS secret manager loaded");
+        } else {
+            throw new Error(`Invalid secret store provider ${provider}`);
         }
 
-        const credential = new DefaultAzureCredential();
-        const url = `https://${keyVaultName}.vault.azure.net`;
-        this.secretClient = new SecretClient(url, credential);
+        this.loadConfig();
+
+        console.log("Config Loaded");
     }
 
-    async loadConfig(): Promise<Partial<ConfigStructure>> {
-        await this.loadFromEnv();
+    async loadConfig(): Promise<ConfigStructure> {
+        let config = await this.loadFromEnv();
 
         if (!this.secretClient) {
             return this.config;
         }
 
-        if (await this.checkAccess() === false) {
-            console.error("Access to configuration denied (Did you login? run `az login`)");
-            return this.config;
-        }
-
-        if (this.config.Keystore?.Provider !== undefined) {
-            console.log("Keystore is active, skipping keyvault load")
-            return this.config;
-        }
-
-        await this.loadFromKeystore();
-        return this.config;
+        config = await this.loadFromSecretStore();
+        return config;
     }
 
-    private async loadFromKeystore() {
+    private async loadFromSecretStore() {
+        const secretClient = this.secretClient!;
 
-        const start = Date.now();
-
-        const secretPromises = [];
-        const secretTimes: any[] = [];
-
-        for await (const secretProperties of this.secretClient!.listPropertiesOfSecrets()) {            
-            const secretName = secretProperties.name!;
-            const secretStart = Date.now();
-
-            secretPromises.push(this.secretClient!.getSecret(secretName).then(secret => {
-
-                const secretEnd = Date.now();
-                const timeTaken = secretEnd - secretStart;
-
-                secretTimes.push({ secretName, timeTaken });
-
-                this.setConfigValue(secretName, secret.value! as string);
-            }));
+        const access = await secretClient.checkAccess();
+        if (!access) {
+            throw new Error(`Access to ${secretClient.provider} denied. Please check your credentials and try again.`);
         }
 
-        await Promise.all(secretPromises);
+        const secretKeys = Object.keys(this.config).filter((key) => key !== 'Keystore');
 
-        console.log("Required reload of secrets");
-        console.log("Time to load secrets:", Date.now() - start, "ms");
+        for (const key of secretKeys) {
+            try {
+                const secret = await secretClient.getSecretValue(key);
+                this.setConfigValue(key, secret);
+            } catch (error) {
+                console.error(`Error loading secret ${key} from ${secretClient.provider}`, error);
+            }
+        }
     }
 
     private setConfigValue(key: string, value: string) {
@@ -80,11 +74,13 @@ class ConfigLoader {
         current[parts[parts.length - 1]] = value;
     }
 
-    private async loadFromEnv() {
-        this.config = {
-            port: Number(process.env.PORT) || 3000, // Defualt port 3000
-            isdevelopment: process.env.NODE_ENV !== 'production', // Default to development
-            Keystore: {
+    private async loadFromEnv(): Promise<ConfigStructure> {
+        const secretStoreProvider = process.env.WIKI_SECRETSTORE_PROVIDER?.toLocaleLowerCase();
+        let secretStore;
+        if (!secretStoreProvider) {
+            secretStore = undefined;
+        } else if (secretStoreProvider === 'azure') {
+            secretStore = {
                 Provider: process.env.WIKI_SECRETSTORE_PROVIDER,
                 Azure: {
                     KeyVaultName: process.env.WIKI_SECRETSTORE_AZURE_VAULT_NAME,
@@ -92,67 +88,75 @@ class ConfigLoader {
                     ClientId: process.env.WIKI_SECRETSTORE_AZURE_CLIENT_ID,
                     ClientSecret: process.env.WIKI_SECRETSTORE_AZURE_CLIENT_SECRET,
                     Url: process.env.WIKI_SECRETSTORE_AZURE_URL,
-                },
-            },
-            Auth: {
+                }
+            }
+        } else if (secretStoreProvider === 'aws') {
+            secretStore = {
+                Provider: process.env.WIKI_SECRETSTORE_PROVIDER,
+                AWS: {
+                    Region: process.env.WIKI_SECRETSTORE_AWS_REGION,
+                    AccessKeyId: process.env.WIKI_SECRETSTORE_AWS_ACCESS_KEY_ID,
+                    SecretAccessKey: process.env.WIKI_SECRETSTORE_AWS_SECRET_ACCESS_KEY,
+                    Endpoint: process.env.WIKI_SECRETSTORE_AWS_ENDPOINT,
+                }
+            }
+        } else {
+            throw new Error(`Invalid secret store provider ${secretStoreProvider}`);
+        }
+
+        const authProvider = process.env.WIKI_AUTH_PROVIDER?.toLocaleLowerCase();
+        let auth;
+        if (!authProvider) {
+            auth = undefined;
+        } else if (authProvider === 'oauth2') {
+            console.log('Using OAuth2 Auth');
+            
+            auth = {
                 Secret: process.env.WIKI_AUTH_SECRET,
                 Provider: process.env.WIKI_AUTH_PROVIDER,
                 Oauth2: {
-                    ClientId: process.env.AUTH_OAUTH2_CLIENT_ID,
-                },
+                    ClientId: process.env.WIKI_AUTH_OAUTH2_CLIENT_ID,
+                    ClientSecret: process.env.WIKI_AUTH_OAUTH2_CLIENT_SECRET,
+                    AuthorizationUri: process.env.WIKI_AUTH_OAUTH2_AUTHORIZATION_URI,
+                    TokenUri: process.env.WIKI_AUTH_OAUTH2_TOKEN_URI,
+                    UserInfoUri: process.env.WIKI_AUTH_OAUTH2_USER_INFO_URI,
+                    Scope: process.env.WIKI_AUTH_OAUTH2_SCOPE,
+                }
+            }
+        } else if (authProvider === 'oidc') {
+            console.log('Using OIDC Auth');
+
+            auth = {
+                Secret: process.env.WIKI_AUTH_SECRET,
+                Provider: process.env.WIKI_AUTH_PROVIDER,
                 OIDC: {
                     ClientId: process.env.WIKI_AUTH_OIDC_CLIENT_ID,
                     ClientSecret: process.env.AUTH_KSU_CLIENT_SECRET,
-                },
-                Google: {
-                    ClientId: process.env.AUTH_GOOGLE_CLIENT_ID,
-                    ProjectId: 'canvascaboose',
-                    AuthUri: 'https://accounts.google.com/o/oauth2/auth',
-                    TokenUri: 'https://oauth2.googleapis.com/token',
-                    AuthProviderX509CertUrl: 'https://www.googleapis.com/oauth2/v1/certs',
-                    ClientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET,
-                },
-                Ksu: {
-                    ClientId: process.env.AUTH_KSU_CLIENT_ID,
-                    ClientSecret: process.env.AUTH_KSU_CLIENT_SECRET,
-                    Issuer: 'https://signin.k-state.edu/WebISO/oidc',
-                    WellKnown: 'https://signin.k-state.edu/WebISO/oidc/.well-known',
-                },
-            },
-            Db: {
-                Name: process.env.DB_NAME,
-                Host: process.env.DB_HOST,
-                Port: process.env.DB_PORT,
-                Username: process.env.DB_USERNAME,
-                Password: process.env.DB_PASSWORD,
-            },
-            dev_user: {
-                username: 'wnbaldwin',
-                id: 109,
-                member: true,
-                admin: true,
-                readonly: false,
-                date_created: '2016-04-20T15:00:00.000Z',
-                date_modified: '2016-04-20T15:00:00.000Z',
-                is_kdd_only: false,
-            },
-            BlobStorage: {
-                AccountName: process.env.BLOB_STORAGE_ACCOUNT_NAME,
-                AccountKey: process.env.BLOB_STORAGE_ACCOUNT_KEY,
-                ContainerName: process.env.BLOB_STORAGE_CONTAINER_NAME,
-                DevelopmentUrl: process.env.BLOB_STORAGE_DEVELOPMENT_URL,
-            },
-            github_actions: process.env.GITHUB_ACTIONS === 'true',
-            public: {
-                github: {
-                    owner: 'kddresearch',
-                    repo: 'KDD-Wiki-NextJS',
-                    maintainers: [
-                        'Legonois',
-                    ],
-                },
-            },
+                    Issuer: process.env.WIKI_AUTH_OIDC_ISSUER,
+                    WellKnown: process.env.WIKI_AUTH_OIDC_WELL_KNOWN
+                }
+            }
+        } else {
+            throw new Error(`Invalid Auth provider ${authProvider}`);
         }
+
+        const dbProvider = process.env.DB_PROVIDER?.toLocaleLowerCase();
+        if (!dbProvider) {
+            throw new Error('DB provider not found. Please provide DB_PROVIDER');
+        } else if (dbProvider === 'postgres') {
+            console.log('Using Postgres DB');
+        } else {
+            throw new Error(`Invalid DB provider ${dbProvider}`);
+        }
+
+        // Must be locally configured
+        const port = Number(process.env.PORT) || 3000; // Defualt port 3000
+        const isdevelopment = process.env.NODE_ENV !== 'production'; // Default to development
+
+        const config = {
+        }
+
+        return config
     }
 
     async checkAccess() {

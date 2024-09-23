@@ -5,6 +5,7 @@ import { SecretClient } from '@azure/keyvault-secrets';
 
 class AzureSecretStore implements ISecretStore {
     private secretClient: SecretClient;
+    public provider: string;
 
     constructor() {
         const vaultName = process.env.WIKI_SECRETSTORE_AZURE_VAULT_NAME;
@@ -37,6 +38,7 @@ class AzureSecretStore implements ISecretStore {
         }
 
         this.secretClient = new SecretClient(url, credential);
+        this.provider = 'azure';
     }
 
     public async getSecretValue(key: string): Promise<string> {

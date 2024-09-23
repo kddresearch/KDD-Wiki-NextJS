@@ -4,6 +4,7 @@ import * as AWS from 'aws-sdk';
 
 export class AWSSecretStore implements ISecretStore {
     private readonly client: AWS.SecretsManager;
+    public provider: string;
 
     constructor() {
         const region = process.env.WIKI_SECRETSTORE_AWS_REGION;
@@ -42,6 +43,7 @@ export class AWSSecretStore implements ISecretStore {
         }
 
         this.client = new AWS.SecretsManager(secretManagerConfig);
+        this.provider = 'aws';
     }
 
     public async getSecretValue(key: string): Promise<string> {
