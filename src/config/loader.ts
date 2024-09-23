@@ -1,12 +1,11 @@
 import 'server-only'
 
-import ConfigStructure from './interface';
+import { ConfigStructure, ConfigStructureSchema } from './schema';
 import { ISecretStore } from '@/interfaces/secret-store';
 import { AzureSecretStore } from '@/keystore/azure-secret-store';
 import { AWSSecretStore } from '@/keystore/aws-secret-store';
 
 class ConfigLoader {
-    private config?: ConfigStructure;
     private secretClient?: ISecretStore;
 
     constructor() {
@@ -25,23 +24,16 @@ class ConfigLoader {
             throw new Error(`Invalid secret store provider ${provider}`);
         }
 
-        this.loadConfig();
-
         console.log("Config Loaded");
     }
 
     async loadConfig(): Promise<ConfigStructure> {
-        let config = await this.loadFromEnv();
-
-        if (!this.secretClient) {
-            return this.config;
-        }
-
-        config = await this.loadFromSecretStore();
-        return config;
+        return !this.secretClient? 
+            await this.loadFromEnv() : // Load from env if no secret store
+            await this.loadFromSecretStore(); // Load from secret store
     }
 
-    private async loadFromSecretStore() {
+    private async loadFromSecretStore(): Promise<ConfigStructure> {
         const secretClient = this.secretClient!;
 
         const access = await secretClient.checkAccess();
@@ -49,22 +41,23 @@ class ConfigLoader {
             throw new Error(`Access to ${secretClient.provider} denied. Please check your credentials and try again.`);
         }
 
-        const secretKeys = Object.keys(this.config).filter((key) => key !== 'Keystore');
+        // const secretKeys = Object.keys(this.config).filter((key) => key !== 'Keystore');
 
-        for (const key of secretKeys) {
-            try {
-                const secret = await secretClient.getSecretValue(key);
-                this.setConfigValue(key, secret);
-            } catch (error) {
-                console.error(`Error loading secret ${key} from ${secretClient.provider}`, error);
-            }
+        const config = ConfigStructureSchema.safeParse({
+            SecretClient: secretClient.config,
+        });
+
+        if (!config.success) {
+            throw new Error('Invalid Configuration');
         }
+
+        return config.data;
     }
 
-    private setConfigValue(key: string, value: string) {
+    private setConfigValue(key: string, value: string, config: any) {
         // Set the config value, handling nested properties
         const parts = key.split('-'); // the _ acts as the . in the namespace
-        let current: any = this.config;
+        let current: any = config;
         for (let i = 0; i < parts.length - 1; i++) {
             if (!(parts[i] in current)) {
                 current[parts[i]] = {};

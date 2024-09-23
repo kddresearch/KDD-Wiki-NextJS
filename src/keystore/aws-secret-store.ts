@@ -1,3 +1,4 @@
+import { SecretStore, SecretStoreSchema } from "@/config/schema";
 import { ISecretStore } from '@/interfaces/secret-store';
 import { getDefaultAWSCredentials } from '@/utils/credentials';
 import * as AWS from 'aws-sdk';
@@ -5,6 +6,7 @@ import * as AWS from 'aws-sdk';
 export class AWSSecretStore implements ISecretStore {
     private readonly client: AWS.SecretsManager;
     public provider: string;
+    private _config: SecretStore;
 
     constructor() {
         const region = process.env.WIKI_SECRETSTORE_AWS_REGION;
@@ -44,6 +46,22 @@ export class AWSSecretStore implements ISecretStore {
 
         this.client = new AWS.SecretsManager(secretManagerConfig);
         this.provider = 'aws';
+
+        const config = SecretStoreSchema.safeParse({
+            Provider: this.provider,
+            AWS: {
+                Region: region,
+                AccessKeyId: accessKeyId,
+                SecretAccessKey: secretAccessKey,
+                Endpoint: endpoint
+            }
+        });
+
+        if (!config.success) {
+            throw new Error('Invalid AWS Secret Store Configuration');
+        }
+
+        this._config = config.data;
     }
 
     public async getSecretValue(key: string): Promise<string> {
@@ -63,5 +81,9 @@ export class AWSSecretStore implements ISecretStore {
         } catch (error) {
             return false;
         }
+    }
+
+    public get config(): SecretStore {
+        return this._config;
     }
 }

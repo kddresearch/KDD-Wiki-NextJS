@@ -11,16 +11,11 @@ import {
     WebResourceLike,
 } from '@azure/core-http';
 
-import getConfig from "@/config";
-const config = await getConfig();
+import config from "@/config";
 
-const account = config!.BlobStorage!.AccountName;
-const accountKey = config!.BlobStorage!.AccountKey;
-const container = config!.BlobStorage!.ContainerName;
 
-if (!account || !accountKey || !container) {
-    throw new Error("Blob Storage configuration missing");
-}
+
+const account = config.FileStorage?.Azure!.ContainerName;
 
 class HostDefaultHttpClient extends DefaultHttpClient {
     private host: string;
@@ -36,11 +31,9 @@ class HostDefaultHttpClient extends DefaultHttpClient {
     }
 }
 
-const accountKeyCredential = new StorageSharedKeyCredential(account, accountKey);
-
 let WikiContainerServiceClient: ContainerClient;
 
-if (config!.isdevelopment) {
+if (config.Development) {
     const host = `${account}.blob.core.windows.net`;
     // const hostPolicy = new HostRequestPolicyFactory(host);
     const pipelineOptions: StoragePipelineOptions = {

@@ -1,3 +1,4 @@
+import { SecretStore, SecretStoreSchema } from "@/config/schema";
 import { ISecretStore } from '@/interfaces/secret-store';
 import { getDefaultAzureCredentials } from '@/utils/credentials';
 import { ClientSecretCredential, TokenCredential } from '@azure/identity';
@@ -6,6 +7,7 @@ import { SecretClient } from '@azure/keyvault-secrets';
 class AzureSecretStore implements ISecretStore {
     private secretClient: SecretClient;
     public provider: string;
+    private _config: SecretStore;
 
     constructor() {
         const vaultName = process.env.WIKI_SECRETSTORE_AZURE_VAULT_NAME;
@@ -39,6 +41,23 @@ class AzureSecretStore implements ISecretStore {
 
         this.secretClient = new SecretClient(url, credential);
         this.provider = 'azure';
+        
+        const config = SecretStoreSchema.safeParse({
+            Provider: this.provider,
+            Azure: {
+                TenantId: tenantId,
+                ClientId: clientId,
+                ClientSecret: clientSecret,
+                KeyVaultName: vaultName,
+                Url: url
+            }
+        })
+
+        if (!config.success) {
+            throw new Error('Invalid Azure Secret Store Configuration');
+        }
+
+        this._config = config.data;
     }
 
     public async getSecretValue(key: string): Promise<string> {
@@ -58,6 +77,10 @@ class AzureSecretStore implements ISecretStore {
         } catch (error) {
             return false;
         }
+    }
+
+    public get config(): SecretStore {
+        return this._config;
     }
 }
 

@@ -1,11 +1,12 @@
 import 'server-only';
+
 import ConfigLoader from './config/loader';
-import ConfigStructure from './config/interface';
+import type { ConfigStructure } from './config/schema';
 
 class ConfigSingleton {
     private static instance: ConfigSingleton;
-    private loader: ConfigLoader | null = null;
-    public config: ConfigStructure | null = null;
+    private loader?: ConfigLoader;
+    private _config?: ConfigStructure;
 
     private constructor() {}
 
@@ -16,24 +17,25 @@ class ConfigSingleton {
         return ConfigSingleton.instance;
     }
 
-    async init(keyVaultName: string | undefined = process.env.AZURE_KEY_VAULT_NAME): Promise<ConfigStructure>{
-        if (!this.config) {
-            this.loader = new ConfigLoader(keyVaultName);
-            this.config = await this.loader.loadConfig();
+    async init() {
+        if (this._config) {
+            return;
         }
-        return this.config;
+
+        this.loader = new ConfigLoader();
+        this._config = await this.loader.loadConfig();
     }
 
-    public getConfig(): ConfigStructure | null {
-        return this.config;
+    public get config(): ConfigStructure {
+        if (!this._config) {
+            throw new Error('Config not loaded');
+        }
+
+        return this._config;
     }
 }
 
-const getConfig = (async () => {
-    const configInstance = ConfigSingleton.getInstance();
-    await configInstance.init();
+const configInstance = ConfigSingleton.getInstance();
+await configInstance.init();
 
-    return configInstance.config;
-});
-
-export default getConfig;
+export default configInstance.config;
