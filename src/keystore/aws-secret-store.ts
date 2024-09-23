@@ -1,7 +1,6 @@
 import { SecretStore, SecretStoreSchema } from "@/config/schema";
 import { ISecretStore } from '@/interfaces/secret-store';
 import { getDefaultAWSCredentials } from '@/utils/credentials';
-import * as AWS from 'aws-sdk';
 
 import { SecretsManager, SecretsManagerClientConfig } from '@aws-sdk/client-secrets-manager';
 
@@ -19,26 +18,28 @@ export class AWSSecretStore implements ISecretStore {
 
         const accessKeyId = process.env.WIKI_SECRETSTORE_AWS_ACCESS_KEY_ID;
         const secretAccessKey = process.env.WIKI_SECRETSTORE_AWS_SECRET_ACCESS_KEY;
+        const sessionToken = process.env.WIKI_SECRETSTORE_AWS_SESSION_TOKEN;
         let endpoint = process.env.WIKI_SECRETSTORE_AWS_ENDPOINT;
 
-        let credential: AWS.Credentials;
+        let credentials;
 
         if (accessKeyId && secretAccessKey) {
             console.log('AWS secret manager credentials found');
-            credential = new AWS.Credentials({
+            credentials = {
                 accessKeyId: accessKeyId,
-                secretAccessKey: secretAccessKey
-            });
+                secretAccessKey: secretAccessKey,
+                sessionToken: sessionToken,
+            };
             console.log('AWS secret manager credentials loaded');
         } else {
             console.log('AWS secret manager credentials not found. Using default credentials...');
-            credential = getDefaultAWSCredentials();
+            credentials = getDefaultAWSCredentials();
             console.log('AWS secret manager credentials loaded');
         }
 
         const secretManagerConfig: SecretsManagerClientConfig = {
             region: region,
-            credentials: credential
+            credentials: credentials
         };
 
         if (endpoint) {

@@ -15,7 +15,7 @@ class ConfigSingleton {
 
     static getInstance(): ConfigSingleton {
         if (!ConfigSingleton.instance) {
-            ConfigSingleton.instance = new ConfigSingleton();
+            this.instance = new ConfigSingleton();
         }
         return ConfigSingleton.instance;
     }

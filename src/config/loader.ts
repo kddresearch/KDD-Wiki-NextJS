@@ -28,22 +28,7 @@ class ConfigLoader {
     private unverifiedConfig?: any = {};
 
     constructor() {
-        const provider = process.env.WIKI_SECRETSTORE_PROVIDER;
-
-        if (!provider) {
-            this.secretClient = undefined;
-            console.log("No secret store provider found");
-        } else if (provider === 'azure') {
-            this.secretClient = new AzureSecretStore();
-            console.log("Azure key vault loaded");
-        } else if (provider === 'aws') {
-            this.secretClient = new AWSSecretStore();
-            console.log("AWS secret manager loaded");
-        } else {
-            throw new Error(`Invalid secret store provider ${provider}`);
-        }
-
-        console.log("Config Loaded");
+        this.secretClient = ConfigLoader.loadSecretStore();
     }
 
     static setConfigValue(path: string[], value: string, config: any) {
@@ -94,6 +79,8 @@ class ConfigLoader {
                 }
             }
         }
+
+        return secretClient;
     }
 
     async loadConfig(): Promise<ConfigStructure> {
@@ -107,9 +94,11 @@ class ConfigLoader {
         const parsedConfig = ConfigStructureSchema.safeParse(this.unverifiedConfig);
 
         if (!parsedConfig.success) {
-            console.error("Configuration validation failed:", parsedConfig.error.format());
+            console.error("Configuration validation failed:", parsedConfig.error);
             throw new Error("Invalid configuration");
         }
+
+        console.log("Configuration loaded successfully");
 
         return parsedConfig.data;
     }

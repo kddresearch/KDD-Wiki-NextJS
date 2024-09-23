@@ -62,14 +62,12 @@ Open the directory in the cli
 
 ### Development
 ```bash
-docker-compose up --build kdd-wiki-dev
+docker compose up --build kdd-wiki-dev
 ```
-
-if 
 
 ### Production
 ```bash
-docker-compose up --build kdd-wiki-prod
+docker compose up --build kdd-wiki-prod
 ```
 
 Open [your browser](http://localhost:3000) to see the result.

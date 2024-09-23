@@ -32,5 +32,5 @@ services:
       - NODE_ENV=production
     ports:
       - 3000:3000
-    env_file:
-      - .env.prod.local
+    # env_file:
+    #   - .env.prod.local

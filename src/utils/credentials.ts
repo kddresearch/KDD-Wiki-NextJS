@@ -1,9 +1,10 @@
-import AWS from 'aws-sdk';
 import { ClientSecretCredential } from '@azure/identity';
 
-function getDefaultAWSCredentials(): AWS.Credentials {
+
+function getDefaultAWSCredentials() {
     const accessKey = process.env.WIKI_AWS_ACCESS_KEY_ID;
     const secretKey = process.env.WIKI_AWS_SECRET_ACCESS_KEY;
+    const token = process.env.WIKI_AWS_SESSION_TOKEN;
 
     if (!accessKey) {
         throw new Error('Default AWS accessKey credentials not found. Please provide WIKI_AWS_ACCESS_KEY_ID');
@@ -13,12 +14,13 @@ function getDefaultAWSCredentials(): AWS.Credentials {
         throw new Error('Default AWS secretKey credentials not found. Please provide WIKI_AWS_SECRET_ACCESS_KEY');
     }
 
-    const credential = new AWS.Credentials({
+    const credentials = {
         accessKeyId: accessKey,
-        secretAccessKey: secretKey
-    });
+        secretAccessKey: secretKey,
+        sessionToken: token,
+    };
     
-    return credential;
+    return credentials;
 }
 
 function getDefaultAzureCredentials(): ClientSecretCredential {

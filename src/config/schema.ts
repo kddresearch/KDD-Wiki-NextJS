@@ -153,7 +153,7 @@ const PublicSchema = z.object({
     Github: z.object({
         Owner: z.string(),
         Repository: z.string(),
-        Maintainers: z.array(z.string()),
+        Maintainers: z.array(z.string()).optional(),
     }),
 });
 
