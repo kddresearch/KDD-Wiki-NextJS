@@ -1,3 +1,4 @@
+import { Git, Github } from "react-bootstrap-icons";
 import { z } from "zod";
 
 function stringToLowerCase(val: any): any {
@@ -7,13 +8,6 @@ function stringToLowerCase(val: any): any {
 
     return val;
 }
-
-// -- Providers --
-
-const SecretStoreProviders = z.enum(["aws", "azure"]);
-const AuthProviders = z.enum(["oauth2", "oidc"]);
-const DbProviders = z.enum(["postgres"]);
-const FileStorageProviders = z.enum(["aws", "azure"]);
 
 // -- Credential Schemas --
 
@@ -75,8 +69,8 @@ const AuthOAuth2Schema = z.object({
 const AuthOIDCSchema = z.object({
     ClientId: z.string(),
     ClientSecret: z.string(),
-    Issuer: z.string(),
-    WellKnown: z.string(),
+    Issuer: z.string().url(),
+    WellKnown: z.string().url().optional(),
 });
 
 const AuthSchema = z.discriminatedUnion("Provider", [
@@ -85,6 +79,7 @@ const AuthSchema = z.discriminatedUnion("Provider", [
             stringToLowerCase,
             z.literal("oauth2")
         ),
+        Secret: z.string(),
         Oauth2: AuthOAuth2Schema,
         OIDC: AuthOIDCSchema.optional(),
     }),
@@ -93,6 +88,7 @@ const AuthSchema = z.discriminatedUnion("Provider", [
             stringToLowerCase,
             z.literal("oidc")
         ),
+        Secret: z.string(),
         OIDC: AuthOIDCSchema,
         Oauth2: AuthOAuth2Schema.optional(),
     }),
@@ -103,7 +99,7 @@ const AuthSchema = z.discriminatedUnion("Provider", [
 const DbPostgresSchema = z.object({
     Name: z.string(),
     Host: z.string(),
-    Port: z.number(),
+    Port: z.coerce.number(),
     Username: z.string(),
     Password: z.string(),
 });
@@ -151,6 +147,16 @@ const FileStorageSchema = z.discriminatedUnion("Provider", [
     }),
 ]);
 
+// -- Public Schemas --
+
+const PublicSchema = z.object({
+    Github: z.object({
+        Owner: z.string(),
+        Repository: z.string(),
+        Maintainers: z.array(z.string()),
+    }),
+});
+
 // -- Configuration Schema --
 
 const ConfigStructureSchema = z.object({
@@ -158,8 +164,9 @@ const ConfigStructureSchema = z.object({
     Auth: AuthSchema.optional(),
     Db: DbSchema.optional(),
     FileStorage: FileStorageSchema.optional(),
-    CIBuild: z.boolean().optional(),
-    Development: z.boolean().optional(),
+    CIBuild: z.coerce.boolean().optional(),
+    Development: z.coerce.boolean().optional(),
+    Public: PublicSchema,
 });
 
 // -- Exports --

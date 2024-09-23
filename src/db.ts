@@ -9,14 +9,14 @@ import getConfig from "@/config";
 let db: ReturnType<typeof drizzle>;
 
 async function connectDrizzle() {
-    const env_config = await getConfig();
+    const env_config = await getConfig;
 
     const poolConfig: PoolConfig = {
-        user: env_config!.Db!.Username,
-        host: env_config!.Db!.Host,
-        database: env_config!.Db!.Name,
-        password: env_config!.Db!.Password,
-        port: parseInt(env_config!.Db!.Port?.toString() || "5432"), // Default port is 5432, if not specified
+        user: env_config!.Db!.Postgres.Username,
+        host: env_config!.Db!.Postgres.Host,
+        database: env_config!.Db!.Postgres.Name,
+        password: env_config!.Db!.Postgres.Password,
+        port: parseInt(env_config!.Db!.Postgres.Port?.toString() || "5432"), // Default port is 5432, if not specified
         ssl: true
     }
 

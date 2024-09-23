@@ -13,6 +13,7 @@
     "drizzle-studio": "pnpm drizzle-kit studio"
   },
   "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.654.0",
     "@azure/core-http": "^3.0.4",
     "@azure/identity": "^4.3.0",
     "@azure/keyvault-keys": "^4.8.0",

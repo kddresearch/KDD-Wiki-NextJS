@@ -6,9 +6,12 @@ import type { ConfigStructure } from './config/schema';
 class ConfigSingleton {
     private static instance: ConfigSingleton;
     private loader?: ConfigLoader;
-    private _config?: ConfigStructure;
+    private _configPromise?: Promise<ConfigStructure>;
 
-    private constructor() {}
+    private constructor() {
+        this.loader = new ConfigLoader();
+        this._configPromise = this.loader.loadConfig();
+    }
 
     static getInstance(): ConfigSingleton {
         if (!ConfigSingleton.instance) {
@@ -17,25 +20,9 @@ class ConfigSingleton {
         return ConfigSingleton.instance;
     }
 
-    async init() {
-        if (this._config) {
-            return;
-        }
-
-        this.loader = new ConfigLoader();
-        this._config = await this.loader.loadConfig();
-    }
-
-    public get config(): ConfigStructure {
-        if (!this._config) {
-            throw new Error('Config not loaded');
-        }
-
-        return this._config;
+    public get config(): Promise<ConfigStructure> {
+        return this._configPromise!;
     }
 }
 
-const configInstance = ConfigSingleton.getInstance();
-await configInstance.init();
-
-export default configInstance.config;
+export default ConfigSingleton.getInstance().config;

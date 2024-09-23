@@ -4,18 +4,38 @@ import {
     ContainerClient,
     HttpOperationResponse,
     StoragePipelineOptions,
-    StorageSharedKeyCredential,
 } from "@azure/storage-blob";
 import {  
     DefaultHttpClient,
     WebResourceLike,
 } from '@azure/core-http';
+import { ClientSecretCredential } from "@azure/identity";
+import { getDefaultAzureCredentials } from "./utils/credentials";
 
-import config from "@/config";
+import getConfig from "@/config";
+const config = await getConfig;
 
+let account;
+let container;
 
+if (config.FileStorage?.Provider === 'azure') {
+    account = config.FileStorage.Azure.ContainerName;
+    container = config.FileStorage.Azure.ContainerName;
+} else {
+    throw new Error('Invalid File Storage Provider');
+}
 
-const account = config.FileStorage?.Azure!.ContainerName;
+let credential;
+
+if (config.FileStorage.Azure.Credentials) {
+    credential = new ClientSecretCredential(
+        config.FileStorage.Azure.Credentials.TenantId,
+        config.FileStorage.Azure.Credentials.ClientId,
+        config.FileStorage.Azure.Credentials.ClientSecret
+    );
+} else {
+    credential = getDefaultAzureCredentials();
+}
 
 class HostDefaultHttpClient extends DefaultHttpClient {
     private host: string;
@@ -42,14 +62,14 @@ if (config.Development) {
 
     WikiContainerServiceClient = new ContainerClient(
         `https://host.docker.internal:8443/${container}`,
-        accountKeyCredential,
+        credential,
         pipelineOptions
     );
 
 } else {
     WikiContainerServiceClient = new ContainerClient(
         `https://${account}.blob.core.windows.net/${container}`,
-        accountKeyCredential
+        credential
     );
 }
 

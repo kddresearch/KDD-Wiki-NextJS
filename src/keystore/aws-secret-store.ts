@@ -3,8 +3,10 @@ import { ISecretStore } from '@/interfaces/secret-store';
 import { getDefaultAWSCredentials } from '@/utils/credentials';
 import * as AWS from 'aws-sdk';
 
+import { SecretsManager, SecretsManagerClientConfig } from '@aws-sdk/client-secrets-manager';
+
 export class AWSSecretStore implements ISecretStore {
-    private readonly client: AWS.SecretsManager;
+    private readonly client: SecretsManager;
     public provider: string;
     private _config: SecretStore;
 
@@ -34,7 +36,7 @@ export class AWSSecretStore implements ISecretStore {
             console.log('AWS secret manager credentials loaded');
         }
 
-        const secretManagerConfig: AWS.SecretsManager.Types.ClientConfiguration = {
+        const secretManagerConfig: SecretsManagerClientConfig = {
             region: region,
             credentials: credential
         };
@@ -44,7 +46,7 @@ export class AWSSecretStore implements ISecretStore {
             console.log(`Using custom AWS Secrets Manager endpoint: ${endpoint}`);
         }
 
-        this.client = new AWS.SecretsManager(secretManagerConfig);
+        this.client = new SecretsManager(secretManagerConfig);
         this.provider = 'aws';
 
         const config = SecretStoreSchema.safeParse({
@@ -65,7 +67,7 @@ export class AWSSecretStore implements ISecretStore {
     }
 
     public async getSecretValue(key: string): Promise<string> {
-        const secret = await this.client.getSecretValue({ SecretId: key }).promise();
+        const secret = await this.client.getSecretValue({ SecretId: key });
 
         if (!secret.SecretString) {
             throw new Error(`Secret ${key} not found`);
@@ -76,7 +78,7 @@ export class AWSSecretStore implements ISecretStore {
 
     public async checkAccess(): Promise<boolean> {
         try {
-            await this.client.getSecretValue({ SecretId: 'verifying-wiki-connection' }).promise();
+            await this.client.getSecretValue({ SecretId: 'verifying-wiki-connection' });
             return true;
         } catch (error) {
             return false;

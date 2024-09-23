@@ -1,12 +1,31 @@
 import 'server-only'
 
-import { ConfigStructure, ConfigStructureSchema } from './schema';
+import {
+    ConfigStructure,
+    ConfigStructureSchema
+} from './schema';
 import { ISecretStore } from '@/interfaces/secret-store';
 import { AzureSecretStore } from '@/keystore/azure-secret-store';
 import { AWSSecretStore } from '@/keystore/aws-secret-store';
+import { extractSchemaPaths } from '@/utils/zod';
+import { SecretStore, SecretStoreSchema } from './schema';
+
+const prefix = "WIKI_";
+
+function pathToEnvVar(path: string[]): string {
+    return (
+        prefix +
+        path
+            .map(segment => {
+                return segment.toUpperCase();
+            })
+            .join("_")
+    );
+}
 
 class ConfigLoader {
     private secretClient?: ISecretStore;
+    private unverifiedConfig?: any = {};
 
     constructor() {
         const provider = process.env.WIKI_SECRETSTORE_PROVIDER;
@@ -27,21 +46,109 @@ class ConfigLoader {
         console.log("Config Loaded");
     }
 
+    static setConfigValue(path: string[], value: string, config: any) {
+        // Set the config value, handling nested properties
+        let current: any = config;
+
+        if (config === undefined || config === null) {
+            config = {};
+        }
+
+        for (let i = 0; i < path.length - 1; i++) {
+            const key = path[i];
+            if (!(key in current)) {
+                current[key] = {};
+            }
+            current = current[key];
+        }
+        current[path[path.length - 1]] = value;
+    }
+
+    static loadSecretStore(): ISecretStore | undefined {
+        const allSchemaPaths = extractSchemaPaths(SecretStoreSchema);
+        let secretClient: ISecretStore | undefined;
+        let secretStoreUnverifiedConfig: any;
+        let secretStoreConfig: SecretStore;
+
+        for (const path of allSchemaPaths) {
+            const envVar = pathToEnvVar(path);
+            const value = process.env[envVar];
+
+            if (value !== undefined) {
+                ConfigLoader.setConfigValue(path, value, secretStoreUnverifiedConfig);
+
+                const output = SecretStoreSchema.safeParse(secretStoreUnverifiedConfig);
+
+                if (!output.success) {
+                    throw new Error("Invalid secret store configuration");
+                }
+
+                secretStoreConfig = output.data;
+
+                if (!secretStoreConfig?.Provider) {
+                    return undefined;
+                } else if (secretStoreConfig.Provider === 'azure') {
+                    secretClient = new AzureSecretStore();
+                } else if (secretStoreConfig.Provider === 'aws') {
+                    secretClient = new AWSSecretStore();
+                }
+            }
+        }
+    }
+
     async loadConfig(): Promise<ConfigStructure> {
-        return !this.secretClient? 
-            await this.loadFromEnv() : // Load from env if no secret store
-            await this.loadFromSecretStore(); // Load from secret store
+        await this.loadFromEnv();
+
+        if (this.secretClient) {
+            await this.loadFromSecretStore();
+        }
+        
+        // Validate the config using Zod schema
+        const parsedConfig = ConfigStructureSchema.safeParse(this.unverifiedConfig);
+
+        if (!parsedConfig.success) {
+            console.error("Configuration validation failed:", parsedConfig.error.format());
+            throw new Error("Invalid configuration");
+        }
+
+        return parsedConfig.data;
+    }
+
+    private setUnverifiedConfigValue(path: string[], value: string) {
+        let current: any = this.unverifiedConfig;
+        ConfigLoader.setConfigValue(path, value, current);
+    }
+
+    private async loadFromEnv() {
+        const allSchemaPaths = extractSchemaPaths(ConfigStructureSchema);
+
+        for (const path of allSchemaPaths) {
+            const envVar = pathToEnvVar(path);
+            const value = process.env[envVar];
+
+            if (value !== undefined) {
+                this.setUnverifiedConfigValue(path, value);
+            }
+        }
     }
 
     private async loadFromSecretStore(): Promise<ConfigStructure> {
+        const allSchemaPaths = extractSchemaPaths(ConfigStructureSchema);        
         const secretClient = this.secretClient!;
+
+        for (const path of allSchemaPaths) {
+            const envVar = pathToEnvVar(path);
+            const value = process.env[envVar];
+
+            if (value !== undefined) {
+                this.setUnverifiedConfigValue(path, value);
+            }
+        }
 
         const access = await secretClient.checkAccess();
         if (!access) {
             throw new Error(`Access to ${secretClient.provider} denied. Please check your credentials and try again.`);
         }
-
-        // const secretKeys = Object.keys(this.config).filter((key) => key !== 'Keystore');
 
         const config = ConfigStructureSchema.safeParse({
             SecretClient: secretClient.config,
@@ -52,117 +159,6 @@ class ConfigLoader {
         }
 
         return config.data;
-    }
-
-    private setConfigValue(key: string, value: string, config: any) {
-        // Set the config value, handling nested properties
-        const parts = key.split('-'); // the _ acts as the . in the namespace
-        let current: any = config;
-        for (let i = 0; i < parts.length - 1; i++) {
-            if (!(parts[i] in current)) {
-                current[parts[i]] = {};
-            }
-            current = current[parts[i]];
-        }
-        current[parts[parts.length - 1]] = value;
-    }
-
-    private async loadFromEnv(): Promise<ConfigStructure> {
-        const secretStoreProvider = process.env.WIKI_SECRETSTORE_PROVIDER?.toLocaleLowerCase();
-        let secretStore;
-        if (!secretStoreProvider) {
-            secretStore = undefined;
-        } else if (secretStoreProvider === 'azure') {
-            secretStore = {
-                Provider: process.env.WIKI_SECRETSTORE_PROVIDER,
-                Azure: {
-                    KeyVaultName: process.env.WIKI_SECRETSTORE_AZURE_VAULT_NAME,
-                    TenantId: process.env.WIKI_SECRETSTORE_AZURE_TENANT_ID,
-                    ClientId: process.env.WIKI_SECRETSTORE_AZURE_CLIENT_ID,
-                    ClientSecret: process.env.WIKI_SECRETSTORE_AZURE_CLIENT_SECRET,
-                    Url: process.env.WIKI_SECRETSTORE_AZURE_URL,
-                }
-            }
-        } else if (secretStoreProvider === 'aws') {
-            secretStore = {
-                Provider: process.env.WIKI_SECRETSTORE_PROVIDER,
-                AWS: {
-                    Region: process.env.WIKI_SECRETSTORE_AWS_REGION,
-                    AccessKeyId: process.env.WIKI_SECRETSTORE_AWS_ACCESS_KEY_ID,
-                    SecretAccessKey: process.env.WIKI_SECRETSTORE_AWS_SECRET_ACCESS_KEY,
-                    Endpoint: process.env.WIKI_SECRETSTORE_AWS_ENDPOINT,
-                }
-            }
-        } else {
-            throw new Error(`Invalid secret store provider ${secretStoreProvider}`);
-        }
-
-        const authProvider = process.env.WIKI_AUTH_PROVIDER?.toLocaleLowerCase();
-        let auth;
-        if (!authProvider) {
-            auth = undefined;
-        } else if (authProvider === 'oauth2') {
-            console.log('Using OAuth2 Auth');
-            
-            auth = {
-                Secret: process.env.WIKI_AUTH_SECRET,
-                Provider: process.env.WIKI_AUTH_PROVIDER,
-                Oauth2: {
-                    ClientId: process.env.WIKI_AUTH_OAUTH2_CLIENT_ID,
-                    ClientSecret: process.env.WIKI_AUTH_OAUTH2_CLIENT_SECRET,
-                    AuthorizationUri: process.env.WIKI_AUTH_OAUTH2_AUTHORIZATION_URI,
-                    TokenUri: process.env.WIKI_AUTH_OAUTH2_TOKEN_URI,
-                    UserInfoUri: process.env.WIKI_AUTH_OAUTH2_USER_INFO_URI,
-                    Scope: process.env.WIKI_AUTH_OAUTH2_SCOPE,
-                }
-            }
-        } else if (authProvider === 'oidc') {
-            console.log('Using OIDC Auth');
-
-            auth = {
-                Secret: process.env.WIKI_AUTH_SECRET,
-                Provider: process.env.WIKI_AUTH_PROVIDER,
-                OIDC: {
-                    ClientId: process.env.WIKI_AUTH_OIDC_CLIENT_ID,
-                    ClientSecret: process.env.AUTH_KSU_CLIENT_SECRET,
-                    Issuer: process.env.WIKI_AUTH_OIDC_ISSUER,
-                    WellKnown: process.env.WIKI_AUTH_OIDC_WELL_KNOWN
-                }
-            }
-        } else {
-            throw new Error(`Invalid Auth provider ${authProvider}`);
-        }
-
-        const dbProvider = process.env.DB_PROVIDER?.toLocaleLowerCase();
-        if (!dbProvider) {
-            throw new Error('DB provider not found. Please provide DB_PROVIDER');
-        } else if (dbProvider === 'postgres') {
-            console.log('Using Postgres DB');
-        } else {
-            throw new Error(`Invalid DB provider ${dbProvider}`);
-        }
-
-        // Must be locally configured
-        const port = Number(process.env.PORT) || 3000; // Defualt port 3000
-        const isdevelopment = process.env.NODE_ENV !== 'production'; // Default to development
-
-        const config = {
-        }
-
-        return config
-    }
-
-    async checkAccess() {
-        try {
-            const secret = await this.secretClient!.getSecret("vault-enabled");
-            if (secret.value === "true") {
-                return true;
-            }
-            return false;
-        } catch (error) {
-            console.error("Unexpected Error Occurred with Access to Configuration (Did you login? run `az login`)", error);
-            return false;
-        }
     }
 }
 
