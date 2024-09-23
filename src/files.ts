@@ -4,26 +4,37 @@ import {
     ContainerClient,
     HttpOperationResponse,
     StoragePipelineOptions,
-    StorageSharedKeyCredential,
 } from "@azure/storage-blob";
 import {  
     DefaultHttpClient,
     WebResourceLike,
 } from '@azure/core-http';
+import { ClientSecretCredential } from "@azure/identity";
+import { getDefaultAzureCredentials } from "./utils/credentials";
 
 import getConfig from "@/config";
-const config = await getConfig();
+const config = await getConfig;
 
-const account = config!.BlobStorage!.AccountName;
-const accountKey = config!.BlobStorage!.AccountKey;
-const container = config!.BlobStorage!.ContainerName;
+let account;
+let container;
 
-if (!config!.Keystore!.Active) {
-    throw new Error("Keystore is not active");
+if (config.FileStorage?.Provider === 'azure') {
+    account = config.FileStorage.Azure.ContainerName;
+    container = config.FileStorage.Azure.ContainerName;
+} else {
+    throw new Error('Invalid File Storage Provider');
 }
 
-if (!account || !accountKey || !container) {
-    throw new Error("Blob Storage configuration missing");
+let credential;
+
+if (config.FileStorage.Azure.Credentials) {
+    credential = new ClientSecretCredential(
+        config.FileStorage.Azure.Credentials.TenantId,
+        config.FileStorage.Azure.Credentials.ClientId,
+        config.FileStorage.Azure.Credentials.ClientSecret
+    );
+} else {
+    credential = getDefaultAzureCredentials();
 }
 
 class HostDefaultHttpClient extends DefaultHttpClient {
@@ -40,11 +51,9 @@ class HostDefaultHttpClient extends DefaultHttpClient {
     }
 }
 
-const accountKeyCredential = new StorageSharedKeyCredential(account, accountKey);
-
 let WikiContainerServiceClient: ContainerClient;
 
-if (config!.isdevelopment) {
+if (config.Development) {
     const host = `${account}.blob.core.windows.net`;
     // const hostPolicy = new HostRequestPolicyFactory(host);
     const pipelineOptions: StoragePipelineOptions = {
@@ -53,14 +62,14 @@ if (config!.isdevelopment) {
 
     WikiContainerServiceClient = new ContainerClient(
         `https://host.docker.internal:8443/${container}`,
-        accountKeyCredential,
+        credential,
         pipelineOptions
     );
 
 } else {
     WikiContainerServiceClient = new ContainerClient(
         `https://${account}.blob.core.windows.net/${container}`,
-        accountKeyCredential
+        credential
     );
 }
 

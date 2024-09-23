@@ -1,17 +1,15 @@
 import NextAuth, { Profile, User } from "next-auth";
 import { NextAuthConfig } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-
-import getConfig from "@/config";
-const env_config = await getConfig();
-
-import google from "next-auth/providers/google";
 import LegacyUser from "@/models/legacy-user";
 import Auth0 from "next-auth/providers/auth0"
 import { AdapterUser } from "next-auth/adapters";
 import type { Provider } from "next-auth/providers"
 import { OIDCConfig } from "next-auth/providers";
 import * as LegacyUserDB from "./db/legacy-user";
+
+import getConfig from "@/config";
+const env_config = await getConfig;
 
 interface KSUProfile extends Profile {
     preferred_username: string;
@@ -32,9 +30,9 @@ const providers: Provider[] = [
         id: "ksu",
         name: "K-State",
         type: "oidc",
-        issuer: env_config!.Auth!.Ksu.Issuer,
-        clientId: env_config!.Auth!.Ksu.ClientId,
-        clientSecret: env_config!.Auth!.Ksu.ClientSecret,
+        issuer: env_config!.Auth!.OIDC!.Issuer,
+        clientId: env_config!.Auth!.OIDC!.ClientId,
+        clientSecret: env_config!.Auth!.OIDC!.ClientSecret,
         profile(profile) {
             console.log('the Profile', profile);
             return {

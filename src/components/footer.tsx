@@ -3,11 +3,11 @@ import Link from "next/link";
 import Breadcrumb from "./breadcrumb";
 import { Github, Opencollective } from "react-bootstrap-icons";
 import getConfig from "@/config";
-const config = await getConfig();
+const config = await getConfig;
 
 export default async function Footer() {
 
-  const GITHUB_URL = `https://github.com/${config!.public!.github!.owner}/${config!.public!.github!.repo}`;
+  const GITHUB_URL = `https://github.com/${config!.Public!.Github!.Owner}/${config!.Public!.Github!.Repository}`;
 
   return (
     <>

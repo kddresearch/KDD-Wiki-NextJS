@@ -51,9 +51,9 @@ function IssueReportButton({
     }
 
     const fetchPublicConfig = async () => {
-      const config = await getPublicConfig();
+      const publicConfig = await getPublicConfig();
 
-      const baseGithubUrl = new URL(`https://github.com/${config!.github!.owner}/${config!.github!.repo}/issues/new`);
+      const baseGithubUrl = new URL(`https://github.com/${publicConfig!.Github!.Owner}/${publicConfig!.Github!.Repository}/issues/new`);
 
       if (type === "general") { // General page report
         baseGithubUrl.searchParams.append("template", "report-page.md");

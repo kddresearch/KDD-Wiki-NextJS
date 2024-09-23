@@ -1,162 +1,153 @@
 import 'server-only'
 
-import { DefaultAzureCredential } from '@azure/identity';
-import { SecretClient } from '@azure/keyvault-secrets';
-import ConfigStructure from './interface';
+import {
+    ConfigStructure,
+    ConfigStructureSchema
+} from './schema';
+import { ISecretStore } from '@/interfaces/secret-store';
+import { AzureSecretStore } from '@/keystore/azure-secret-store';
+import { AWSSecretStore } from '@/keystore/aws-secret-store';
+import { extractSchemaPaths } from '@/utils/zod';
+import { SecretStore, SecretStoreSchema } from './schema';
+
+const prefix = "WIKI_";
+
+function pathToEnvVar(path: string[]): string {
+    return (
+        prefix +
+        path
+            .map(segment => {
+                return segment.toUpperCase();
+            })
+            .join("_")
+    );
+}
 
 class ConfigLoader {
-    private config: Partial<ConfigStructure> = {};
-    private secretClient: SecretClient | null = null;
+    private secretClient?: ISecretStore;
+    private unverifiedConfig?: any = {};
 
-    constructor(private keyVaultName?: String) {
-
-        if (keyVaultName === undefined) {
-            return;
-        }
-
-        const credential = new DefaultAzureCredential();
-        const url = `https://${keyVaultName}.vault.azure.net`;
-        this.secretClient = new SecretClient(url, credential);
+    constructor() {
+        this.secretClient = ConfigLoader.loadSecretStore();
     }
 
-    async loadConfig(): Promise<Partial<ConfigStructure>> {
+    static setConfigValue(path: string[], value: string, config: any) {
+        // Set the config value, handling nested properties
+        let current: any = config;
+
+        if (config === undefined || config === null) {
+            config = {};
+        }
+
+        for (let i = 0; i < path.length - 1; i++) {
+            const key = path[i];
+            if (!(key in current)) {
+                current[key] = {};
+            }
+            current = current[key];
+        }
+        current[path[path.length - 1]] = value;
+    }
+
+    static loadSecretStore(): ISecretStore | undefined {
+        const allSchemaPaths = extractSchemaPaths(SecretStoreSchema);
+        let secretClient: ISecretStore | undefined;
+        let secretStoreUnverifiedConfig: any;
+        let secretStoreConfig: SecretStore;
+
+        for (const path of allSchemaPaths) {
+            const envVar = pathToEnvVar(path);
+            const value = process.env[envVar];
+
+            if (value !== undefined) {
+                ConfigLoader.setConfigValue(path, value, secretStoreUnverifiedConfig);
+
+                const output = SecretStoreSchema.safeParse(secretStoreUnverifiedConfig);
+
+                if (!output.success) {
+                    throw new Error("Invalid secret store configuration");
+                }
+
+                secretStoreConfig = output.data;
+
+                if (!secretStoreConfig?.Provider) {
+                    return undefined;
+                } else if (secretStoreConfig.Provider === 'azure') {
+                    secretClient = new AzureSecretStore();
+                } else if (secretStoreConfig.Provider === 'aws') {
+                    secretClient = new AWSSecretStore();
+                }
+            }
+        }
+
+        return secretClient;
+    }
+
+    async loadConfig(): Promise<ConfigStructure> {
         await this.loadFromEnv();
 
-        if (!this.secretClient) {
-            return this.config;
+        if (this.secretClient) {
+            await this.loadFromSecretStore();
+        }
+        
+        // Validate the config using Zod schema
+        const parsedConfig = ConfigStructureSchema.safeParse(this.unverifiedConfig);
+
+        if (!parsedConfig.success) {
+            console.error("Configuration validation failed:", parsedConfig.error);
+            throw new Error("Invalid configuration");
         }
 
-        if (await this.checkAccess() === false) {
-            console.error("Access to configuration denied (Did you login? run `az login`)");
-            return this.config;
-        }
+        console.log("Configuration loaded successfully");
 
-        if (this.config.Keystore?.Active) {
-            return this.config;
-            console.log("Keystore is active, skipping keyvault load")
-        }
-
-        await this.loadFromKeyVault();
-        return this.config;
+        return parsedConfig.data;
     }
 
-    private async loadFromKeyVault() {
-
-        const start = Date.now();
-
-        const secretPromises = [];
-        const secretTimes: any[] = [];
-
-        for await (const secretProperties of this.secretClient!.listPropertiesOfSecrets()) {            
-            const secretName = secretProperties.name!;
-            const secretStart = Date.now();
-
-            secretPromises.push(this.secretClient!.getSecret(secretName).then(secret => {
-
-                const secretEnd = Date.now();
-                const timeTaken = secretEnd - secretStart;
-
-                secretTimes.push({ secretName, timeTaken });
-
-                // console.log("Secret Name:", secretName);
-                this.setConfigValue(secretName, secret.value! as string);
-            }));
-        }
-
-        await Promise.all(secretPromises);
-
-        // secretTimes.forEach(({ secretName, timeTaken }) => {
-        //     console.log(`${timeTaken} ms, ${secretName}`);
-        // });
-
-        console.log("Required reload of secrets");
-        console.log("Time to load secrets:", Date.now() - start, "ms");
-    }
-
-    private setConfigValue(key: string, value: string) {
-        // Set the config value, handling nested properties
-        const parts = key.split('-'); // the _ acts as the . in the namespace
-        let current: any = this.config;
-        for (let i = 0; i < parts.length - 1; i++) {
-            if (!(parts[i] in current)) {
-                current[parts[i]] = {};
-            }
-            current = current[parts[i]];
-        }
-        current[parts[parts.length - 1]] = value;
+    private setUnverifiedConfigValue(path: string[], value: string) {
+        let current: any = this.unverifiedConfig;
+        ConfigLoader.setConfigValue(path, value, current);
     }
 
     private async loadFromEnv() {
+        const allSchemaPaths = extractSchemaPaths(ConfigStructureSchema);
 
-        // console.log('Loading from environment variables')
+        for (const path of allSchemaPaths) {
+            const envVar = pathToEnvVar(path);
+            const value = process.env[envVar];
 
-        this.config = {
-            port: Number(process.env.PORT) || 3000,
-            isdevelopment: process.env.NODE_ENV !== 'production',
-            Auth: {
-                Secret: process.env.AUTH_SECRET,
-                Google: {
-                    ClientId: process.env.AUTH_GOOGLE_CLIENT_ID,
-                    ProjectId: 'canvascaboose',
-                    AuthUri: 'https://accounts.google.com/o/oauth2/auth',
-                    TokenUri: 'https://oauth2.googleapis.com/token',
-                    AuthProviderX509CertUrl: 'https://www.googleapis.com/oauth2/v1/certs',
-                    ClientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET,
-                },
-                Ksu: {
-                    ClientId: process.env.AUTH_KSU_CLIENT_ID,
-                    ClientSecret: process.env.AUTH_KSU_CLIENT_SECRET,
-                    Issuer: 'https://signin.k-state.edu/WebISO/oidc',
-                    WellKnown: 'https://signin.k-state.edu/WebISO/oidc/.well-known',
-                },
-            },
-            Db: {
-                Name: process.env.DB_NAME,
-                Host: process.env.DB_HOST,
-                Port: process.env.DB_PORT,
-                Username: process.env.DB_USERNAME,
-                Password: process.env.DB_PASSWORD,
-            },
-            dev_user: {
-                username: 'wnbaldwin',
-                id: 109,
-                member: true,
-                admin: true,
-                readonly: false,
-                date_created: '2016-04-20T15:00:00.000Z',
-                date_modified: '2016-04-20T15:00:00.000Z',
-                is_kdd_only: false,
-            },
-            BlobStorage: {
-                AccountName: process.env.BLOB_STORAGE_ACCOUNT_NAME,
-                AccountKey: process.env.BLOB_STORAGE_ACCOUNT_KEY,
-                ContainerName: process.env.BLOB_STORAGE_CONTAINER_NAME,
-                DevelopmentUrl: process.env.BLOB_STORAGE_DEVELOPMENT_URL,
-            },
-            github_actions: process.env.GITHUB_ACTIONS === 'true',
-            public: {
-                github: {
-                    owner: 'kddresearch',
-                    repo: 'KDD-Wiki-NextJS',
-                    maintainers: [
-                        'Legonois',
-                    ],
-                },
-            },
+            if (value !== undefined) {
+                this.setUnverifiedConfigValue(path, value);
+            }
         }
     }
 
-    async checkAccess() {
-        try {
-            const secret = await this.secretClient!.getSecret("vault-enabled");
-            if (secret.value === "true") {
-                return true;
+    private async loadFromSecretStore(): Promise<ConfigStructure> {
+        const allSchemaPaths = extractSchemaPaths(ConfigStructureSchema);        
+        const secretClient = this.secretClient!;
+
+        for (const path of allSchemaPaths) {
+            const envVar = pathToEnvVar(path);
+            const value = process.env[envVar];
+
+            if (value !== undefined) {
+                this.setUnverifiedConfigValue(path, value);
             }
-            return false;
-        } catch (error) {
-            console.error("Unexpected Error Occurred with Access to Configuration (Did you login? run `az login`)", error);
-            return false;
         }
+
+        const access = await secretClient.checkAccess();
+        if (!access) {
+            throw new Error(`Access to ${secretClient.provider} denied. Please check your credentials and try again.`);
+        }
+
+        const config = ConfigStructureSchema.safeParse({
+            SecretClient: secretClient.config,
+        });
+
+        if (!config.success) {
+            throw new Error('Invalid Configuration');
+        }
+
+        return config.data;
     }
 }
 
