@@ -1,6 +1,6 @@
 interface ISecretStore {
-    getAllSecretValue(key: string): Promise<string>;
+    getSecretValue(key: string): Promise<string>;
     checkAccess(): Promise<boolean>;
 }
 
-export type { ISecretStore as IKeystore };
+export type { ISecretStore };

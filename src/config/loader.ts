@@ -85,10 +85,25 @@ class ConfigLoader {
             port: Number(process.env.PORT) || 3000, // Defualt port 3000
             isdevelopment: process.env.NODE_ENV !== 'production', // Default to development
             Keystore: {
-                Provider: process.env.KEYSTORE_PROVIDER,
+                Provider: process.env.WIKI_SECRETSTORE_PROVIDER,
+                Azure: {
+                    KeyVaultName: process.env.WIKI_SECRETSTORE_AZURE_VAULT_NAME,
+                    TenantId: process.env.WIKI_SECRETSTORE_AZURE_TENANT_ID,
+                    ClientId: process.env.WIKI_SECRETSTORE_AZURE_CLIENT_ID,
+                    ClientSecret: process.env.WIKI_SECRETSTORE_AZURE_CLIENT_SECRET,
+                    Url: process.env.WIKI_SECRETSTORE_AZURE_URL,
+                },
             },
             Auth: {
-                Secret: process.env.AUTH_SECRET,
+                Secret: process.env.WIKI_AUTH_SECRET,
+                Provider: process.env.WIKI_AUTH_PROVIDER,
+                Oauth2: {
+                    ClientId: process.env.AUTH_OAUTH2_CLIENT_ID,
+                },
+                OIDC: {
+                    ClientId: process.env.WIKI_AUTH_OIDC_CLIENT_ID,
+                    ClientSecret: process.env.AUTH_KSU_CLIENT_SECRET,
+                },
                 Google: {
                     ClientId: process.env.AUTH_GOOGLE_CLIENT_ID,
                     ProjectId: 'canvascaboose',

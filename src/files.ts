@@ -18,10 +18,6 @@ const account = config!.BlobStorage!.AccountName;
 const accountKey = config!.BlobStorage!.AccountKey;
 const container = config!.BlobStorage!.ContainerName;
 
-if (!config!.Keystore!.Active) {
-    throw new Error("Keystore is not active");
-}
-
 if (!account || !accountKey || !container) {
     throw new Error("Blob Storage configuration missing");
 }
