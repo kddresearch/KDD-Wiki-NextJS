@@ -1,7 +1,6 @@
 import { SecretStore, SecretStoreSchema } from "@/config/schema";
 import { ISecretStore } from '@/interfaces/secret-store';
 import { getDefaultAWSCredentials } from '@/utils/credentials';
-
 import { SecretsManager, SecretsManagerClientConfig } from '@aws-sdk/client-secrets-manager';
 
 export class AWSSecretStore implements ISecretStore {
@@ -19,8 +18,8 @@ export class AWSSecretStore implements ISecretStore {
         const accessKeyId = process.env.WIKI_SECRETSTORE_AWS_ACCESS_KEY_ID;
         const secretAccessKey = process.env.WIKI_SECRETSTORE_AWS_SECRET_ACCESS_KEY;
         const sessionToken = process.env.WIKI_SECRETSTORE_AWS_SESSION_TOKEN;
-        let endpoint = process.env.WIKI_SECRETSTORE_AWS_ENDPOINT;
 
+        let endpoint = process.env.WIKI_SECRETSTORE_AWS_ENDPOINT;
         let credentials;
 
         if (accessKeyId && secretAccessKey) {

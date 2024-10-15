@@ -1,4 +1,3 @@
-import { Git, Github } from "react-bootstrap-icons";
 import { z } from "zod";
 
 function stringToLowerCase(val: any): any {
@@ -125,8 +124,7 @@ const FileStorageAWSSchema = z.object({
     Region: z.string(),
     BucketName: z.string(),
     Credentials: AWSCredentialsSchema.optional(),
-})
-
+});
 
 const FileStorageSchema = z.discriminatedUnion("Provider", [
     z.object({

@@ -39,6 +39,8 @@ class ConfigLoader {
             config = {};
         }
 
+        console.log('Setting config value', path, value);
+
         for (let i = 0; i < path.length - 1; i++) {
             const key = path[i];
             if (!(key in current)) {
