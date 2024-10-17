@@ -1,3 +1,5 @@
+This project has been archived
+
 # KDD - Wiki - NextJS
 
 This is the wiki for the KDD Research Lab. Rewritten in NextJS as the
